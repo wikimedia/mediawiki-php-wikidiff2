@@ -18,6 +18,10 @@ void print_diff(std::vector<std::string> &text1, std::vector<std::string> &text2
 	int from_ind = 1, to_ind = 1;
 	int num_ops = linediff.size();
 
+	// Should a line number be printed before the next context line?
+	// Set to true initially so we get a line number on line 1
+	bool showLineNumber = true; 
+
 	for (int i = 0; i < num_ops; ++i) {
 		int n, j, n1, n2;
 		// Line 1 changed, show heading with no leading context
@@ -52,7 +56,7 @@ void print_diff(std::vector<std::string> &text1, std::vector<std::string> &text2
 				for (j=0; j<n; j++) {
 					if ((i != 0 && j < num_lines_context) /*trailing*/
 							|| (i != num_ops - 1 && j >= n - num_lines_context)) /*leading*/ {
-						if (j == n - num_lines_context || (j == 0 && n < num_lines_context)) {
+						if (showLineNumber) {
 							// Print Line: heading
 							char buf[256]; // should be plenty
 							sprintf(buf, 
@@ -62,6 +66,7 @@ void print_diff(std::vector<std::string> &text1, std::vector<std::string> &text2
 								"</tr>\n",
 								from_ind, to_ind);
 							ret += buf;
+							showLineNumber = false;
 						}
 						// Print context
 						ret += 
@@ -75,6 +80,8 @@ void print_diff(std::vector<std::string> &text1, std::vector<std::string> &text2
 							"  <td class=\"diff-context\">";
 						print_htmlspecialchars(*linediff[i].from[j], ret);
 						ret += "</td>\n</tr>\n";
+					} else {
+						showLineNumber = true;
 					}
 					from_ind++;
 					to_ind++;
@@ -101,6 +108,8 @@ void print_diff(std::vector<std::string> &text1, std::vector<std::string> &text2
 				}
 				break;
 		}
+		// Not first line anymore, don't show line number by default
+		showLineNumber = false;
 	}
 }
 
