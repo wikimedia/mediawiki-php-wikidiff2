@@ -1,10 +1,10 @@
 Summary: PHP extension and standalone application to do fast word-level diffs
 Name: wikidiff2
-Version: 0.0.1
+Version: 0.0.2
 Release: 2
 Copyright: GPL
 Group: Applications/Internet
-Source: wikidiff2-0.0.1.tar.gz
+Source: wikidiff2-0.0.2.tar.gz
 BuildRoot: /var/tmp/%{name}-buildroot
 
 %description

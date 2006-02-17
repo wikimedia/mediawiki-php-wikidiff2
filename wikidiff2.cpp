@@ -209,8 +209,14 @@ void print_worddiff_side(Diff<Word> &worddiff, bool added, std::string &ret)
 		int n, j;
 		if (op.op == DiffOp<Word>::copy) {
 			n = op.from.size();
-			for (j=0; j<n; j++) {
-				print_htmlspecialchars(op.from[j]->whole, ret);
+			if (added) {
+				for (j=0; j<n; j++) {
+					print_htmlspecialchars(op.to[j]->whole, ret);
+				}
+			} else {
+				for (j=0; j<n; j++) {
+					print_htmlspecialchars(op.from[j]->whole, ret);
+				}
 			}
 		} else if (!added && (op.op == DiffOp<Word>::del || op.op == DiffOp<Word>::change)) {
 			n = op.from.size();

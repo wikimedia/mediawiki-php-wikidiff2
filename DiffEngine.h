@@ -16,7 +16,7 @@
  * from and to are vectors containing pointers to the objects passed in from_lines and to_lines
  *
  * op is one of the following
- *    copy:    A sequence of lines (in from) which are the same in both files. 
+ *    copy:    A sequence of lines (in from and to) which are the same in both files. 
  *    del:     A sequence of lines (in from) which were in the first file but not the second.
  *    add:     A sequence of lines (in to) which were in the second file but not the first.
  *    change:  A sequence of lines which are different between the two files. Lines from the 
@@ -185,22 +185,25 @@ void _DiffEngine<T>::diff (const std::vector<T> & from_lines,
 		assert(xi < n_from || ychanged[yi]);
 
 		// Skip matching "snake".
-		std::vector<const T*> copy;
+		std::vector<const T*> del;
+		std::vector<const T*> add;
 		std::vector<const T*> empty;
 		while (xi < n_from && yi < n_to && !xchanged[xi] && !ychanged[yi]) {
-			copy.push_back(&from_lines[xi]);
+			del.push_back(&from_lines[xi]);
+			add.push_back(&to_lines[yi]);
 			++xi;
 			++yi;
 		}
-		if (copy.size())
-			diff.add_edit(DiffOp<T>(DiffOp<T>::copy, copy, empty));
+		if (del.size()) {
+			diff.add_edit(DiffOp<T>(DiffOp<T>::copy, del, add));
+			del.clear();
+			add.clear();
+		}
 
 		// Find deletes & adds.
-		std::vector<const T*> del;
 		while (xi < n_from && xchanged[xi])
 			del.push_back(&from_lines[xi++]);
 
-		std::vector<const T*> add;
 		while (yi < n_to && ychanged[yi])
 			add.push_back(&to_lines[yi++]);
 
