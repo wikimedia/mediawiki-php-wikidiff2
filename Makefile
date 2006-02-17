@@ -4,7 +4,7 @@ VERSION=0.0.1
 CXX?=g++
 
 # For Linux
-SHARED = -shared
+SHARED = -shared -fPIC
 
 # For Mac OS X
 # SHARED = -bundle
@@ -30,7 +30,7 @@ standalone:
 #	MACOSX_DEPLOYMENT_TARGET=10.3 g++ -O2 `php-config --includes` $(SHARED) -o php_wikidiff2.so wikidiff2.cpp wikidiff2_wrap.cpp -undefined dynamic_lookup
 
 $(PRODUCT)_wrap.cpp : $(PRODUCT).i
-	swig -php4 -c++ $(PRODUCT).i
+	swig -php -c++ $(PRODUCT).i
 
 install : $(OUTPUT)
 	install -d "$(INSTALL_TARGET)"
