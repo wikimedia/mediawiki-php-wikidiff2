@@ -9,6 +9,7 @@
 #include <map>
 #include <set>
 #include <utility>
+#include <algorithm>
 
 /**
  * Diff operation
@@ -101,6 +102,7 @@ class _DiffEngine
 		std::set<int> in_seq;
 		int lcs;
 		bool done;
+		enum {MAX_CHUNKS=8};
 };
 
 //-----------------------------------------------------------------------------
@@ -222,7 +224,7 @@ void _DiffEngine<T>::diff (const std::vector<T> & from_lines,
  * [XOFF, XLIM) and [YOFF, YLIM) into NCHUNKS approximately equally
  * sized segments.
  *
- * Returns (LCS, PTS).	LCS is the length of the LCS. PTS is an
+ * Returns (LCS, SEPS). LCS is the length of the LCS. SEPS is an
  * array of NCHUNKS+1 (X, Y) indexes giving the diving points between
  * sub sequences.  The first sub-sequence is contained in [X0, X1),
  * [Y0, Y1), the second in [X1, X2), [Y1, Y2) and so on.  Note
@@ -259,20 +261,20 @@ int _DiffEngine<T>::_diag (int xoff, int xlim, int yoff, int ylim, int nchunks,
 		for (int i = ylim - 1; i >= yoff; i--)
 			ymatches[*yv[i]].push_back(i);
 
+	int nlines = ylim - yoff;
 	lcs = 0;
 	seq[0] = yoff - 1;
 	in_seq.clear();
-	vector<vector<int> > ymids(lcs+1);
-	for (int i = 0; i <= lcs; i++) {
-		ymids[i].resize(nchunks);
-	}
+
+	// 2-d array, line major, chunk minor
+	vector<int> ymids(nlines * nchunks);
 
 	int numer = xlim - xoff + nchunks - 1;
 	int x = xoff, x1, y1;
 	for (int chunk = 0; chunk < nchunks; chunk++) {
 		if (chunk > 0)
 			for (int i = 0; i <= lcs; i++) 
-				ymids[i][chunk-1] = seq[i];
+				ymids.at(i * nchunks + chunk-1) = seq[i];
 
 		x1 = xoff + (int)((numer + (xlim-xoff)*chunk) / nchunks);
 		for ( ; x < x1; x++) {
@@ -282,15 +284,18 @@ int _DiffEngine<T>::_diag (int xoff, int xlim, int yoff, int ylim, int nchunks,
 			vector<int> & matches = ymatches[line];
 			vector<int>::iterator y;
 			int k = 0;
+			
 			for (y = matches.begin(); y != matches.end(); ++y) {
 				if (!in_seq.count(*y)) {
 					k = _lcs_pos(*y);
 					assert(k > 0);
-					ymids[k] = ymids[k-1];
+					std::copy(ymids.begin() + (k-1) * nchunks, ymids.begin() + k * nchunks, 
+							ymids.begin() + k * nchunks);
+					++y;
 					break;
 				}
 			}
-			for (y = matches.begin(); y != matches.end(); ++y) {
+			for ( ; y != matches.end(); ++y) {
 				if (*y > seq[k-1]) {
 					assert(*y < seq[k]);
 					// Optimization: this is a common case:
@@ -301,7 +306,8 @@ int _DiffEngine<T>::_diag (int xoff, int xlim, int yoff, int ylim, int nchunks,
 				} else if (!in_seq.count(*y)) {
 					k = _lcs_pos(*y);
 					assert(k > 0);
-					ymids[k] = ymids[k-1];
+					std::copy(ymids.begin() + (k-1) * nchunks, ymids.begin() + k * nchunks, 
+							ymids.begin() + k * nchunks);
 				}
 			}
 		}
@@ -311,7 +317,7 @@ int _DiffEngine<T>::_diag (int xoff, int xlim, int yoff, int ylim, int nchunks,
 	seps.resize(nchunks + 1);
 	
 	seps[0] = flip ? make_pair(yoff, xoff) : make_pair(xoff, yoff);
-	vector<int> & ymid = ymids[lcs];
+	vector<int>::iterator ymid = ymids.begin() + lcs * nchunks;
 	for (int n = 0; n < nchunks - 1; n++) {
 		x1 = xoff + (numer + (xlim - xoff) * n) / nchunks;
 		y1 = ymid[n] + 1;
@@ -384,7 +390,7 @@ void _DiffEngine<T>::_compareseq (int xoff, int xlim, int yoff, int ylim) {
 		// This is ad hoc but seems to work well.
 		//nchunks = sqrt(min(xlim - xoff, ylim - yoff) / 2.5);
 		//nchunks = max(2,min(8,(int)nchunks));
-		int nchunks = std::min(7, std::min(xlim - xoff, ylim - yoff)) + 1;
+		int nchunks = std::min(MAX_CHUNKS-1, std::min(xlim - xoff, ylim - yoff)) + 1;
 		lcs = _diag(xoff, xlim, yoff, ylim, nchunks, seps);
 	}
 
