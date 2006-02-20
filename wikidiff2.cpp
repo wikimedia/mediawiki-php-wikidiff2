@@ -138,8 +138,8 @@ void print_worddiff(const std::string & text1, const std::string & text2, std::s
 {
 	std::vector<Word> text1_words, text2_words;
 
-	split_tokens(text1.c_str(), text1_words);
-	split_tokens(text2.c_str(), text2_words);
+	split_tokens(text1, text1_words);
+	split_tokens(text2, text2_words);
 	Diff<Word> worddiff(text1_words, text2_words);
 	
 	//debug_print_worddiff(worddiff, ret);
@@ -184,7 +184,7 @@ void debug_print_worddiff(Diff<Word> &worddiff, std::string &ret)
 				ret += ", ";
 			}
 			ret += "(";
-			ret += op.from[j]->whole + ")";
+			ret += op.from[j]->whole() + ")";
 		}
 		ret += "\n";
 		ret += "To: ";
@@ -196,7 +196,7 @@ void debug_print_worddiff(Diff<Word> &worddiff, std::string &ret)
 				ret += ", ";
 			}
 			ret += "(";
-			ret += op.to[j]->whole + ")";
+			ret += op.to[j]->whole() + ")";
 		}
 		ret += "\n\n";
 	}
@@ -204,6 +204,7 @@ void debug_print_worddiff(Diff<Word> &worddiff, std::string &ret)
 
 void print_worddiff_side(Diff<Word> &worddiff, bool added, std::string &ret)
 {
+	std::string word;
 	for (unsigned i = 0; i < worddiff.size(); ++i) {
 		DiffOp<Word> & op = worddiff[i];
 		int n, j;
@@ -211,25 +212,29 @@ void print_worddiff_side(Diff<Word> &worddiff, bool added, std::string &ret)
 			n = op.from.size();
 			if (added) {
 				for (j=0; j<n; j++) {
-					print_htmlspecialchars(op.to[j]->whole, ret);
+					op.to[j]->get_whole(word);
+					print_htmlspecialchars(word, ret);
 				}
 			} else {
 				for (j=0; j<n; j++) {
-					print_htmlspecialchars(op.from[j]->whole, ret);
+					op.from[j]->get_whole(word);
+					print_htmlspecialchars(word, ret);
 				}
 			}
 		} else if (!added && (op.op == DiffOp<Word>::del || op.op == DiffOp<Word>::change)) {
 			n = op.from.size();
 			ret += "<span class=\"diffchange\">";
 			for (j=0; j<n; j++) {
-				print_htmlspecialchars(op.from[j]->whole, ret);
+				op.from[j]->get_whole(word);
+				print_htmlspecialchars(word, ret);
 			}
 			ret += "</span>";
 		} else if (added && (op.op == DiffOp<Word>::add || op.op == DiffOp<Word>::change)) {
 			n = op.to.size();
 			ret += "<span class=\"diffchange\">";
 			for (j=0; j<n; j++) {
-				print_htmlspecialchars(op.to[j]->whole, ret);
+				op.to[j]->get_whole(word);
+				print_htmlspecialchars(word, ret);
 			}
 			ret += "</span>";
 		}
@@ -264,56 +269,119 @@ void print_htmlspecialchars(const std::string & input, std::string & ret)
 }
 
 
-inline bool my_istext(unsigned char ch)
+inline bool my_istext(int ch)
 {
-	return (ch >= '0' && ch <= '9') ||
+	// Standard alphanumeric
+	if ((ch >= '0' && ch <= '9') ||
 	   (ch == '_') ||
 	   (ch >= 'A' && ch <= 'Z') ||
-	   (ch >= 'a' && ch <= 'z') ||
-	   (ch >= 0x80 /* && ch <= 0xFF */);
+	   (ch >= 'a' && ch <= 'z'))
+	{
+		return true;
+	}
+	// Punctuation and control characters
+	if (ch < 0xc0) return false;
+	// Thai, return false so it gets split up
+	if (ch >= 0xe00 && ch <= 0xee7) return false;
+	// Chinese/Japanese, same
+	if (ch >= 0x3000 && ch <= 0x9fff) return false;
+	if (ch >= 0x20000 && ch <= 0x2a000) return false;
+	// Otherwise assume it's from a language that uses spaces
+	return true;
 }
 
-// split a string into multiple tokens, just like the monster regex in DifferenceEngine.php
-void split_tokens(const char *text, std::vector<Word> &tokens)
+inline bool my_isspace(int ch)
 {
-	if (strlen(text) > MAX_DIFF_LINE) {
-		std::string everything(text);
-		tokens.push_back(Word(everything, everything));
+	return ch == ' ' || ch == '\t';
+}
+
+// Weak UTF-8 decoder
+// Will return garbage on invalid input (overshort sequences, overlong sequences, etc.)
+int next_utf8_char(std::string::const_iterator & p, std::string::const_iterator & charStart, 
+		std::string::const_iterator end)
+{
+	int c;
+	unsigned char byte;
+	int bytes = 0;
+	charStart = p;
+	if (p == end) {
+		return 0;
+	}
+	do {
+		byte = (unsigned char)*p;
+		if (byte < 0x80) {
+			c = byte;
+			bytes = 0;
+		} else if (byte >= 0xc0) {
+			// Start of UTF-8 character
+			// If this is unexpected, due to an overshort sequence, we ignore the invalid
+			// sequence and resynchronise here
+		   	if (byte < 0xe0) {
+				bytes = 1;
+				c = byte & 0x1f;
+			} else if (byte < 0xf0) {
+				bytes = 2;
+				c = byte & 0x0f;
+			} else {
+				bytes = 3;
+				c = byte & 7;
+			}
+		} else if (bytes) {
+			c <<= 6;
+			c |= byte & 0x3f;
+			--bytes;
+		} else {
+			// Unexpected continuation, ignore
+		}
+		++p;
+	} while (bytes && p != end);
+	return c;
+}
+
+// split a string into multiple tokens
+void split_tokens(const std::string & text, std::vector<Word> &tokens)
+{
+	// Don't try to do a word-level diff on very long lines
+	if (text.size() > MAX_DIFF_LINE) {
+		tokens.push_back(Word(text.begin(), text.end(), text.end()));
 		return;
 	}
 	
-	const char *ptr = text;
-
-	while (*ptr) {
-		std::string body, suffix;
-		char ch = *ptr;
-		
+	std::string body, suffix;
+	std::string::const_iterator bodyStart, bodyEnd, suffixEnd, charStart, p;
+	int ch;
+	p = text.begin();
+	ch = next_utf8_char(p, charStart, text.end());
+	while (ch) {
 		// first group has three different opportunities:
-		if (ch == ' ' || ch == '\t') {
-			// one or more whitespace characters (but not \n)
-			while (*ptr == ' ' || *ptr == '\t') { 
-				body.push_back(*ptr++);
+		if (my_isspace(ch)) {
+			// one or more whitespace characters
+			bodyStart = charStart;
+			while (my_isspace(ch)) {
+				ch = next_utf8_char(p, charStart, text.end());
 			}
+			bodyEnd = charStart;
 		} else if (my_istext(ch)) {
 			// one or more text characters
-			while (my_istext(*ptr)) {
-				body.push_back(*ptr++);
+			bodyStart = charStart;
+			while (my_istext(ch)) {
+				ch = next_utf8_char(p, charStart, text.end());
 			}
+			bodyEnd = charStart;
 		} else {
 			// one character, no matter what it is
-			body.push_back(*ptr++);
+			bodyStart = charStart;
+			bodyEnd = p;
+			ch = next_utf8_char(p, charStart, text.end());
 		}
-
-		// second group: if the first character was not \n,
-		// any whitespace character that is not \n (if any)
-		if (ch != '\n') {
-			if (*ptr == ' ' || *ptr == '\t') {
-				suffix.push_back(*ptr++);
-			}
+		
+		// second group: any whitespace character
+		while (my_isspace(ch)) {
+			ch = next_utf8_char(p, charStart, text.end());
 		}
-
-		tokens.push_back(Word(body, suffix));
-	 }
+		suffixEnd = charStart;
+		tokens.push_back(Word(bodyStart, bodyEnd, suffixEnd));
+	}
 }
 
 void line_explode(const char *text, std::vector<std::string> &lines)

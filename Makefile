@@ -11,6 +11,10 @@ SHARED = -shared -fPIC
 
 OUTPUT=php_$(PRODUCT).so
 STANDALONE=$(PRODUCT)
+#LIBDIRS=-L/usr/local/lib
+#LIBS=-lJudy
+LIBS=
+LIBDIRS=
 
 TMPDIST=$(PRODUCT)-$(VERSION)
 DISTFILES=Makefile \
@@ -24,7 +28,7 @@ $(OUTPUT) : $(PRODUCT).cpp $(PRODUCT)_wrap.cpp
 
 .PHONY: standalone
 standalone:
-	$(CXX) -o $(STANDALONE) -O3 $(PRODUCT).cpp standalone.cpp 
+	$(CXX) -o $(STANDALONE) -O3 $(PRODUCT).cpp standalone.cpp $(LIBS) $(LIBDIRS)
 
 # The below _almost_ works. It gets unresolved symbol errors on load looking for _compiler_globals.
 #	MACOSX_DEPLOYMENT_TARGET=10.3 g++ -O2 `php-config --includes` $(SHARED) -o php_wikidiff2.so wikidiff2.cpp wikidiff2_wrap.cpp -undefined dynamic_lookup

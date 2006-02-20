@@ -5,11 +5,17 @@
 #ifndef DIFFENGINE_H
 #define DIFFENGINE_H
 
+//#define USE_JUDY
+
 #include <vector>
 #include <map>
 #include <set>
 #include <utility>
 #include <algorithm>
+
+#ifdef USE_JUDY
+#include "JudyHS.h"
+#endif
 
 /**
  * Diff operation
@@ -152,7 +158,11 @@ void _DiffEngine<T>::diff (const std::vector<T> & from_lines,
 	}
 
 	// Ignore lines which do not exist in both files.
+#ifdef USE_JUDY
+	JudySet xhash, yhash;
+#else
 	std::set<T> xhash, yhash;
+#endif
 	for (xi = skip; xi < n_from - endskip; xi++) {
 		xhash.insert(from_lines[xi]);
 	}
@@ -243,8 +253,14 @@ int _DiffEngine<T>::_diag (int xoff, int xlim, int yoff, int ylim, int nchunks,
 	using std::vector;
 	using std::swap;
 	using std::make_pair;
+	using std::map;
+	using std::copy;
 	bool flip = false;
-	std::map<T, vector<int> > ymatches;
+#ifdef USE_JUDY
+	JudyHS<vector<int> > ymatches;
+#else
+	map<T, vector<int> > ymatches;
+#endif
 
 	if (xlim - xoff > ylim - yoff) {
 		// Things seems faster (I'm not sure I understand why)
@@ -279,23 +295,30 @@ int _DiffEngine<T>::_diag (int xoff, int xlim, int yoff, int ylim, int nchunks,
 		x1 = xoff + (int)((numer + (xlim-xoff)*chunk) / nchunks);
 		for ( ; x < x1; x++) {
 			const T & line = flip ? *yv[x] : *xv[x];
-			if (ymatches.find(line) == ymatches.end())
+#ifdef USE_JUDY
+			vector<int> * pMatches = ymatches.Get(line);
+			if (!pMatches)
 				continue;
-			vector<int> & matches = ymatches[line];
+#else
+			typename map<T, vector<int> >::iterator iter = ymatches.find(line);
+			if (iter == ymatches.end())
+				continue;
+			vector<int> * pMatches = &(iter->second);
+#endif
 			vector<int>::iterator y;
 			int k = 0;
 			
-			for (y = matches.begin(); y != matches.end(); ++y) {
+			for (y = pMatches->begin(); y != pMatches->end(); ++y) {
 				if (!in_seq.count(*y)) {
 					k = _lcs_pos(*y);
 					assert(k > 0);
-					std::copy(ymids.begin() + (k-1) * nchunks, ymids.begin() + k * nchunks, 
+					copy(ymids.begin() + (k-1) * nchunks, ymids.begin() + k * nchunks, 
 							ymids.begin() + k * nchunks);
 					++y;
 					break;
 				}
 			}
-			for ( ; y != matches.end(); ++y) {
+			for ( ; y != pMatches->end(); ++y) {
 				if (*y > seq[k-1]) {
 					assert(*y < seq[k]);
 					// Optimization: this is a common case:
@@ -306,7 +329,7 @@ int _DiffEngine<T>::_diag (int xoff, int xlim, int yoff, int ylim, int nchunks,
 				} else if (!in_seq.count(*y)) {
 					k = _lcs_pos(*y);
 					assert(k > 0);
-					std::copy(ymids.begin() + (k-1) * nchunks, ymids.begin() + k * nchunks, 
+					copy(ymids.begin() + (k-1) * nchunks, ymids.begin() + k * nchunks, 
 							ymids.begin() + k * nchunks);
 				}
 			}
