@@ -12,6 +12,7 @@
 #include <set>
 #include <utility>
 #include <algorithm>
+#include <cassert>
 
 #ifdef USE_JUDY
 #include "JudyHS.h"
