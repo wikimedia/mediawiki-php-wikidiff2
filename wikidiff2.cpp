@@ -71,14 +71,14 @@ void print_diff(std::vector<std::string> &text1, std::vector<std::string> &text2
 						// Print context
 						ret += 
 							"<tr>\n"
-							"  <td> </td>\n"
+							"  <td class=\"diff-marker\"> </td>\n"
 							"  <td class=\"diff-context\">";
-						print_htmlspecialchars(*linediff[i].from[j], ret);
+						print_div_htmlspecialchars(*linediff[i].from[j], ret);
 						ret += 
 							"</td>\n"
-							"  <td> </td>\n"
+							"  <td class=\"diff-marker\"> </td>\n"
 							"  <td class=\"diff-context\">";
-						print_htmlspecialchars(*linediff[i].from[j], ret);
+						print_div_htmlspecialchars(*linediff[i].from[j], ret);
 						ret += "</td>\n</tr>\n";
 					} else {
 						showLineNumber = true;
@@ -117,18 +117,18 @@ void print_add(const std::string & line, std::string & ret)
 {
 	ret += "<tr>\n"
 		"  <td colspan=\"2\">&nbsp;</td>\n"
-		"  <td>+</td>\n"
+		"  <td class=\"diff-marker\">+</td>\n"
 		"  <td class=\"diff-addedline\">";
-	print_htmlspecialchars(line, ret);
+	print_div_htmlspecialchars(line, ret);
 	ret += "</td>\n</tr>\n";
 }
 
 void print_del(const std::string & line, std::string & ret)
 {
 	ret += "<tr>\n"
-		"  <td>-</td>\n"
+		"  <td class=\"diff-marker\">-</td>\n"
 		"  <td class=\"diff-deletedline\">";
-	print_htmlspecialchars(line, ret);
+	print_div_htmlspecialchars(line, ret);
 	ret += "</td>\n"
 		"  <td colspan=\"2\">&nbsp;</td>\n"
 		"</tr>\n";
@@ -146,14 +146,14 @@ void print_worddiff(const std::string & text1, const std::string & text2, std::s
 	
 	// print twice; first for left side, then for right side
 	ret += "<tr>\n"
-		"  <td>-</td>\n"
-		"  <td class=\"diff-deletedline\">\n";
+		"  <td class=\"diff-marker\">-</td>\n"
+		"  <td class=\"diff-deletedline\"><div>\n";
 	print_worddiff_side(worddiff, false, ret);
-	ret += "\n  </td>\n"
-		"  <td>+</td>\n"
-		"  <td class=\"diff-addedline\">\n";
+	ret += "\n  </div></td>\n"
+		"  <td class=\"diff-marker\">+</td>\n"
+		"  <td class=\"diff-addedline\"><div>\n";
 	print_worddiff_side(worddiff, true, ret);
-	ret += "\n  </td>\n"
+	ret += "\n  </div></td>\n"
 		"</tr>\n";
 }
 
@@ -238,6 +238,16 @@ void print_worddiff_side(Diff<Word> &worddiff, bool added, std::string &ret)
 			}
 			ret += "</span>";
 		}
+	}
+}
+
+void print_div_htmlspecialchars(const std::string & input, std::string & ret)
+{
+	// Wrap string in a <div> if it's not empty
+	if (input.size() > 0) {
+		ret.append("<div>");
+		print_htmlspecialchars(input, ret);
+		ret.append("</div>");
 	}
 }
 

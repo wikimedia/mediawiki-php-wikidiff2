@@ -28,6 +28,7 @@ void print_worddiff_side(Diff<Word> &worddiff, bool added, std::string &ret);
 void split_tokens(const std::string & text, std::vector<Word> &tokens);
 void print_add(const std::string & line, std::string & ret);
 void print_del(const std::string & line, std::string & ret);
+void print_div_htmlspecialchars(const std::string & input, std::string & ret);
 void print_htmlspecialchars(const std::string & input, std::string & ret);
 void debug_print_worddiff(Diff<Word> &worddiff, std::string &ret);
 const char *wikidiff2_do_diff(const char *text1, const char *text2, int num_lines_context);
