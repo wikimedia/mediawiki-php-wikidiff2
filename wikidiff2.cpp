@@ -28,8 +28,8 @@ void print_diff(std::vector<std::string> &text1, std::vector<std::string> &text2
 		if (linediff[i].op != DiffOp<std::string>::copy && i == 0) {
 			ret += 
 				"<tr>\n"
-				"  <td colspan=\"2\" align=\"left\"><strong><!--LINE 1--></strong></td>\n"
-				"  <td colspan=\"2\" align=\"left\"><strong><!--LINE 1--></strong></td>\n"
+				"  <td colspan=\"2\" class=\"diff-lineno\"><!--LINE 1--></td>\n"
+				"  <td colspan=\"2\" class=\"diff-lineno\"><!--LINE 1--></td>\n"
 				"</tr>\n";
 		}
 			
@@ -61,8 +61,8 @@ void print_diff(std::vector<std::string> &text1, std::vector<std::string> &text2
 							char buf[256]; // should be plenty
 							sprintf(buf, 
 								"<tr>\n"
-								"  <td colspan=\"2\" align=\"left\"><strong><!--LINE %u--></strong></td>\n"
-								"  <td colspan=\"2\" align=\"left\"><strong><!--LINE %u--></strong></td>\n"
+								"  <td colspan=\"2\" class=\"diff-lineno\"><!--LINE %u--></td>\n"
+								"  <td colspan=\"2\" class=\"diff-lineno\"><!--LINE %u--></td>\n"
 								"</tr>\n",
 								from_ind, to_ind);
 							ret += buf;
