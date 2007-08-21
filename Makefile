@@ -17,7 +17,7 @@ LIBS=
 LIBDIRS=
 
 TMPDIST=$(PRODUCT)-$(VERSION)
-DISTDIRS=test
+DISTDIRS=test debian
 DISTFILES=Makefile \
   $(PRODUCT).spec compile.sh release.sh \
   DiffEngine.h JudyHS.h Word.h wikidiff2.h \
@@ -30,7 +30,12 @@ DISTFILES=Makefile \
   test/test-a2 \
   test/test-b.diff \
   test/test-b1 \
-  test/test-b2
+  test/test-b2 \
+  debian/control \
+  debian/compat \
+  debian/changelog \
+  debian/copyright \
+  debian/rules
 
 $(OUTPUT) : $(PRODUCT).cpp $(PRODUCT)_wrap.cpp
 	$(CXX) -O2 `php-config --includes` $(SHARED) -o $@ $(PRODUCT).cpp $(PRODUCT)_wrap.cpp
