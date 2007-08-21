@@ -20,7 +20,7 @@ TMPDIST=$(PRODUCT)-$(VERSION)
 DISTDIRS=test
 DISTFILES=Makefile \
   $(PRODUCT).spec compile.sh release.sh \
-  DiffEngine.h JudyHS.h Word.h \
+  DiffEngine.h JudyHS.h Word.h wikidiff2.h \
   judy_test.cpp standalone.cpp \
   $(PRODUCT).cpp $(PRODUCT).i \
   $(PRODUCT)_wrap.cpp php_$(PRODUCT).h wikidiff2.php \
