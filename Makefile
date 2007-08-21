@@ -1,6 +1,6 @@
-INSTALL_TARGET?=`php-config --extension-dir`
+PHP_EXT_DIR=`php-config --extension-dir`
 PRODUCT=wikidiff2
-VERSION=0.0.1
+VERSION=1.0.2
 CXX?=g++
 
 # For Linux
@@ -17,14 +17,23 @@ LIBS=
 LIBDIRS=
 
 TMPDIST=$(PRODUCT)-$(VERSION)
+DISTDIRS=test
 DISTFILES=Makefile \
-  $(PRODUCT).spec \
+  $(PRODUCT).spec compile.sh release.sh \
+  DiffEngine.h JudyHS.h Word.h \
+  judy_test.cpp standalone.cpp \
   $(PRODUCT).cpp $(PRODUCT).i \
-  $(PRODUCT)_wrap.cpp php_$(PRODUCT).h \
-  test.php memleak.php t1.txt t2.txt
+  $(PRODUCT)_wrap.cpp php_$(PRODUCT).h wikidiff2.php \
+  test/chinese-reverse.zip \
+  test/test-a.diff \
+  test/test-a1 \
+  test/test-a2 \
+  test/test-b.diff \
+  test/test-b1 \
+  test/test-b2
 
 $(OUTPUT) : $(PRODUCT).cpp $(PRODUCT)_wrap.cpp
-	$(CXX) -O3 `php-config --includes` $(SHARED) -o $@ $(PRODUCT).cpp $(PRODUCT)_wrap.cpp
+	$(CXX) -O2 `php-config --includes` $(SHARED) -o $@ $(PRODUCT).cpp $(PRODUCT)_wrap.cpp
 
 .PHONY: standalone
 standalone:
@@ -33,19 +42,22 @@ standalone:
 # The below _almost_ works. It gets unresolved symbol errors on load looking for _compiler_globals.
 #	MACOSX_DEPLOYMENT_TARGET=10.3 g++ -O2 `php-config --includes` $(SHARED) -o php_wikidiff2.so wikidiff2.cpp wikidiff2_wrap.cpp -undefined dynamic_lookup
 
+test.php : $(PRODUCT)_wrap.cpp
+
 $(PRODUCT)_wrap.cpp : $(PRODUCT).i
-	swig -php -c++ $(PRODUCT).i
+	swig -php4 -c++ $(PRODUCT).i
 
 install : $(OUTPUT)
-	install -d "$(INSTALL_TARGET)"
-	install -m 0755 $(OUTPUT) "$(INSTALL_TARGET)"
+	install -d "$(INSTALL_TARGET)$(PHP_EXT_DIR)"
+	install -m 0755 $(OUTPUT) "$(INSTALL_TARGET)$(PHP_EXT_DIR)"
 
 uninstall :
-	rm -f "$(INSTALL_TARGET)"/$(OUTPUT)
+	rm -f "$(INSTALL_TARGET)$(PHP_EXT_DIR)"/$(OUTPUT)
 
 clean :
 	rm -f $(OUTPUT)
 	rm -f $(PRODUCT)_wrap.cpp
+	rm -f $(PRODUCT).php
 
 test : $(OUTPUT)
 	php test.php
@@ -57,6 +69,7 @@ distclean : clean
 dist : $(DISTFILES) Makefile
 	rm -rf $(TMPDIST)
 	mkdir $(TMPDIST)
+	for x in $(DISTDIRS); do mkdir $(TMPDIST)/$$x; done
 	for x in $(DISTFILES); do cp -p $$x $(TMPDIST)/$$x; done
 	tar zcvf $(TMPDIST).tar.gz $(TMPDIST)
 
