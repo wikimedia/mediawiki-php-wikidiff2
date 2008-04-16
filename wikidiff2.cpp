@@ -223,7 +223,7 @@ void print_worddiff_side(Diff<Word> &worddiff, bool added, std::string &ret)
 			}
 		} else if (!added && (op.op == DiffOp<Word>::del || op.op == DiffOp<Word>::change)) {
 			n = op.from.size();
-			ret += "<span class=\"diffchange\">";
+			ret += "<span class=\"diffchange diffchange-inline\">";
 			for (j=0; j<n; j++) {
 				op.from[j]->get_whole(word);
 				print_htmlspecialchars(word, ret);
@@ -231,7 +231,7 @@ void print_worddiff_side(Diff<Word> &worddiff, bool added, std::string &ret)
 			ret += "</span>";
 		} else if (added && (op.op == DiffOp<Word>::add || op.op == DiffOp<Word>::change)) {
 			n = op.to.size();
-			ret += "<span class=\"diffchange\">";
+			ret += "<span class=\"diffchange diffchange-inline\">";
 			for (j=0; j<n; j++) {
 				op.to[j]->get_whole(word);
 				print_htmlspecialchars(word, ret);
