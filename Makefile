@@ -1,6 +1,6 @@
 PHP_EXT_DIR=`php-config --extension-dir`
 PRODUCT=wikidiff2
-VERSION=1.0.2
+VERSION=1.0.3
 CXX?=g++
 
 # For Linux

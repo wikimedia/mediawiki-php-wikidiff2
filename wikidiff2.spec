@@ -19,14 +19,14 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-INSTALL_TARGET="$RPM_BUILD_ROOT/usr/local/lib/php/extensions/no-debug-non-zts-20050922" make install
+INSTALL_TARGET="$RPM_BUILD_ROOT" make install
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%dir /usr/local/lib/php/extensions/no-debug-non-zts-20050922
+%dir /usr/local/lib/php/extensions/no-debug-non-zts-20060613
 
-/usr/local/lib/php/extensions/no-debug-non-zts-20050922/php_wikidiff2.so
+/usr/local/lib/php/extensions/no-debug-non-zts-20060613/php_wikidiff2.so
 
