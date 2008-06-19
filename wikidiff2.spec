@@ -1,7 +1,7 @@
 Summary: PHP extension and standalone application to do fast word-level diffs
 Name: wikidiff2
 Version: VERSION
-Release: 1
+Release: 2
 License: GPL
 Group: Applications/Internet
 Source: wikidiff2-VERSION.tar.gz
