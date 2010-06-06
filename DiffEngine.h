@@ -82,8 +82,6 @@ class Diff
  * Finally, it was ported to C++ by Tim Starling in February 2006
  *
  * @access private
- * @package MediaWiki
- * @subpackage DifferenceEngine
  */
 
 template<typename T>
