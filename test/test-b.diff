@@ -1,66 +1,66 @@
 <tr>
-  <td colspan="2" align="left"><strong><!--LINE 1--></strong></td>
-  <td colspan="2" align="left"><strong><!--LINE 1--></strong></td>
+  <td colspan="2" class="diff-lineno"><!--LINE 1--></td>
+  <td colspan="2" class="diff-lineno"><!--LINE 1--></td>
 </tr>
 <tr>
-  <td> </td>
-  <td class="diff-context">== Shortest sequence in X ==</td>
-  <td> </td>
-  <td class="diff-context">== Shortest sequence in X ==</td>
-</tr>
-<tr>
-  <td colspan="2">&nbsp;</td>
-  <td>+</td>
-  <td class="diff-addedline">x1</td>
-</tr>
-<tr>
-  <td> </td>
-  <td class="diff-context">x2</td>
-  <td> </td>
-  <td class="diff-context">x2</td>
-</tr>
-<tr>
-  <td> </td>
-  <td class="diff-context">x1</td>
-  <td> </td>
-  <td class="diff-context">x1</td>
-</tr>
-<tr>
-  <td> </td>
-  <td class="diff-context">x2</td>
-  <td> </td>
-  <td class="diff-context">x2</td>
-</tr>
-<tr>
-  <td> </td>
-  <td class="diff-context">x1</td>
-  <td> </td>
-  <td class="diff-context">x1</td>
+  <td class="diff-marker"> </td>
+  <td class="diff-context"><div>== Shortest sequence in X ==</div></td>
+  <td class="diff-marker"> </td>
+  <td class="diff-context"><div>== Shortest sequence in X ==</div></td>
 </tr>
 <tr>
   <td colspan="2">&nbsp;</td>
-  <td>+</td>
-  <td class="diff-addedline">x2</td>
+  <td class="diff-marker">+</td>
+  <td class="diff-addedline"><div>x1</div></td>
+</tr>
+<tr>
+  <td class="diff-marker"> </td>
+  <td class="diff-context"><div>x2</div></td>
+  <td class="diff-marker"> </td>
+  <td class="diff-context"><div>x2</div></td>
+</tr>
+<tr>
+  <td class="diff-marker"> </td>
+  <td class="diff-context"><div>x1</div></td>
+  <td class="diff-marker"> </td>
+  <td class="diff-context"><div>x1</div></td>
+</tr>
+<tr>
+  <td class="diff-marker"> </td>
+  <td class="diff-context"><div>x2</div></td>
+  <td class="diff-marker"> </td>
+  <td class="diff-context"><div>x2</div></td>
+</tr>
+<tr>
+  <td class="diff-marker"> </td>
+  <td class="diff-context"><div>x1</div></td>
+  <td class="diff-marker"> </td>
+  <td class="diff-context"><div>x1</div></td>
 </tr>
 <tr>
   <td colspan="2">&nbsp;</td>
-  <td>+</td>
-  <td class="diff-addedline">x1</td>
+  <td class="diff-marker">+</td>
+  <td class="diff-addedline"><div>x2</div></td>
 </tr>
 <tr>
   <td colspan="2">&nbsp;</td>
-  <td>+</td>
-  <td class="diff-addedline">x2</td>
+  <td class="diff-marker">+</td>
+  <td class="diff-addedline"><div>x1</div></td>
 </tr>
 <tr>
-  <td> </td>
-  <td class="diff-context">context</td>
-  <td> </td>
-  <td class="diff-context">context</td>
+  <td colspan="2">&nbsp;</td>
+  <td class="diff-marker">+</td>
+  <td class="diff-addedline"><div>x2</div></td>
 </tr>
 <tr>
-  <td> </td>
-  <td class="diff-context">context</td>
-  <td> </td>
-  <td class="diff-context">context</td>
+  <td class="diff-marker"> </td>
+  <td class="diff-context"><div>context</div></td>
+  <td class="diff-marker"> </td>
+  <td class="diff-context"><div>context</div></td>
+</tr>
+<tr>
+  <td class="diff-marker"> </td>
+  <td class="diff-context"><div>context</div></td>
+  <td class="diff-marker"> </td>
+  <td class="diff-context"><div>context</div></td>
 </tr>
