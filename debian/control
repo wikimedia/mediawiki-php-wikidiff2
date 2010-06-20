@@ -1,8 +1,8 @@
 Source: php5-wikidiff2
 Section: web
 Priority: optional
-Maintainer: Brion Vibber <brion@wikimedia.org>
-Build-Depends: debhelper (>= 5), php5-dev
+Maintainer: Tim Starling <tstarling@wikimedia.org>
+Build-Depends: debhelper (>= 7.0.50), php5-dev, libthai-dev
 Standards-Version: 3.7.2
 
 Package: php5-wikidiff2
