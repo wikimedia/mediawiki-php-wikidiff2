@@ -1,3 +1,51 @@
+--TEST--
+Diff test B
+--SKIPIF--
+<?php if (!extension_loaded("wikidiff2")) print "skip"; ?>
+--FILE--
+<?php 
+$x = <<<EOT
+== Shortest sequence in X ==
+x2
+x1
+x2
+x1
+context
+context
+context
+context
+context
+
+
+EOT;
+
+#---------------------------------------------------
+
+$y = <<<EOT
+== Shortest sequence in X ==
+x1
+x2
+x1
+x2
+x1
+x2
+x1
+x2
+context
+context
+context
+context
+context
+
+
+EOT;
+
+#---------------------------------------------------
+
+print wikidiff2_do_diff( $x, $y, 2 );
+
+?>
+--EXPECT--
 <tr>
   <td colspan="2" class="diff-lineno"><!--LINE 1--></td>
   <td colspan="2" class="diff-lineno"><!--LINE 1--></td>
