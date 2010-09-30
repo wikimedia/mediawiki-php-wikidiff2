@@ -16,11 +16,14 @@ These files are 2.3MB each, and give a worst-case performance test. Performance 
 Wikidiff2 is a PHP extension. To compile and install it:
 
 $ phpize
-$ CXXFLAGS=-Wno-write-strings ./configure
+$ ./configure
 $ make
 $ sudo make install
 
 == Changelog ==
+
+2010-09-30
+* Automaticly use CXXFLAGS=-Wno-write-strings
 
 2010-06-14
 * Converted the extension from swig to PHP native.
