@@ -150,13 +150,13 @@ void Wikidiff2::printWordDiff(const String & text1, const String & text2)
 	// print twice; first for left side, then for right side
 	result += "<tr>\n"
 		"  <td class=\"diff-marker\">-</td>\n"
-		"  <td class=\"diff-deletedline\"><div>\n";
+		"  <td class=\"diff-deletedline\"><div>";
 	printWordDiffSide(worddiff, false);
-	result += "\n  </div></td>\n"
+	result += "</div></td>\n"
 		"  <td class=\"diff-marker\">+</td>\n"
-		"  <td class=\"diff-addedline\"><div>\n";
+		"  <td class=\"diff-addedline\"><div>";
 	printWordDiffSide(worddiff, true);
-	result += "\n  </div></td>\n"
+	result += "</div></td>\n"
 		"</tr>\n";
 }
 
