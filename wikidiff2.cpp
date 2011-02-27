@@ -129,7 +129,7 @@ void Wikidiff2::printAdd(const String & line)
 void Wikidiff2::printDelete(const String & line)
 {
 	result += "<tr>\n"
-		"  <td class=\"diff-marker\">-</td>\n"
+		"  <td class=\"diff-marker\">−</td>\n"
 		"  <td class=\"diff-deletedline\">";
 	printTextWithDiv(line);
 	result += "</td>\n"
@@ -149,7 +149,7 @@ void Wikidiff2::printWordDiff(const String & text1, const String & text2)
 	
 	// print twice; first for left side, then for right side
 	result += "<tr>\n"
-		"  <td class=\"diff-marker\">-</td>\n"
+		"  <td class=\"diff-marker\">−</td>\n"
 		"  <td class=\"diff-deletedline\"><div>";
 	printWordDiffSide(worddiff, false);
 	result += "</div></td>\n"
