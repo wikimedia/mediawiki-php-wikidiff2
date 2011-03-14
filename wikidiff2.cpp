@@ -382,6 +382,11 @@ void Wikidiff2::explodeWords(const String & text, WordVector &words)
 		breaks.insert(thaiBreakPositions.begin(), thaiBreakPositions.end());
 	}
 
+	// Add a fake end-of-string character and have a break on it, so that the 
+	// last word gets added without special handling
+	breaks.insert(charSizes.size());
+	charSizes += (char)0;
+
 	// Now make the word array by traversing the breaks set
 	p = text.begin();
 	IntSet::iterator pBrk = breaks.begin();
@@ -392,11 +397,6 @@ void Wikidiff2::explodeWords(const String & text, WordVector &words)
 	if (pBrk != breaks.end() && *pBrk == 0) {
 		pBrk++;
 	}
-
-	// Add a fake end-of-string character and have a break on it, so that the 
-	// last word gets added without special handling
-	breaks.insert(charSizes.size());
-	charSizes += (char)0;
 
 	for (charIndex = 0; charIndex < charSizes.size(); p += charSizes[charIndex++]) {
 		// Assume all spaces are ASCII

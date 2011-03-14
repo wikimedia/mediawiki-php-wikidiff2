@@ -154,7 +154,7 @@ print wikidiff2_do_diff( $x, $y, 2 );
   <td class="diff-context"></td>
 </tr>
 <tr>
-  <td class="diff-marker">-</td>
+  <td class="diff-marker">−</td>
   <td class="diff-deletedline"><div>kjahegwnygw</div></td>
   <td colspan="2">&nbsp;</td>
 </tr>
@@ -171,7 +171,7 @@ print wikidiff2_do_diff( $x, $y, 2 );
   <td class="diff-context"><div>a</div></td>
 </tr>
 <tr>
-  <td class="diff-marker">-</td>
+  <td class="diff-marker">−</td>
   <td class="diff-deletedline"><div>---line---</div></td>
   <td colspan="2">&nbsp;</td>
 </tr>
@@ -237,12 +237,12 @@ print wikidiff2_do_diff( $x, $y, 2 );
   <td class="diff-context"><div>a</div></td>
 </tr>
 <tr>
-  <td class="diff-marker">-</td>
+  <td class="diff-marker">−</td>
   <td class="diff-deletedline"><div>--line1--</div></td>
   <td colspan="2">&nbsp;</td>
 </tr>
 <tr>
-  <td class="diff-marker">-</td>
+  <td class="diff-marker">−</td>
   <td class="diff-deletedline"><div>--line2--</div></td>
   <td colspan="2">&nbsp;</td>
 </tr>
@@ -313,7 +313,7 @@ print wikidiff2_do_diff( $x, $y, 2 );
   <td class="diff-context"><div>== Shortest sequence in Y ==</div></td>
 </tr>
 <tr>
-  <td class="diff-marker">-</td>
+  <td class="diff-marker">−</td>
   <td class="diff-deletedline"><div>x1</div></td>
   <td colspan="2">&nbsp;</td>
 </tr>
@@ -342,17 +342,17 @@ print wikidiff2_do_diff( $x, $y, 2 );
   <td class="diff-context"><div>x1</div></td>
 </tr>
 <tr>
-  <td class="diff-marker">-</td>
+  <td class="diff-marker">−</td>
   <td class="diff-deletedline"><div>x2</div></td>
   <td colspan="2">&nbsp;</td>
 </tr>
 <tr>
-  <td class="diff-marker">-</td>
+  <td class="diff-marker">−</td>
   <td class="diff-deletedline"><div>x1</div></td>
   <td colspan="2">&nbsp;</td>
 </tr>
 <tr>
-  <td class="diff-marker">-</td>
+  <td class="diff-marker">−</td>
   <td class="diff-deletedline"><div>x2</div></td>
   <td colspan="2">&nbsp;</td>
 </tr>
@@ -385,14 +385,10 @@ print wikidiff2_do_diff( $x, $y, 2 );
   <td class="diff-context"><div>== Changed line ==</div></td>
 </tr>
 <tr>
-  <td class="diff-marker">-</td>
-  <td class="diff-deletedline"><div>
-blah blah blah <span class="diffchange diffchange-inline">1</span>
-  </div></td>
+  <td class="diff-marker">−</td>
+  <td class="diff-deletedline"><div>blah blah blah <span class="diffchange diffchange-inline">1</span></div></td>
   <td class="diff-marker">+</td>
-  <td class="diff-addedline"><div>
-blah blah blah <span class="diffchange diffchange-inline">2</span>
-  </div></td>
+  <td class="diff-addedline"><div>blah blah blah <span class="diffchange diffchange-inline">2</span></div></td>
 </tr>
 <tr>
   <td class="diff-marker"> </td>
