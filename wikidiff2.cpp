@@ -325,6 +325,13 @@ int Wikidiff2::nextUtf8Char(String::const_iterator & p, String::const_iterator &
 }
 
 // Split a string into words
+//
+// TODO: I think the best way to do this would be to use ICU BreakIterator 
+// instead of libthai + DIY. Basically you'd run BreakIterators from several 
+// different locales (en, th, ja) and merge the results, i.e. if a break occurs
+// in any locale at a given position, split the string. I don't know if the 
+// quality of the Thai dictionary in ICU matches the one in libthai, we would 
+// have to check this somehow.
 void Wikidiff2::explodeWords(const String & text, WordVector &words)
 {
 	// Don't try to do a word-level diff on very long lines
@@ -360,9 +367,11 @@ void Wikidiff2::explodeWords(const String & text, WordVector &words)
 		tisText += (char)thaiChar;
 		charSizes += (char)(p - charStart);
 
-		if (!isSpace(ch) && lastChar && isSpace(lastChar)) {
-			breaks.insert(charIndex);
-		} else if (isChineseJapanese(ch)) {
+		if (isLetter(ch)) {
+			if (lastChar && !isLetter(lastChar)) {
+				breaks.insert(charIndex);
+			}
+		} else {
 			breaks.insert(charIndex);
 		}
 		charIndex++;

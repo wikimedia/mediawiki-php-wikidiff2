@@ -43,7 +43,7 @@ class Wikidiff2 {
 		void printWordDiffSide(WordDiff &worddiff, bool added);
 		void printTextWithDiv(const String & input);
 		void printText(const String & input);
-		inline bool isChineseJapanese(int ch);
+		inline bool isLetter(int ch);
 		inline bool isSpace(int ch);
 		void debugPrintWordDiff(WordDiff & worddiff);
 
@@ -54,11 +54,23 @@ class Wikidiff2 {
 		void explodeLines(const String & text, StringVector &lines);
 };
 
-bool Wikidiff2::isChineseJapanese(int ch)
+bool Wikidiff2::isLetter(int ch)
 {
-	if (ch >= 0x3000 && ch <= 0x9fff) return true;
-	if (ch >= 0x20000 && ch <= 0x2a000) return true;
-	return false;
+	// Standard alphanumeric
+	if ((ch >= '0' && ch <= '9') ||
+	   (ch == '_') ||
+	   (ch >= 'A' && ch <= 'Z') ||
+	   (ch >= 'a' && ch <= 'z'))
+	{
+		return true;
+	}
+	// Punctuation and control characters
+	if (ch < 0xc0) return false;
+	// Chinese, Japanese: split up character by character
+	if (ch >= 0x3000 && ch <= 0x9fff) return false;
+	if (ch >= 0x20000 && ch <= 0x2a000) return false;
+	// Otherwise assume it's from a language that uses spaces
+	return true;
 }
 
 bool Wikidiff2::isSpace(int ch)
