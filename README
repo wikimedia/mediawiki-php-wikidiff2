@@ -22,6 +22,9 @@ $ sudo make install
 
 == Changelog ==
 
+2012-01-03
+* (bug 25697) Add &#160; to empty context lines
+
 2010-09-30
 * Automaticly use CXXFLAGS=-Wno-write-strings
 

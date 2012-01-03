@@ -74,12 +74,12 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 						// Print context
 						result += 
 							"<tr>\n"
-							"  <td class=\"diff-marker\"> </td>\n"
+							"  <td class=\"diff-marker\">&#160;</td>\n"
 							"  <td class=\"diff-context\">";
 						printTextWithDiv(*linediff[i].from[j]);
 						result += 
 							"</td>\n"
-							"  <td class=\"diff-marker\"> </td>\n"
+							"  <td class=\"diff-marker\">&#160;</td>\n"
 							"  <td class=\"diff-context\">";
 						printTextWithDiv(*linediff[i].from[j]);
 						result += "</td>\n</tr>\n";
