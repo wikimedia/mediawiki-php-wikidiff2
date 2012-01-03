@@ -119,7 +119,7 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 void Wikidiff2::printAdd(const String & line) 
 {
 	result += "<tr>\n"
-		"  <td colspan=\"2\">&nbsp;</td>\n"
+		"  <td colspan=\"2\" class=\"diff-empty\">&#160;</td>\n"
 		"  <td class=\"diff-marker\">+</td>\n"
 		"  <td class=\"diff-addedline\">";
 	printTextWithDiv(line);
@@ -133,7 +133,7 @@ void Wikidiff2::printDelete(const String & line)
 		"  <td class=\"diff-deletedline\">";
 	printTextWithDiv(line);
 	result += "</td>\n"
-		"  <td colspan=\"2\">&nbsp;</td>\n"
+		"  <td colspan=\"2\" class=\"diff-empty\">&#160;</td>\n"
 		"</tr>\n";
 }
 

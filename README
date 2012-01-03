@@ -23,6 +23,7 @@ $ sudo make install
 == Changelog ==
 
 2012-01-03
+* (bug 26354) Add class to dummy cells containing &nbsp;
 * (bug 25697) Add &#160; to empty context lines
 
 2010-09-30

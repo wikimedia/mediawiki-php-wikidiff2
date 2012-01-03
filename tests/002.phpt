@@ -57,7 +57,7 @@ print wikidiff2_do_diff( $x, $y, 2 );
   <td class="diff-context"><div>== Shortest sequence in X ==</div></td>
 </tr>
 <tr>
-  <td colspan="2">&nbsp;</td>
+  <td colspan="2" class="diff-empty">&#160;</td>
   <td class="diff-marker">+</td>
   <td class="diff-addedline"><div>x1</div></td>
 </tr>
@@ -86,17 +86,17 @@ print wikidiff2_do_diff( $x, $y, 2 );
   <td class="diff-context"><div>x1</div></td>
 </tr>
 <tr>
-  <td colspan="2">&nbsp;</td>
+  <td colspan="2" class="diff-empty">&#160;</td>
   <td class="diff-marker">+</td>
   <td class="diff-addedline"><div>x2</div></td>
 </tr>
 <tr>
-  <td colspan="2">&nbsp;</td>
+  <td colspan="2" class="diff-empty">&#160;</td>
   <td class="diff-marker">+</td>
   <td class="diff-addedline"><div>x1</div></td>
 </tr>
 <tr>
-  <td colspan="2">&nbsp;</td>
+  <td colspan="2" class="diff-empty">&#160;</td>
   <td class="diff-marker">+</td>
   <td class="diff-addedline"><div>x2</div></td>
 </tr>
