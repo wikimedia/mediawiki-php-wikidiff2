@@ -27,7 +27,7 @@ $ sudo make install
 * (bug 25697) Add &#160; to empty context lines
 
 2010-09-30
-* Automaticly use CXXFLAGS=-Wno-write-strings
+* Automatically use CXXFLAGS=-Wno-write-strings
 
 2010-06-14
 * Converted the extension from swig to PHP native.
