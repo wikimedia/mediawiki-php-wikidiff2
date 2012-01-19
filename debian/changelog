@@ -2,7 +2,7 @@ php5-wikidiff2 (1.1.2-1) lucid; urgency=low
   * Fixed bug 26354 (added class to dummy cells containing &nbsp;)
   * Fixed bug 25697 (empty context lines not showing)
 
- -- Roan Kattouw <rkattouw@wikimedia.org> Tue, 03 Jan 2012 14:15:41 +0100
+ -- Roan Kattouw <rkattouw@wikimedia.org>  Tue, 03 Jan 2012 14:15:41 +0100
 
 php5-wikidiff2 (1.1.1-1) lucid; urgency=low
 
