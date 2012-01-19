@@ -1,4 +1,4 @@
-php5-wikidiff2 (1.1.2-1) lucid-wikimedia; urgency=low
+php-wikidiff2 (1.1.2-1) lucid-wikimedia; urgency=low
   * Fixed bug 26354 (added class to dummy cells containing &nbsp;)
   * Fixed bug 25697 (empty context lines not showing)
 
