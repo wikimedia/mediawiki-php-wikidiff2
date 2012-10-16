@@ -286,7 +286,7 @@ void Wikidiff2::printText(const String & input)
 int Wikidiff2::nextUtf8Char(String::const_iterator & p, String::const_iterator & charStart, 
 		String::const_iterator end)
 {
-	int c;
+	int c = 0;
 	unsigned char byte;
 	int seqLength = 0;
 	charStart = p;

@@ -69,7 +69,10 @@ PHP_MINFO_FUNCTION(wikidiff2)
 }
 
 /* {{{ proto string wikidiff2_do_diff(string text1, string text2, int numContextLines)
-    */
+ *
+ * Warning: the input text must be valid UTF-8! Do not pass user input directly
+ * to this function.
+ */
 PHP_FUNCTION(wikidiff2_do_diff)
 {
 	char *text1 = NULL;
