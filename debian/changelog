@@ -1,3 +1,9 @@
+php-wikidiff2 (1.1.2-2) precise; urgency=low
+
+  * Fixed incorrect path in wikidiff2.ini
+
+ -- Tim Starling <tstarling@wikimedia.org>  Tue, 08 Jan 2013 14:30:53 +1100
+
 php-wikidiff2 (1.1.2-1) lucid-wikimedia; urgency=low
   * Fixed bug 26354 (added class to dummy cells containing &nbsp;)
   * Fixed bug 25697 (empty context lines not showing)
