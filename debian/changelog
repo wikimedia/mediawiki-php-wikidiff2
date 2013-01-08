@@ -1,4 +1,4 @@
-php-wikidiff2 (1.1.2-2) precise; urgency=low
+php-wikidiff2 (1.1.2-2) precise-wikimedia; urgency=low
 
   * Fixed incorrect path in wikidiff2.ini
 
