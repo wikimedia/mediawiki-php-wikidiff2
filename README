@@ -29,6 +29,9 @@ $ sudo make install
 
 == Changelog ==
 
+2013-08-07
+* (bug 52616) Use <ins> and <del> for insertions and deletions
+
 2012-01-03
 * (bug 26354) Add class to dummy cells containing &nbsp;
 * (bug 25697) Add &#160; to empty context lines

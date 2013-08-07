@@ -226,20 +226,20 @@ void Wikidiff2::printWordDiffSide(WordDiff &worddiff, bool added)
 			}
 		} else if (!added && (op.op == DiffOp<Word>::del || op.op == DiffOp<Word>::change)) {
 			n = op.from.size();
-			result += "<span class=\"diffchange diffchange-inline\">";
+			result += "<del class=\"diffchange diffchange-inline\">";
 			for (j=0; j<n; j++) {
 				op.from[j]->get_whole(word);
 				printText(word);
 			}
-			result += "</span>";
+			result += "</del>";
 		} else if (added && (op.op == DiffOp<Word>::add || op.op == DiffOp<Word>::change)) {
 			n = op.to.size();
-			result += "<span class=\"diffchange diffchange-inline\">";
+			result += "<ins class=\"diffchange diffchange-inline\">";
 			for (j=0; j<n; j++) {
 				op.to[j]->get_whole(word);
 				printText(word);
 			}
-			result += "</span>";
+			result += "</ins>";
 		}
 	}
 }

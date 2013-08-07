@@ -386,9 +386,9 @@ print wikidiff2_do_diff( $x, $y, 2 );
 </tr>
 <tr>
   <td class="diff-marker">−</td>
-  <td class="diff-deletedline"><div>blah blah blah <span class="diffchange diffchange-inline">1</span></div></td>
+  <td class="diff-deletedline"><div>blah blah blah <del class="diffchange diffchange-inline">1</del></div></td>
   <td class="diff-marker">+</td>
-  <td class="diff-addedline"><div>blah blah blah <span class="diffchange diffchange-inline">2</span></div></td>
+  <td class="diff-addedline"><div>blah blah blah <ins class="diffchange diffchange-inline">2</ins></div></td>
 </tr>
 <tr>
   <td class="diff-marker">&#160;</td>
