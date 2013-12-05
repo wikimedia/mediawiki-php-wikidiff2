@@ -35,26 +35,27 @@ class Wikidiff2 {
 	protected:
 		String result;
 
-		void diffLines(const StringVector & lines1, const StringVector & lines2, 
+		virtual void diffLines(const StringVector & lines1, const StringVector & lines2,
 				int numContextLines);
-		void printAdd(const String & line);
-		void printDelete(const String & line);
-		void printWordDiff(const String & text1, const String & text2);
-		void printWordDiffSide(WordDiff &worddiff, bool added);
-		void printTextWithDiv(const String & input);
+		virtual void printAdd(const String & line) = 0;
+		virtual void printDelete(const String & line) = 0;
+		virtual void printWordDiff(const String & text1, const String & text2) = 0;
+		virtual void printBlockHeader(int leftLine, int rightLine) = 0;
+		virtual void printContext(const String & input) = 0;
+
 		void printText(const String & input);
 		inline bool isLetter(int ch);
 		inline bool isSpace(int ch);
 		void debugPrintWordDiff(WordDiff & worddiff);
 
-		int nextUtf8Char(String::const_iterator & p, String::const_iterator & charStart, 
+		int nextUtf8Char(String::const_iterator & p, String::const_iterator & charStart,
 				String::const_iterator end);
 
 		void explodeWords(const String & text, WordVector &tokens);
 		void explodeLines(const String & text, StringVector &lines);
 };
 
-bool Wikidiff2::isLetter(int ch)
+inline bool Wikidiff2::isLetter(int ch)
 {
 	// Standard alphanumeric
 	if ((ch >= '0' && ch <= '9') ||
@@ -73,12 +74,12 @@ bool Wikidiff2::isLetter(int ch)
 	return true;
 }
 
-bool Wikidiff2::isSpace(int ch)
+inline bool Wikidiff2::isSpace(int ch)
 {
 	return ch == ' ' || ch == '\t';
 }
 
-const Wikidiff2::String & Wikidiff2::getResult() const
+inline const Wikidiff2::String & Wikidiff2::getResult() const
 {
 	return result;
 }

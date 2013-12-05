@@ -1,23 +1,24 @@
 /**
- * Diff formatter, based on code by Steinar H. Gunderson, converted to work with the 
+ * Diff formatter, based on code by Steinar H. Gunderson, converted to work with the
  * Dairiki diff engine by Tim Starling
- * 
+ *
  * GPL.
  */
 
 #include <stdio.h>
 #include <string.h>
-#include "wikidiff2.h"
+#include "Wikidiff2.h"
 #include <thai/thailib.h>
 #include <thai/thwchar.h>
 #include <thai/thbrk.h>
 
-void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & lines2, 
+
+void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & lines2,
 		int numContextLines)
 {
 	// first do line-level diff
 	StringDiff linediff(lines1, lines2);
-	
+
 	int ctx = 0;
 	int from_index = 1, to_index = 1;
 
@@ -29,13 +30,9 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 		int n, j, n1, n2;
 		// Line 1 changed, show heading with no leading context
 		if (linediff[i].op != DiffOp<String>::copy && i == 0) {
-			result += 
-				"<tr>\n"
-				"  <td colspan=\"2\" class=\"diff-lineno\"><!--LINE 1--></td>\n"
-				"  <td colspan=\"2\" class=\"diff-lineno\"><!--LINE 1--></td>\n"
-				"</tr>\n";
+			printBlockHeader(1, 1);
 		}
-			
+
 		switch (linediff[i].op) {
 			case DiffOp<String>::add:
 				// inserted lines
@@ -60,29 +57,10 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 					if ((i != 0 && j < numContextLines) /*trailing*/
 							|| (i != linediff.size() - 1 && j >= n - numContextLines)) /*leading*/ {
 						if (showLineNumber) {
-							// Print Line: heading
-							char buf[256]; // should be plenty
-							snprintf(buf, 256,
-								"<tr>\n"
-								"  <td colspan=\"2\" class=\"diff-lineno\"><!--LINE %u--></td>\n"
-								"  <td colspan=\"2\" class=\"diff-lineno\"><!--LINE %u--></td>\n"
-								"</tr>\n",
-								from_index, to_index);
-							result += buf;
+							printBlockHeader(from_index, to_index);
 							showLineNumber = false;
 						}
-						// Print context
-						result += 
-							"<tr>\n"
-							"  <td class=\"diff-marker\">&#160;</td>\n"
-							"  <td class=\"diff-context\">";
-						printTextWithDiv(*linediff[i].from[j]);
-						result += 
-							"</td>\n"
-							"  <td class=\"diff-marker\">&#160;</td>\n"
-							"  <td class=\"diff-context\">";
-						printTextWithDiv(*linediff[i].from[j]);
-						result += "</td>\n</tr>\n";
+						printContext(*linediff[i].from[j]);
 					} else {
 						showLineNumber = true;
 					}
@@ -116,54 +94,10 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 	}
 }
 
-void Wikidiff2::printAdd(const String & line) 
-{
-	result += "<tr>\n"
-		"  <td colspan=\"2\" class=\"diff-empty\">&#160;</td>\n"
-		"  <td class=\"diff-marker\">+</td>\n"
-		"  <td class=\"diff-addedline\">";
-	printTextWithDiv(line);
-	result += "</td>\n</tr>\n";
-}
-
-void Wikidiff2::printDelete(const String & line)
-{
-	result += "<tr>\n"
-		"  <td class=\"diff-marker\">−</td>\n"
-		"  <td class=\"diff-deletedline\">";
-	printTextWithDiv(line);
-	result += "</td>\n"
-		"  <td colspan=\"2\" class=\"diff-empty\">&#160;</td>\n"
-		"</tr>\n";
-}
-
-void Wikidiff2::printWordDiff(const String & text1, const String & text2)
-{
-	WordVector words1, words2;
-
-	explodeWords(text1, words1);
-	explodeWords(text2, words2);
-	WordDiff worddiff(words1, words2);
-	
-	//debugPrintWordDiff(worddiff);
-	
-	// print twice; first for left side, then for right side
-	result += "<tr>\n"
-		"  <td class=\"diff-marker\">−</td>\n"
-		"  <td class=\"diff-deletedline\"><div>";
-	printWordDiffSide(worddiff, false);
-	result += "</div></td>\n"
-		"  <td class=\"diff-marker\">+</td>\n"
-		"  <td class=\"diff-addedline\"><div>";
-	printWordDiffSide(worddiff, true);
-	result += "</div></td>\n"
-		"</tr>\n";
-}
-
 void Wikidiff2::debugPrintWordDiff(WordDiff & worddiff)
 {
 	for (unsigned i = 0; i < worddiff.size(); ++i) {
-		DiffOp<Word> & op = worddiff[i];	
+		DiffOp<Word> & op = worddiff[i];
 		switch (op.op) {
 			case DiffOp<Word>::copy:
 				result += "Copy\n";
@@ -205,55 +139,6 @@ void Wikidiff2::debugPrintWordDiff(WordDiff & worddiff)
 	}
 }
 
-void Wikidiff2::printWordDiffSide(WordDiff &worddiff, bool added)
-{
-	String word;
-	for (unsigned i = 0; i < worddiff.size(); ++i) {
-		DiffOp<Word> & op = worddiff[i];
-		int n, j;
-		if (op.op == DiffOp<Word>::copy) {
-			n = op.from.size();
-			if (added) {
-				for (j=0; j<n; j++) {
-					op.to[j]->get_whole(word);
-					printText(word);
-				}
-			} else {
-				for (j=0; j<n; j++) {
-					op.from[j]->get_whole(word);
-					printText(word);
-				}
-			}
-		} else if (!added && (op.op == DiffOp<Word>::del || op.op == DiffOp<Word>::change)) {
-			n = op.from.size();
-			result += "<del class=\"diffchange diffchange-inline\">";
-			for (j=0; j<n; j++) {
-				op.from[j]->get_whole(word);
-				printText(word);
-			}
-			result += "</del>";
-		} else if (added && (op.op == DiffOp<Word>::add || op.op == DiffOp<Word>::change)) {
-			n = op.to.size();
-			result += "<ins class=\"diffchange diffchange-inline\">";
-			for (j=0; j<n; j++) {
-				op.to[j]->get_whole(word);
-				printText(word);
-			}
-			result += "</ins>";
-		}
-	}
-}
-
-void Wikidiff2::printTextWithDiv(const String & input)
-{
-	// Wrap string in a <div> if it's not empty
-	if (input.size() > 0) {
-		result.append("<div>");
-		printText(input);
-		result.append("</div>");
-	}
-}
-
 void Wikidiff2::printText(const String & input)
 {
 	size_t start = 0;
@@ -283,7 +168,7 @@ void Wikidiff2::printText(const String & input)
 
 // Weak UTF-8 decoder
 // Will return garbage on invalid input (overshort sequences, overlong sequences, etc.)
-int Wikidiff2::nextUtf8Char(String::const_iterator & p, String::const_iterator & charStart, 
+int Wikidiff2::nextUtf8Char(String::const_iterator & p, String::const_iterator & charStart,
 		String::const_iterator end)
 {
 	int c = 0;
@@ -326,11 +211,11 @@ int Wikidiff2::nextUtf8Char(String::const_iterator & p, String::const_iterator &
 
 // Split a string into words
 //
-// TODO: I think the best way to do this would be to use ICU BreakIterator 
-// instead of libthai + DIY. Basically you'd run BreakIterators from several 
+// TODO: I think the best way to do this would be to use ICU BreakIterator
+// instead of libthai + DIY. Basically you'd run BreakIterators from several
 // different locales (en, th, ja) and merge the results, i.e. if a break occurs
-// in any locale at a given position, split the string. I don't know if the 
-// quality of the Thai dictionary in ICU matches the one in libthai, we would 
+// in any locale at a given position, split the string. I don't know if the
+// quality of the Thai dictionary in ICU matches the one in libthai, we would
 // have to check this somehow.
 void Wikidiff2::explodeWords(const String & text, WordVector &words)
 {
@@ -342,7 +227,7 @@ void Wikidiff2::explodeWords(const String & text, WordVector &words)
 
 	// Decode the UTF-8 in the string.
 	// * Save the character sizes (in bytes)
-	// * Convert the string to TIS-620, which is the internal character set of libthai. 
+	// * Convert the string to TIS-620, which is the internal character set of libthai.
 	// * Save the character offsets of any break positions (same format as libthai).
 
 	String tisText, charSizes;
@@ -385,13 +270,13 @@ void Wikidiff2::explodeWords(const String & text, WordVector &words)
 		IntVector thaiBreakPositions;
 		tisText += '\0';
 		thaiBreakPositions.resize(tisText.size());
-		int numBreaks = th_brk((const thchar_t*)(tisText.data()), 
+		int numBreaks = th_brk((const thchar_t*)(tisText.data()),
 				&thaiBreakPositions[0], thaiBreakPositions.size());
 		thaiBreakPositions.resize(numBreaks);
 		breaks.insert(thaiBreakPositions.begin(), thaiBreakPositions.end());
 	}
 
-	// Add a fake end-of-string character and have a break on it, so that the 
+	// Add a fake end-of-string character and have a break on it, so that the
 	// last word gets added without special handling
 	breaks.insert(charSizes.size());
 	charSizes += (char)0;
@@ -431,7 +316,7 @@ void Wikidiff2::explodeLines(const String & text, StringVector &lines)
 	while (ptr != text.end()) {
 		String::const_iterator ptr2 = std::find(ptr, text.end(), '\n');
 		lines.push_back(String(ptr, ptr2));
-		
+
 		ptr = ptr2;
 		if (ptr != text.end()) {
 			++ptr;
@@ -444,7 +329,7 @@ const Wikidiff2::String & Wikidiff2::execute(const String & text1, const String 
 	// Allocate some result space to avoid excessive copying
 	result.clear();
 	result.reserve(text1.size() + text2.size() + 10000);
-	
+
 	// Split input strings into lines
 	StringVector lines1;
 	StringVector lines2;
@@ -457,4 +342,3 @@ const Wikidiff2::String & Wikidiff2::execute(const String & text1, const String 
 	// Return a reference to the result buffer
 	return result;
 }
-

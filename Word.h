@@ -3,12 +3,12 @@
 
 #include <string>
 #include <algorithm>
-#include "wikidiff2.h"
+#include "Wikidiff2.h"
 
 // a small class to accomodate word-level diffs; basically, a body and an
 // optional suffix (the latter consisting of a single whitespace), where
 // only the bodies are compared on operator==.
-// 
+//
 // This class stores iterators pointing to the line string, this is to avoid
 // excessive allocation calls. To avoid invalidation, the source string should
 // not be changed or destroyed.
@@ -16,21 +16,21 @@ class Word {
 public:
 	typedef std::basic_string<char, std::char_traits<char>, WD2_ALLOCATOR<char> > String;
 	typedef String::const_iterator Iterator;
-	
+
 	Iterator bodyStart;
 	Iterator bodyEnd;
 	Iterator suffixEnd;
-	
+
 	/**
 	  * The body is the character sequence [bs, be)
 	  * The whitespace suffix is the character sequence [be, se)
 	  */
-	Word(Iterator bs, Iterator be, Iterator se) 
+	Word(Iterator bs, Iterator be, Iterator se)
 		: bodyStart(bs), bodyEnd(be), suffixEnd(se)
 	{}
 
 	bool operator== (const Word &w) const {
-		return (bodyEnd - bodyStart == w.bodyEnd - w.bodyStart) 
+		return (bodyEnd - bodyStart == w.bodyEnd - w.bodyStart)
 			&& std::equal(bodyStart, bodyEnd, w.bodyStart);
 	}
 	bool operator!=(const Word &w) const {

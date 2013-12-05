@@ -18,19 +18,19 @@
 #include "JudyHS.h"
 #endif
 
-#include "wikidiff2.h"
+#include "Wikidiff2.h"
 
 /**
  * Diff operation
- * 
+ *
  * from and to are vectors containing pointers to the objects passed in from_lines and to_lines
  *
  * op is one of the following
- *    copy:    A sequence of lines (in from and to) which are the same in both files. 
+ *    copy:    A sequence of lines (in from and to) which are the same in both files.
  *    del:     A sequence of lines (in from) which were in the first file but not the second.
  *    add:     A sequence of lines (in to) which were in the second file but not the first.
- *    change:  A sequence of lines which are different between the two files. Lines from the 
- *             first file are in from, lines from the second are in to. The two vectors need 
+ *    change:  A sequence of lines which are different between the two files. Lines from the
+ *             first file are in from, lines from the second are in to. The two vectors need
  *             not be the same length.
  */
 template<typename T>
@@ -59,9 +59,9 @@ class Diff
 		typedef std::vector<DiffOp<T>, WD2_ALLOCATOR<T> > DiffOpVector;
 
 		Diff(const ValueVector & from_lines, const ValueVector & to_lines);
-		
+
 		virtual void add_edit(const DiffOp<T> & edit) {
-			edits.push_back(edit); 
+			edits.push_back(edit);
 		}
 		unsigned size() { return edits.size(); }
 		DiffOp<T> & operator[](int i) {return edits[i];}
@@ -82,8 +82,8 @@ class Diff
  * diffutils-2.7, which can be found at:
  *	 ftp://gnudist.gnu.org/pub/gnu/diffutils/diffutils-2.7.tar.gz
  *
- * This implementation is largely due to Geoffrey T. Dairiki, who wrote this 
- * diff engine for phpwiki 1-3.3. It was then adopted by MediaWiki. 
+ * This implementation is largely due to Geoffrey T. Dairiki, who wrote this
+ * diff engine for phpwiki 1-3.3. It was then adopted by MediaWiki.
  *
  * Finally, it was ported to C++ by Tim Starling in February 2006
  *
@@ -91,7 +91,7 @@ class Diff
  */
 
 template<typename T>
-class _DiffEngine 
+class _DiffEngine
 {
 	public:
 		// Vectors
@@ -118,16 +118,16 @@ class _DiffEngine
 
 		_DiffEngine() : done(false) {}
 		void clear();
-		void diff (const ValueVector & from_lines, 
+		void diff (const ValueVector & from_lines,
 				const ValueVector & to_lines, Diff<T> & diff);
 		int _lcs_pos (int ypos);
 		void _compareseq (int xoff, int xlim, int yoff, int ylim);
-		void _shift_boundaries (const ValueVector & lines, BoolVector & changed, 
+		void _shift_boundaries (const ValueVector & lines, BoolVector & changed,
 				const BoolVector & other_changed);
 	protected:
-		int _diag (int xoff, int xlim, int yoff, int ylim, int nchunks, 
+		int _diag (int xoff, int xlim, int yoff, int ylim, int nchunks,
 				IntPairVector & seps);
-		
+
 		BoolVector xchanged, ychanged;
 		PointerVector xv, yv;
 		IntVector xind, yind;
@@ -142,7 +142,7 @@ class _DiffEngine
 // _DiffEngine implementation
 //-----------------------------------------------------------------------------
 template<typename T>
-void _DiffEngine<T>::clear() 
+void _DiffEngine<T>::clear()
 {
 	xchanged.clear();
 	ychanged.clear();
@@ -156,8 +156,8 @@ void _DiffEngine<T>::clear()
 }
 
 template<typename T>
-void _DiffEngine<T>::diff (const ValueVector & from_lines, 
-		const ValueVector & to_lines, Diff<T> & diff) 
+void _DiffEngine<T>::diff (const ValueVector & from_lines,
+		const ValueVector & to_lines, Diff<T> & diff)
 {
 	int n_from = (int)from_lines.size();
 	int n_to = (int)to_lines.size();
@@ -165,7 +165,7 @@ void _DiffEngine<T>::diff (const ValueVector & from_lines,
 	// If this diff engine has been used before for a diff, clear the member variables
 	if (done) {
 		clear();
-	} 
+	}
 	xchanged.resize(n_from);
 	ychanged.resize(n_to);
 	seq.resize(std::max(n_from, n_to) + 1);
@@ -196,7 +196,7 @@ void _DiffEngine<T>::diff (const ValueVector & from_lines,
 		if ( (ychanged[yi] = (xhash.find(line) == xhash.end())) )
 			continue;
 		yhash.insert(line);
-		yv.push_back(&line);		
+		yv.push_back(&line);
 		yind.push_back(yi);
 	}
 	for (xi = skip; xi < n_from - endskip; xi++) {
@@ -271,8 +271,8 @@ void _DiffEngine<T>::diff (const ValueVector & from_lines,
  * of the portions it is going to specify.
  */
 template <typename T>
-int _DiffEngine<T>::_diag (int xoff, int xlim, int yoff, int ylim, int nchunks, 
-		IntPairVector & seps) 
+int _DiffEngine<T>::_diag (int xoff, int xlim, int yoff, int ylim, int nchunks,
+		IntPairVector & seps)
 {
 	using std::swap;
 	using std::make_pair;
@@ -307,7 +307,7 @@ int _DiffEngine<T>::_diag (int xoff, int xlim, int yoff, int ylim, int nchunks,
 	int x = xoff, x1, y1;
 	for (int chunk = 0; chunk < nchunks; chunk++) {
 		if (chunk > 0)
-			for (int i = 0; i <= lcs; i++) 
+			for (int i = 0; i <= lcs; i++)
 				ymids.at(i * nchunks + chunk-1) = seq[i];
 
 		x1 = xoff + (int)((numer + (xlim-xoff)*chunk) / nchunks);
@@ -325,12 +325,12 @@ int _DiffEngine<T>::_diag (int xoff, int xlim, int yoff, int ylim, int nchunks,
 #endif
 			IntVector::iterator y;
 			int k = 0;
-			
+
 			for (y = pMatches->begin(); y != pMatches->end(); ++y) {
 				if (!in_seq.count(*y)) {
 					k = _lcs_pos(*y);
 					assert(k > 0);
-					copy(ymids.begin() + (k-1) * nchunks, ymids.begin() + k * nchunks, 
+					copy(ymids.begin() + (k-1) * nchunks, ymids.begin() + k * nchunks,
 							ymids.begin() + k * nchunks);
 					++y;
 					break;
@@ -347,7 +347,7 @@ int _DiffEngine<T>::_diag (int xoff, int xlim, int yoff, int ylim, int nchunks,
 				} else if (!in_seq.count(*y)) {
 					k = _lcs_pos(*y);
 					assert(k > 0);
-					copy(ymids.begin() + (k-1) * nchunks, ymids.begin() + k * nchunks, 
+					copy(ymids.begin() + (k-1) * nchunks, ymids.begin() + k * nchunks,
 							ymids.begin() + k * nchunks);
 				}
 			}
@@ -356,7 +356,7 @@ int _DiffEngine<T>::_diag (int xoff, int xlim, int yoff, int ylim, int nchunks,
 
 	seps.clear();
 	seps.resize(nchunks + 1);
-	
+
 	seps[0] = flip ? make_pair(yoff, xoff) : make_pair(xoff, yoff);
 	IntVector::iterator ymid = ymids.begin() + lcs * nchunks;
 	for (int n = 0; n < nchunks - 1; n++) {
@@ -411,7 +411,7 @@ void _DiffEngine<T>::_compareseq (int xoff, int xlim, int yoff, int ylim) {
 
 	IntPairVector seps;
 	int lcs;
-	
+
 	// Slide down the bottom initial diagonal.
 	while (xoff < xlim && yoff < ylim && *xv[xoff] == *yv[yoff]) {
 		++xoff;
@@ -465,8 +465,8 @@ void _DiffEngine<T>::_compareseq (int xoff, int xlim, int yoff, int ylim) {
  * This is extracted verbatim from analyze.c (GNU diffutils-2.7).
  */
 template <typename T>
-void _DiffEngine<T>::_shift_boundaries (const ValueVector & lines, BoolVector & changed, 
-		const BoolVector & other_changed) 
+void _DiffEngine<T>::_shift_boundaries (const ValueVector & lines, BoolVector & changed,
+		const BoolVector & other_changed)
 {
 	int i = 0;
 	int j = 0;

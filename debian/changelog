@@ -1,3 +1,9 @@
+php-wikidiff2 (1.2) precise-wikimedia; urgency=low
+
+  * Added new function, wikidiff2_inline_diff(), for one-column diffs
+
+ -- Max Semenik <msemenik@wikimedia.org>  Mon, 09 Dec 2013 21:56:00 +0000
+
 php-wikidiff2 (1.1.2-2) precise-wikimedia; urgency=low
 
   * Fixed incorrect path in wikidiff2.ini

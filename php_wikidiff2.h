@@ -43,6 +43,7 @@ PHP_RSHUTDOWN_FUNCTION(wikidiff2);
 PHP_MINFO_FUNCTION(wikidiff2);
 
 PHP_FUNCTION(wikidiff2_do_diff);
+PHP_FUNCTION(wikidiff2_inline_diff);
 
 
 
