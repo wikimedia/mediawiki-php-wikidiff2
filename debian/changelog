@@ -1,4 +1,4 @@
-php-wikidiff2 (1.2) precise-wikimedia; urgency=low
+php-wikidiff2 (1.2-1) precise-wikimedia; urgency=low
 
   * Added new function, wikidiff2_inline_diff(), for one-column diffs
 

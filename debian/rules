@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 
-# The PHP header files are not designed to be run with C++, they hit this 
+# The PHP header files are not designed to be run with C++, they hit this
 # warning a lot.
 CXXFLAGS=-Wno-write-strings
 
@@ -20,3 +20,7 @@ override_dh_auto_install:
 	INSTALL_ROOT=$(CURDIR)/debian/php-wikidiff2 make install
 	install -m 0755 -d $(CURDIR)/debian/php-wikidiff2/etc/php5/conf.d
 	install -m 0644 wikidiff2.ini $(CURDIR)/debian/php-wikidiff2/etc/php5/conf.d/wikidiff2.ini
+
+override_dh_gencontrol:
+	echo "php:Depends=phpapi-$(shell php-config5 --phpapi)" >> debian/php-wikidiff2.substvars
+	dh_gencontrol
