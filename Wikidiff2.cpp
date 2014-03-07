@@ -19,7 +19,6 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 	// first do line-level diff
 	StringDiff linediff(lines1, lines2);
 
-	int ctx = 0;
 	int from_index = 1, to_index = 1;
 
 	// Should a line number be printed before the next context line?

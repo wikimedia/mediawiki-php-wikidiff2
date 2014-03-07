@@ -3,12 +3,12 @@
 
 #define MAX_DIFF_LINE 10000
 
-/** Set WD2_USE_STD_ALLOCATOR to compile for standalone (non-PHP) operation */
-#ifdef WD2_USE_STD_ALLOCATOR
-#define WD2_ALLOCATOR std::allocator
+/** Set WD2_USE_STD_ALLOCATOR depending on whether we're compiling as a PHP module or not */
+#if defined(HAVE_CONFIG_H)
+	#define WD2_ALLOCATOR PhpAllocator
+	#include "php_cpp_allocator.h"
 #else
-#define WD2_ALLOCATOR PhpAllocator
-#include "php_cpp_allocator.h"
+	#define WD2_ALLOCATOR std::allocator
 #endif
 
 #include "DiffEngine.h"
