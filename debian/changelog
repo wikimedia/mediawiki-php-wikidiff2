@@ -1,3 +1,18 @@
+php-wikidiff2 (1.2-2) UNRELEASED; urgency=medium
+
+  * Various Debian packaging fixes
+    - Bump to debhelper compatibility level 9
+    - Update Standards-Version to 3.9.5
+    - Move custom install statements under dh_auto_install to an install file.
+    - Add to CXXFLAGS but don't override them (+= instead of =).
+    - Drop libthai0 explicit dependency; shlibs:Depends does this
+      automatically.
+    - Adjust short and long description based on Debian's description of the
+      package.
+    - Add a Homepage field.
+
+ -- Faidon Liambotis <faidon@wikimedia.org>  Fri, 27 Jun 2014 15:29:50 +0000
+
 php-wikidiff2 (1.2-1) precise-wikimedia; urgency=low
 
   * Added new function, wikidiff2_inline_diff(), for one-column diffs
@@ -11,6 +26,7 @@ php-wikidiff2 (1.1.2-2) precise-wikimedia; urgency=low
  -- Tim Starling <tstarling@wikimedia.org>  Tue, 08 Jan 2013 14:30:53 +1100
 
 php-wikidiff2 (1.1.2-1) lucid-wikimedia; urgency=low
+
   * Fixed bug 26354 (added class to dummy cells containing &nbsp;)
   * Fixed bug 25697 (empty context lines not showing)
 
