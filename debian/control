@@ -3,7 +3,8 @@ Section: web
 Priority: optional
 Maintainer: Tim Starling <tstarling@wikimedia.org>
 Build-Depends: debhelper (>= 9), libthai-dev, pkg-config,
-  php5-dev
+  php5-dev,
+  hhvm-dev, cmake
 Homepage: http://www.mediawiki.org/wiki/Extension:Wikidiff2
 Standards-Version: 3.9.5
 
@@ -15,3 +16,16 @@ Description: external diff engine for MediaWiki (PHP extension)
  performs word-level (space-delimited) diffs on general text, and
  character-level diffs on text composed of characters from the Japanese and
  Thai alphabets and the unified han.
+ .
+ This package contains the PHP extension.
+
+Package: hhvm-wikidiff2
+Architecture: any
+Depends: hhvm, ${shlibs:Depends}, ${misc:Depends}
+Description: external diff engine for MediaWiki (HHVM extension)
+ Wikidiff2 is PHP 5 module providing external diff engine for MediaWiki. It
+ performs word-level (space-delimited) diffs on general text, and
+ character-level diffs on text composed of characters from the Japanese and
+ Thai alphabets and the unified han.
+ .
+ This package contains the HHVM extension.
