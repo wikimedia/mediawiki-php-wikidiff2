@@ -21,7 +21,7 @@ Description: external diff engine for MediaWiki (PHP extension)
 
 Package: hhvm-wikidiff2
 Architecture: any
-Depends: hhvm (= ${hhvm:Depends}), ${shlibs:Depends}, ${misc:Depends}
+Depends: ${hhvm:ApiVersion}, ${shlibs:Depends}, ${misc:Depends}
 Description: external diff engine for MediaWiki (HHVM extension)
  Wikidiff2 is PHP 5 module providing external diff engine for MediaWiki. It
  performs word-level (space-delimited) diffs on general text, and
