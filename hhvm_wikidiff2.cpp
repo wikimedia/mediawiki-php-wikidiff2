@@ -1,6 +1,8 @@
 /* $Id$ */
 
-#include "hphp/runtime/base/base-includes.h"
+#include "hphp/util/lock.h"
+#include "hphp/runtime/ext/extension.h"
+#include "hphp/util/compatibility.h"
 #include "hphp/util/alloc.h"
 #include "Wikidiff2.h"
 #include "TableDiff.h"
@@ -71,6 +73,3 @@ static class Wikidiff2Extension : public Extension {
 HHVM_GET_MODULE(wikidiff2)
 
 } // namespace HPHP
-
-
-
