@@ -2,13 +2,18 @@
 *~
 *.kate-swp
 .*.swp
+.idea
 *.in
 *.lo
 *.la
 *.m4
 Makefile*
 config.*
+CMake*
+*.iml
+*.so
 
+install_manifest.txt
 .deps
 configure
 install-sh
@@ -16,6 +21,7 @@ libtool
 ltmain.sh
 missing
 mkinstalldirs
+run-test
 run-tests.php
 
 .libs
@@ -23,3 +29,9 @@ autom4te.cache
 build
 modules
 
+tests/*.diff
+tests/*.exp
+tests/*.log
+tests/*.out
+tests/*.php
+tests/*.sh
