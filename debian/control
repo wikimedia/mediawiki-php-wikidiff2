@@ -3,8 +3,8 @@ Section: web
 Priority: optional
 Maintainer: Tim Starling <tstarling@wikimedia.org>
 Build-Depends: debhelper (>= 9), libthai-dev, pkg-config,
-  php5-dev,
-  hhvm-dev, cmake
+  php5-dev, hhvm, hhvm-dev, cmake, libtbb-dev, libboost-dev,
+  libgoogle-glog-dev, libdouble-conversion-dev, libjemalloc-dev
 Homepage: http://www.mediawiki.org/wiki/Extension:Wikidiff2
 Standards-Version: 3.9.5
 
