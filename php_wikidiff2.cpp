@@ -12,6 +12,12 @@
 #include "TableDiff.h"
 #include "InlineDiff.h"
 
+#if PHP_MAJOR_VERSION >= 7
+#define COMPAT_RETURN_STRINGL(s, l) { RETURN_STRINGL(s, l); return; }
+#else
+#define COMPAT_RETURN_STRINGL(s, l) { RETURN_STRINGL(s, l, 1); return; }
+#endif
+
 static int le_wikidiff2;
 
 zend_function_entry wikidiff2_functions[] = {
@@ -81,9 +87,15 @@ PHP_FUNCTION(wikidiff2_do_diff)
 	char *text1 = NULL;
 	char *text2 = NULL;
 	int argc = ZEND_NUM_ARGS();
+#if PHP_MAJOR_VERSION >= 7
+	size_t text1_len;
+	size_t text2_len;
+	zend_long numContextLines;
+#else
 	int text1_len;
 	int text2_len;
 	long numContextLines;
+#endif
 
 	if (zend_parse_parameters(argc TSRMLS_CC, "ssl", &text1, &text1_len, &text2,
 		&text2_len, &numContextLines) == FAILURE)
@@ -96,8 +108,8 @@ PHP_FUNCTION(wikidiff2_do_diff)
 		TableDiff wikidiff2;
 		Wikidiff2::String text1String(text1, text1_len);
 		Wikidiff2::String text2String(text2, text2_len);
-		const Wikidiff2::String & ret = wikidiff2.execute(text1String, text2String, numContextLines);
-		RETURN_STRINGL( const_cast<char*>(ret.data()), ret.size(), 1);
+		const Wikidiff2::String & ret = wikidiff2.execute(text1String, text2String, (int)numContextLines);
+		COMPAT_RETURN_STRINGL( const_cast<char*>(ret.data()), ret.size());
 	} catch (std::bad_alloc &e) {
 		zend_error(E_WARNING, "Out of memory in wikidiff2_do_diff().");
 	} catch (...) {
@@ -115,9 +127,15 @@ PHP_FUNCTION(wikidiff2_inline_diff)
 	char *text1 = NULL;
 	char *text2 = NULL;
 	int argc = ZEND_NUM_ARGS();
+#if PHP_MAJOR_VERSION >= 7
+	size_t text1_len;
+	size_t text2_len;
+	zend_long numContextLines;
+#else
 	int text1_len;
 	int text2_len;
 	long numContextLines;
+#endif
 
 	if (zend_parse_parameters(argc TSRMLS_CC, "ssl", &text1, &text1_len, &text2,
 		&text2_len, &numContextLines) == FAILURE)
@@ -130,8 +148,8 @@ PHP_FUNCTION(wikidiff2_inline_diff)
 		InlineDiff wikidiff2;
 		Wikidiff2::String text1String(text1, text1_len);
 		Wikidiff2::String text2String(text2, text2_len);
-		const Wikidiff2::String& ret = wikidiff2.execute(text1String, text2String, numContextLines);
-		RETURN_STRINGL( const_cast<char*>(ret.data()), ret.size(), 1);
+		const Wikidiff2::String& ret = wikidiff2.execute(text1String, text2String, (int)numContextLines);
+		COMPAT_RETURN_STRINGL( const_cast<char*>(ret.data()), ret.size());
 	} catch (std::bad_alloc &e) {
 		zend_error(E_WARNING, "Out of memory in wikidiff2_inline_diff().");
 	} catch (...) {
