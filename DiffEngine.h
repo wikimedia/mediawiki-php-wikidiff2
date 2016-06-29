@@ -58,7 +58,8 @@ class Diff
 		typedef std::vector<T, WD2_ALLOCATOR<T> > ValueVector;
 		typedef std::vector<DiffOp<T>, WD2_ALLOCATOR<T> > DiffOpVector;
 
-		Diff(const ValueVector & from_lines, const ValueVector & to_lines);
+		Diff(const ValueVector & from_lines, const ValueVector & to_lines,
+			long long bailoutComplexity = 0);
 
 		virtual void add_edit(const DiffOp<T> & edit) {
 			edits.push_back(edit);
@@ -119,7 +120,8 @@ class DiffEngine
 		DiffEngine() : done(false) {}
 		void clear();
 		void diff (const ValueVector & from_lines,
-				const ValueVector & to_lines, Diff<T> & diff);
+				const ValueVector & to_lines, Diff<T> & diff,
+				long long bailoutComplexity = 0);
 		int lcs_pos (int ypos);
 		void compareseq (int xoff, int xlim, int yoff, int ylim);
 		void shift_boundaries (const ValueVector & lines, BoolVector & changed,
@@ -157,7 +159,8 @@ void DiffEngine<T>::clear()
 
 template<typename T>
 void DiffEngine<T>::diff (const ValueVector & from_lines,
-		const ValueVector & to_lines, Diff<T> & diff)
+		const ValueVector & to_lines, Diff<T> & diff,
+		long long bailoutComplexity /* = 0 */)
 {
 	int n_from = (int)from_lines.size();
 	int n_to = (int)to_lines.size();
@@ -183,6 +186,26 @@ void DiffEngine<T>::diff (const ValueVector & from_lines,
 		if (from_lines[xi] != to_lines[yi])
 			break;
 		xchanged[xi] = ychanged[yi] = false;
+	}
+
+	long long complexity = (long long)(n_from - skip - endskip)
+		* (n_to - skip - endskip);
+
+	// If too complex, just output "whole left side replaced with right"
+	if (bailoutComplexity > 0 && complexity > bailoutComplexity) {
+		PointerVector del;
+		PointerVector add;
+
+		for (xi = 0; xi < n_from; xi++) {
+			del.push_back(&from_lines[xi]);
+		}
+		for (yi = 0; yi < n_to; yi++) {
+			add.push_back(&to_lines[yi]);
+		}
+		diff.add_edit(DiffOp<T>(DiffOp<T>::change, del, add));
+
+		done = true;
+		return;
 	}
 
 	// Ignore lines which do not exist in both files.
@@ -571,10 +594,11 @@ void DiffEngine<T>::shift_boundaries (const ValueVector & lines, BoolVector & ch
 //-----------------------------------------------------------------------------
 
 template<typename T>
-Diff<T>::Diff(const ValueVector & from_lines, const ValueVector & to_lines)
+Diff<T>::Diff(const ValueVector & from_lines, const ValueVector & to_lines,
+	long long bailoutComplexity)
 {
 	DiffEngine<T> engine;
-	engine.diff(from_lines, to_lines, *this);
+	engine.diff(from_lines, to_lines, *this, bailoutComplexity);
 }
 
 #endif
