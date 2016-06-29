@@ -43,40 +43,10 @@ class Wikidiff2 {
 		virtual void printContext(const String & input) = 0;
 
 		void printText(const String & input);
-		inline bool isLetter(int ch);
-		inline bool isSpace(int ch);
 		void debugPrintWordDiff(WordDiff & worddiff);
 
-		int nextUtf8Char(String::const_iterator & p, String::const_iterator & charStart,
-				String::const_iterator end);
-
-		void explodeWords(const String & text, WordVector &tokens);
 		void explodeLines(const String & text, StringVector &lines);
 };
-
-inline bool Wikidiff2::isLetter(int ch)
-{
-	// Standard alphanumeric
-	if ((ch >= '0' && ch <= '9') ||
-	   (ch == '_') ||
-	   (ch >= 'A' && ch <= 'Z') ||
-	   (ch >= 'a' && ch <= 'z'))
-	{
-		return true;
-	}
-	// Punctuation and control characters
-	if (ch < 0xc0) return false;
-	// Chinese, Japanese: split up character by character
-	if (ch >= 0x3000 && ch <= 0x9fff) return false;
-	if (ch >= 0x20000 && ch <= 0x2a000) return false;
-	// Otherwise assume it's from a language that uses spaces
-	return true;
-}
-
-inline bool Wikidiff2::isSpace(int ch)
-{
-	return ch == ' ' || ch == '\t';
-}
 
 inline const Wikidiff2::String & Wikidiff2::getResult() const
 {

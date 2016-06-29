@@ -32,7 +32,8 @@ print wikidiff2_inline_diff( $x, $y, 2 );
 <div class="mw-diff-inline-changed">foo <del>bar</del><ins>test</ins></div>
 <div class="mw-diff-inline-deleted"><del>&#160;</del></div>
 <div class="mw-diff-inline-context">baz</div>
-<div class="mw-diff-inline-changed"><del>quux</del><ins>test</ins></div>
+<div class="mw-diff-inline-deleted"><del>quux</del></div>
+<div class="mw-diff-inline-added"><ins>test</ins></div>
 <div class="mw-diff-inline-added"><ins>&#160;</ins></div>
 <div class="mw-diff-inline-context">bang</div>
 

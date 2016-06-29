@@ -44,7 +44,6 @@ zend_module_entry wikidiff2_module_entry = {
 	STANDARD_MODULE_PROPERTIES
 };
 
-
 #ifdef COMPILE_DL_WIKIDIFF2
 ZEND_GET_MODULE(wikidiff2)
 #endif

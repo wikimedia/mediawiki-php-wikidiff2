@@ -14,8 +14,8 @@ void InlineDiff::printWordDiff(const String& text1, const String& text2)
 {
 	WordVector words1, words2;
 
-	explodeWords(text1, words1);
-	explodeWords(text2, words2);
+	TextUtil::explodeWords(text1, words1);
+	TextUtil::explodeWords(text2, words2);
 	WordDiff worddiff(words1, words2, MAX_WORD_LEVEL_DIFF_COMPLEXITY);
 	String word;
 
