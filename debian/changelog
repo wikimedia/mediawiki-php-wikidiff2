@@ -1,3 +1,20 @@
+php-wikidiff2 (1.4.0) trusty-wikimedia; urgency=medium
+
+  [ Bryan Davis ]
+  * Update for PHP7 api changes
+
+  [ Kunal Mehta ]
+  * Update .gitreview for new branch
+  * Remove debian/ from master, now in debian branch
+
+  [ Max Semenik ]
+  * Update documentation
+  * Update ignores
+  * Refactoring: remove underscore prefixes from identifiers
+  * Redo paragraph-level diffs
+
+ -- Kunal Mehta <legoktm@member.fsf.org>  Thu, 14 Jul 2016 18:36:00 -0700
+
 php-wikidiff2 (1.3.6) trusty-wikimedia; urgency=medium
 
   * Fixed debian/control to work correctly under pbuilder
