@@ -29,7 +29,7 @@ void TableDiff::printWordDiff(const String & text1, const String & text2)
 
 	explodeWords(text1, words1);
 	explodeWords(text2, words2);
-	WordDiff worddiff(words1, words2);
+	WordDiff worddiff(words1, words2, MAX_WORD_LEVEL_DIFF_COMPLEXITY);
 
 	//debugPrintWordDiff(worddiff);
 

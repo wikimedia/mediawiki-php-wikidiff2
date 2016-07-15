@@ -1,5 +1,5 @@
 --TEST--
-Diff test C: https://bugzilla.wikimedia.org/show_bug.cgi?id=27993
+Diff test C: https://phabricator.wikimedia.org/T29993
 --SKIPIF--
 <?php if (!extension_loaded("wikidiff2")) print "skip"; ?>
 --FILE--

@@ -1,4 +1,4 @@
-Wikidiff2 is partly based on the original wikidiff, partly on DifferenceEngine.php, and partly my own work. It performs word-level (space-delimited) diffs on general text, and character-level diffs on text composed of characters from the Japanese and Thai alphabets and the unified han. Japanese, Chinese and Thai do not use spaces to separate words. The input is assumed to be UTF-8 encoded. Invalid UTF-8 may cause undesirable operation, such as truncation of the output, so the input should be validated by the application. The input text should have unix-style line endings.
+Wikidiff2 is partly based on the original wikidiff, partly on DifferenceEngine.php, and partly Tim Starling's own work. It performs word-level (space-delimited) diffs on general text, and character-level diffs on text composed of characters from the Japanese and Thai alphabets and the unified han. Japanese, Chinese and Thai do not use spaces to separate words. The input is assumed to be UTF-8 encoded. Invalid UTF-8 may cause undesirable operation, such as truncation of the output, so the input should be validated by the application. The input text should have unix-style line endings.
 
 The output is an HTML fragment -- a number of HTML table rows with the rest of the document structure omitted. The characters "<", ">" and "&" will be HTML-escaped in the output.
 
@@ -19,29 +19,22 @@ It requires the following library:
 
 * libthai, a Thai language support library
   http://linux.thai.net/plone/TLWG/libthai/
+  On Debian-based systems, you need libthai0 and libthai-dev packages
 
-To compile and install it:
+== Compilation and installation with Zend PHP ==
 
 $ phpize
 $ ./configure
 $ make
 $ sudo make install
 
-== Changelog ==
+== Compilation and installation with HHVM ==
 
-2013-08-07
-* (bug 52616) Use <ins> and <del> for insertions and deletions
+$ hphpize
+$ cmake .
+$ make
+$ sudo make install
 
-2012-01-03
-* (bug 26354) Add class to dummy cells containing &nbsp;
-* (bug 25697) Add &#160; to empty context lines
 
-2010-09-30
-* Automatically use CXXFLAGS=-Wno-write-strings
-
-2010-06-14
-* Converted the extension from swig to PHP native.
-* Added Thai word break support
-* Added PHP allocator support
 
 vim: wrap

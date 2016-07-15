@@ -1,4 +1,4 @@
-php-wikidiff2 (1.3.5-1) trusty-wikimedia; urgency=medium
+php-wikidiff2 (1.3.6) trusty-wikimedia; urgency=medium
 
   * Fixed debian/control to work correctly under pbuilder
 

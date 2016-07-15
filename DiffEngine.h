@@ -58,7 +58,8 @@ class Diff
 		typedef std::vector<T, WD2_ALLOCATOR<T> > ValueVector;
 		typedef std::vector<DiffOp<T>, WD2_ALLOCATOR<T> > DiffOpVector;
 
-		Diff(const ValueVector & from_lines, const ValueVector & to_lines);
+		Diff(const ValueVector & from_lines, const ValueVector & to_lines,
+			long long bailoutComplexity = 0);
 
 		virtual void add_edit(const DiffOp<T> & edit) {
 			edits.push_back(edit);
@@ -91,7 +92,7 @@ class Diff
  */
 
 template<typename T>
-class _DiffEngine
+class DiffEngine
 {
 	public:
 		// Vectors
@@ -116,16 +117,17 @@ class _DiffEngine
 		typedef std::set<T, std::less<T>, WD2_ALLOCATOR<T> > ValueSet;
 #endif
 
-		_DiffEngine() : done(false) {}
+		DiffEngine() : done(false) {}
 		void clear();
 		void diff (const ValueVector & from_lines,
-				const ValueVector & to_lines, Diff<T> & diff);
-		int _lcs_pos (int ypos);
-		void _compareseq (int xoff, int xlim, int yoff, int ylim);
-		void _shift_boundaries (const ValueVector & lines, BoolVector & changed,
+				const ValueVector & to_lines, Diff<T> & diff,
+				long long bailoutComplexity = 0);
+		int lcs_pos (int ypos);
+		void compareseq (int xoff, int xlim, int yoff, int ylim);
+		void shift_boundaries (const ValueVector & lines, BoolVector & changed,
 				const BoolVector & other_changed);
 	protected:
-		int _diag (int xoff, int xlim, int yoff, int ylim, int nchunks,
+		int diag (int xoff, int xlim, int yoff, int ylim, int nchunks,
 				IntPairVector & seps);
 
 		BoolVector xchanged, ychanged;
@@ -139,10 +141,10 @@ class _DiffEngine
 };
 
 //-----------------------------------------------------------------------------
-// _DiffEngine implementation
+// DiffEngine implementation
 //-----------------------------------------------------------------------------
 template<typename T>
-void _DiffEngine<T>::clear()
+void DiffEngine<T>::clear()
 {
 	xchanged.clear();
 	ychanged.clear();
@@ -156,8 +158,9 @@ void _DiffEngine<T>::clear()
 }
 
 template<typename T>
-void _DiffEngine<T>::diff (const ValueVector & from_lines,
-		const ValueVector & to_lines, Diff<T> & diff)
+void DiffEngine<T>::diff (const ValueVector & from_lines,
+		const ValueVector & to_lines, Diff<T> & diff,
+		long long bailoutComplexity /* = 0 */)
 {
 	int n_from = (int)from_lines.size();
 	int n_to = (int)to_lines.size();
@@ -185,6 +188,26 @@ void _DiffEngine<T>::diff (const ValueVector & from_lines,
 		xchanged[xi] = ychanged[yi] = false;
 	}
 
+	long long complexity = (long long)(n_from - skip - endskip)
+		* (n_to - skip - endskip);
+
+	// If too complex, just output "whole left side replaced with right"
+	if (bailoutComplexity > 0 && complexity > bailoutComplexity) {
+		PointerVector del;
+		PointerVector add;
+
+		for (xi = 0; xi < n_from; xi++) {
+			del.push_back(&from_lines[xi]);
+		}
+		for (yi = 0; yi < n_to; yi++) {
+			add.push_back(&to_lines[yi]);
+		}
+		diff.add_edit(DiffOp<T>(DiffOp<T>::change, del, add));
+
+		done = true;
+		return;
+	}
+
 	// Ignore lines which do not exist in both files.
 	ValueSet xhash, yhash;
 	for (xi = skip; xi < n_from - endskip; xi++) {
@@ -208,11 +231,11 @@ void _DiffEngine<T>::diff (const ValueVector & from_lines,
 	}
 
 	// Find the LCS.
-	_compareseq(0, xv.size(), 0, yv.size());
+	compareseq(0, xv.size(), 0, yv.size());
 
 	// Merge edits when possible
-	_shift_boundaries(from_lines, xchanged, ychanged);
-	_shift_boundaries(to_lines, ychanged, xchanged);
+	shift_boundaries(from_lines, xchanged, ychanged);
+	shift_boundaries(to_lines, ychanged, xchanged);
 
 	// Compute the edit operations.
 	xi = yi = 0;
@@ -271,7 +294,7 @@ void _DiffEngine<T>::diff (const ValueVector & from_lines,
  * of the portions it is going to specify.
  */
 template <typename T>
-int _DiffEngine<T>::_diag (int xoff, int xlim, int yoff, int ylim, int nchunks,
+int DiffEngine<T>::diag (int xoff, int xlim, int yoff, int ylim, int nchunks,
 		IntPairVector & seps)
 {
 	using std::swap;
@@ -328,7 +351,7 @@ int _DiffEngine<T>::_diag (int xoff, int xlim, int yoff, int ylim, int nchunks,
 
 			for (y = pMatches->begin(); y != pMatches->end(); ++y) {
 				if (!in_seq.count(*y)) {
-					k = _lcs_pos(*y);
+					k = lcs_pos(*y);
 					assert(k > 0);
 					copy(ymids.begin() + (k-1) * nchunks, ymids.begin() + k * nchunks,
 							ymids.begin() + k * nchunks);
@@ -345,7 +368,7 @@ int _DiffEngine<T>::_diag (int xoff, int xlim, int yoff, int ylim, int nchunks,
 					seq[k] = *y;
 					in_seq.insert(*y);
 				} else if (!in_seq.count(*y)) {
-					k = _lcs_pos(*y);
+					k = lcs_pos(*y);
 					assert(k > 0);
 					copy(ymids.begin() + (k-1) * nchunks, ymids.begin() + k * nchunks,
 							ymids.begin() + k * nchunks);
@@ -369,7 +392,7 @@ int _DiffEngine<T>::_diag (int xoff, int xlim, int yoff, int ylim, int nchunks,
 }
 
 template <typename T>
-int _DiffEngine<T>::_lcs_pos (int ypos) {
+int DiffEngine<T>::lcs_pos (int ypos) {
 	int end = lcs;
 	if (end == 0 || ypos > seq[end]) {
 		seq[++lcs] = ypos;
@@ -406,7 +429,7 @@ int _DiffEngine<T>::_lcs_pos (int ypos) {
  * All line numbers are origin-0 and discarded lines are not counted.
  */
 template <typename T>
-void _DiffEngine<T>::_compareseq (int xoff, int xlim, int yoff, int ylim) {
+void DiffEngine<T>::compareseq (int xoff, int xlim, int yoff, int ylim) {
 	using std::pair;
 
 	IntPairVector seps;
@@ -431,7 +454,7 @@ void _DiffEngine<T>::_compareseq (int xoff, int xlim, int yoff, int ylim) {
 		//nchunks = sqrt(min(xlim - xoff, ylim - yoff) / 2.5);
 		//nchunks = max(2,min(8,(int)nchunks));
 		int nchunks = std::min(MAX_CHUNKS-1, std::min(xlim - xoff, ylim - yoff)) + 1;
-		lcs = _diag(xoff, xlim, yoff, ylim, nchunks, seps);
+		lcs = diag(xoff, xlim, yoff, ylim, nchunks, seps);
 	}
 
 	if (lcs == 0) {
@@ -446,7 +469,7 @@ void _DiffEngine<T>::_compareseq (int xoff, int xlim, int yoff, int ylim) {
 		IntPairVector::iterator pt1, pt2;
 		pt1 = pt2 = seps.begin();
 		while (++pt2 != seps.end()) {
-			_compareseq (pt1->first, pt2->first, pt1->second, pt2->second);
+			compareseq (pt1->first, pt2->first, pt1->second, pt2->second);
 			pt1 = pt2;
 		}
 	}
@@ -465,7 +488,7 @@ void _DiffEngine<T>::_compareseq (int xoff, int xlim, int yoff, int ylim) {
  * This is extracted verbatim from analyze.c (GNU diffutils-2.7).
  */
 template <typename T>
-void _DiffEngine<T>::_shift_boundaries (const ValueVector & lines, BoolVector & changed,
+void DiffEngine<T>::shift_boundaries (const ValueVector & lines, BoolVector & changed,
 		const BoolVector & other_changed)
 {
 	int i = 0;
@@ -571,10 +594,11 @@ void _DiffEngine<T>::_shift_boundaries (const ValueVector & lines, BoolVector & 
 //-----------------------------------------------------------------------------
 
 template<typename T>
-Diff<T>::Diff(const ValueVector & from_lines, const ValueVector & to_lines)
+Diff<T>::Diff(const ValueVector & from_lines, const ValueVector & to_lines,
+	long long bailoutComplexity)
 {
-	_DiffEngine<T> engine;
-	engine.diff(from_lines, to_lines, *this);
+	DiffEngine<T> engine;
+	engine.diff(from_lines, to_lines, *this, bailoutComplexity);
 }
 
 #endif

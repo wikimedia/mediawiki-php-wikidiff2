@@ -218,12 +218,6 @@ int Wikidiff2::nextUtf8Char(String::const_iterator & p, String::const_iterator &
 // have to check this somehow.
 void Wikidiff2::explodeWords(const String & text, WordVector &words)
 {
-	// Don't try to do a word-level diff on very long lines
-	if (text.size() > MAX_DIFF_LINE) {
-		words.push_back(Word(text.begin(), text.end(), text.end()));
-		return;
-	}
-
 	// Decode the UTF-8 in the string.
 	// * Save the character sizes (in bytes)
 	// * Convert the string to TIS-620, which is the internal character set of libthai.
