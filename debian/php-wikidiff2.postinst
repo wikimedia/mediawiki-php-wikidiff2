@@ -3,7 +3,7 @@
 set -e
 
 #EXTRA#
-[ "$1" = "configure "] && php5enmod -s ALL wikidiff2
+[ "$1" = "configure " ] && php5enmod -s ALL wikidiff2
 
 #DEBHELPER#
 

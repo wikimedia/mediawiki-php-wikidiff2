@@ -1,3 +1,9 @@
+php-wikidiff2 (1.4.1) trusty-wikimedia; urgency=medium
+
+  * Fix postinst script issue
+
+ -- Alexandros Kosiaris <akosiaris@wikimedia.org>  Wed, 10 Aug 2016 14:47:34 +0300
+
 php-wikidiff2 (1.4.0) trusty-wikimedia; urgency=medium
 
   [ Bryan Davis ]
