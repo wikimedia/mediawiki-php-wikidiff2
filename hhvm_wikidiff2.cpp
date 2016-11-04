@@ -12,7 +12,7 @@
 
 namespace HPHP {
 
-/* {{{ proto string wikidiff2_do_diff(string text1, string text2, int numContextLines)
+/* {{{ proto string wikidiff2_do_diff(string text1, string text2, int numContextLines, int maxMovedLines = 25)
  *
  * Warning: the input text must be valid UTF-8! Do not pass user input directly
  * to this function.
@@ -20,14 +20,15 @@ namespace HPHP {
 static String HHVM_FUNCTION(wikidiff2_do_diff,
 	const String& text1,
 	const String& text2,
-	int64_t numContextLines)
+	int64_t numContextLines,
+	int64_t maxMovedLines)
 {
     String result;
 	try {
 		TableDiff wikidiff2;
 		Wikidiff2::String text1String(text1.c_str());
 		Wikidiff2::String text2String(text2.c_str());
-		result = wikidiff2.execute(text1String, text2String, numContextLines);
+		result = wikidiff2.execute(text1String, text2String, numContextLines, maxMovedLines);
 	} catch (OutOfMemoryException &e) {
 		raise_error("Out of memory in wikidiff2_do_diff().");
 	} catch (...) {
@@ -36,7 +37,7 @@ static String HHVM_FUNCTION(wikidiff2_do_diff,
 	return result;
 }
 
-/* {{{ proto string wikidiff2_inline_diff(string text1, string text2, int numContextLines)
+/* {{{ proto string wikidiff2_inline_diff(string text1, string text2, int numContextLines, int maxMovedLines)
  *
  * Warning: the input text must be valid UTF-8! Do not pass user input directly
  * to this function.
@@ -44,14 +45,15 @@ static String HHVM_FUNCTION(wikidiff2_do_diff,
 static String HHVM_FUNCTION(wikidiff2_inline_diff,
 	const String& text1,
 	const String& text2,
-	int64_t numContextLines)
+	int64_t numContextLines,
+	int64_t maxMovedLines)
 {
     String result;
 	try {
 		InlineDiff wikidiff2;
 		Wikidiff2::String text1String(text1.c_str());
 		Wikidiff2::String text2String(text2.c_str());
-		result = wikidiff2.execute(text1String, text2String, numContextLines);
+		result = wikidiff2.execute(text1String, text2String, numContextLines, 0 /*inlinediff todo*/);
 	} catch (OutOfMemoryException &e) {
 		raise_error("Out of memory in wikidiff2_do_diff().");
 	} catch (...) {
@@ -60,12 +62,21 @@ static String HHVM_FUNCTION(wikidiff2_inline_diff,
 	return result;
 }
 
+/* {{{ proto string wikidiff2_version()
+ */
+static String HHVM_FUNCTION(wikidiff2_version)
+{
+    String version = WIKIDIFF2_VERSION_STRING;
+	return version;
+}
+
 static class Wikidiff2Extension : public Extension {
 	public:
-		Wikidiff2Extension() : Extension("wikidiff2") {}
+		Wikidiff2Extension() : Extension("wikidiff2", WIKIDIFF2_VERSION_STRING) {}
 		virtual void moduleInit() {
 			HHVM_FE(wikidiff2_do_diff);
 			HHVM_FE(wikidiff2_inline_diff);
+			HHVM_FE(wikidiff2_version);
 			loadSystemlib();
 		}
 } s_wikidiff2_extension;

@@ -8,7 +8,7 @@ class InlineDiff: public Wikidiff2 {
 	protected:
 		void printAdd(const String& line);
 		void printDelete(const String& line);
-		void printWordDiff(const String& text1, const String& text2);
+		void printWordDiff(const String& text1, const String& text2, bool printLeft = true, bool printRight = true, const String & srcAnchor = "", const String & dstAnchor = "");
 		void printBlockHeader(int leftLine, int rightLine);
 		void printContext(const String& input);
 

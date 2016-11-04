@@ -23,7 +23,7 @@ void TableDiff::printDelete(const String & line)
 		"</tr>\n";
 }
 
-void TableDiff::printWordDiff(const String & text1, const String & text2)
+void TableDiff::printWordDiff(const String & text1, const String & text2, bool printLeft, bool printRight, const String & srcAnchor, const String & dstAnchor)
 {
 	WordVector words1, words2;
 
@@ -33,17 +33,43 @@ void TableDiff::printWordDiff(const String & text1, const String & text2)
 
 	//debugPrintWordDiff(worddiff);
 
-	// print twice; first for left side, then for right side
-	result += "<tr>\n"
-		"  <td class=\"diff-marker\">−</td>\n"
-		"  <td class=\"diff-deletedline\"><div>";
-	printWordDiffSide(worddiff, false);
-	result += "</div></td>\n"
-		"  <td class=\"diff-marker\">+</td>\n"
-		"  <td class=\"diff-addedline\"><div>";
-	printWordDiffSide(worddiff, true);
-	result += "</div></td>\n"
-		"</tr>\n";
+	result += "<tr>\n";
+
+	// print left side or blank placeholder.
+	if (printLeft) {
+		result += "  <td class=\"diff-marker\">";
+		if(dstAnchor != "")
+			result += "<a href=\"#" + dstAnchor + "\">&hookrightarrow;</a>";
+		else
+			result += "−";
+		result += "</td>\n";
+		result += "  <td class=\"diff-deletedline\"><div>";
+		if(srcAnchor != "")
+			result += "<a name=\"" + srcAnchor + "\"></a>";
+		printWordDiffSide(worddiff, false);
+		result += "</div></td>\n";
+	} else {
+		result += "  <td colspan=\"2\" class=\"diff-empty\">&#160;</td>\n";
+	}
+
+	// print right side or blank placeholder.
+	if (printRight) {
+		result += "  <td class=\"diff-marker\">";
+		if(dstAnchor != "")
+			result += "<a href=\"#" + dstAnchor + "\">&hookleftarrow;</a>";
+		else
+			result += "+";
+		result += "</td>\n";
+		result += "  <td class=\"diff-addedline\"><div>";
+		if(srcAnchor != "")
+			result += "<a name=\"" + srcAnchor + "\"></a>";
+		printWordDiffSide(worddiff, true);
+		result += "</div></td>\n"
+			"</tr>\n";
+	} else {
+		result += "  <td colspan=\"2\" class=\"diff-empty\">&#160;</td>\n"
+			"</tr>\n";
+	}
 }
 
 void TableDiff::printWordDiffSide(WordDiff &worddiff, bool added)
