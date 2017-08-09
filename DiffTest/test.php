@@ -19,8 +19,10 @@ set_error_handler( function( $errno , $errstr ) {
 } );
 
 echo <<<HTML
+<!DOCTYPE html>
 <html>
 <title>Diff changes</title>
+<meta charset="UTF-8"/>
 <style>
 body {
 	font-family: sans-serif;
