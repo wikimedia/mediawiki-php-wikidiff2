@@ -15,11 +15,24 @@ These files are 2.3MB each, and give a worst-case performance test. Performance 
 
 Wikidiff2 is a PHP extension.
 
+== Dependencies ==
 It requires the following library:
 
 * libthai, a Thai language support library
   http://linux.thai.net/plone/TLWG/libthai/
   On Debian-based systems, you need libthai0 and libthai-dev packages
+
+* To build wikidiff2 as a HHVM extension on Debian systems, you need the following packages:
+        hhvm-dev libtbb-dev libtbb2 libboost-all-dev libdouble-conversion-dev \
+        libdouble-conversion1 libgoogle-glog-dev libgoogle-glog-doc libgoogle-glog0 \
+        libjemalloc-dev libjemalloc1 libjemalloc1-dbg
+
+* To build wikidiff2 as a PHP extension, you need the following packages:
+** On Jessie and previous versions:
+        php5-dev pkg-config
+** On Stretch and later versions:
+        php-dev pkg-config
+
 
 == Compilation and installation with Zend PHP ==
 

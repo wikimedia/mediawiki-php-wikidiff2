@@ -14,6 +14,9 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <memory>
+
+#define WIKIDIFF2_VERSION_STRING	"1.5.0"
 
 class Wikidiff2 {
 	public:
@@ -26,7 +29,7 @@ class Wikidiff2 {
 		typedef Diff<String> StringDiff;
 		typedef Diff<Word> WordDiff;
 
-		const String & execute(const String & text1, const String & text2, int numContextLines);
+		const String & execute(const String & text1, const String & text2, int numContextLines, int maxMovedLines);
 
 		inline const String & getResult() const;
 
@@ -34,53 +37,74 @@ class Wikidiff2 {
 		enum { MAX_WORD_LEVEL_DIFF_COMPLEXITY = 40000000 };
 		String result;
 
+		struct DiffMapEntry
+		{
+			double similarity;
+			int opCharCount[4] = { 0 };
+			int opIndexFrom, opLineFrom, opIndexTo, opLineTo;
+			bool lhsDisplayed = false, rhsDisplayed = false;
+
+			DiffMapEntry(WordVector& words1, WordVector& words2, int opIndexFrom_, int opLineFrom_, int opIndexTo_, int opLineTo_);
+		};
+		// PhpAllocator can't be specialized for std::pair, so we're using the standard allocator.
+		typedef std::map<uint64_t, std::shared_ptr<struct Wikidiff2::DiffMapEntry> > DiffMap;
+		DiffMap diffMap;
+
+		class AllowPrintMovedLineDiff {
+			bool detectMovedLines = true;       // will be set to false when too many 'add' or 'delete' ops appear in diff.
+			bool detectMovedLinesValid = false; // whether detectMovedLines is valid.
+			public:
+				bool operator() (StringDiff & linediff, int maxMovedLines);	// calculates & caches comparison count
+		} allowPrintMovedLineDiff;
+
 		virtual void diffLines(const StringVector & lines1, const StringVector & lines2,
-				int numContextLines);
+				int numContextLines, int maxMovedLines);
 		virtual void printAdd(const String & line) = 0;
 		virtual void printDelete(const String & line) = 0;
-		virtual void printWordDiff(const String & text1, const String & text2) = 0;
+		virtual void printWordDiff(const String & text1, const String & text2, bool printLeft = true, bool printRight = true, const String & srcAnchor = "", const String & dstAnchor = "") = 0;
 		virtual void printBlockHeader(int leftLine, int rightLine) = 0;
 		virtual void printContext(const String & input) = 0;
 
 		void printText(const String & input);
-		inline bool isLetter(int ch);
-		inline bool isSpace(int ch);
 		void debugPrintWordDiff(WordDiff & worddiff);
 
-		int nextUtf8Char(String::const_iterator & p, String::const_iterator & charStart,
-				String::const_iterator end);
-
-		void explodeWords(const String & text, WordVector &tokens);
 		void explodeLines(const String & text, StringVector &lines);
+
+		bool printMovedLineDiff(StringDiff & linediff, int opIndex, int opLine, int maxMovedLines);
 };
-
-inline bool Wikidiff2::isLetter(int ch)
-{
-	// Standard alphanumeric
-	if ((ch >= '0' && ch <= '9') ||
-	   (ch == '_') ||
-	   (ch >= 'A' && ch <= 'Z') ||
-	   (ch >= 'a' && ch <= 'z'))
-	{
-		return true;
-	}
-	// Punctuation and control characters
-	if (ch < 0xc0) return false;
-	// Chinese, Japanese: split up character by character
-	if (ch >= 0x3000 && ch <= 0x9fff) return false;
-	if (ch >= 0x20000 && ch <= 0x2a000) return false;
-	// Otherwise assume it's from a language that uses spaces
-	return true;
-}
-
-inline bool Wikidiff2::isSpace(int ch)
-{
-	return ch == ' ' || ch == '\t';
-}
 
 inline const Wikidiff2::String & Wikidiff2::getResult() const
 {
 	return result;
 }
+
+inline Wikidiff2::DiffMapEntry::DiffMapEntry(Wikidiff2::WordVector& words1, Wikidiff2::WordVector& words2, int opIndexFrom_, int opLineFrom_, int opIndexTo_, int opLineTo_):
+	opIndexFrom(opIndexFrom_), opLineFrom(opLineFrom_), opIndexTo(opIndexTo_), opLineTo(opLineTo_)
+{
+	similarity = calculateSimilarity(words1, words2, MAX_WORD_LEVEL_DIFF_COMPLEXITY, opCharCount);
+}
+
+inline bool Wikidiff2::AllowPrintMovedLineDiff::operator () (StringDiff & linediff, int maxMovedLines)
+{
+	if(!detectMovedLinesValid) {
+		// count the number of added or removed lines which could have been moved.
+		int adds = 0, deletes = 0;
+		for(int i = 0; i < linediff.size(); ++i) {
+			if(linediff[i].op == DiffOp<String>::add)
+				++adds;
+			if(linediff[i].op == DiffOp<String>::del)
+				++deletes;
+			// number of comparisons is (number of additions) x (number of deletions).
+			// if count is too large, don't try detecting moved lines.
+			if(adds+deletes > maxMovedLines) {
+				detectMovedLines = false;
+				break;
+			}
+		}
+		detectMovedLinesValid = true;
+	}
+	return detectMovedLines;
+}
+
 
 #endif

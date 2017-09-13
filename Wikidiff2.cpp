@@ -7,14 +7,15 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdarg.h>
+//#define DIFFENGINE__EVERY_CHANGE_IS_AN_ADD_AND_DELETE
 #include "Wikidiff2.h"
-#include <thai/thailib.h>
-#include <thai/thwchar.h>
-#include <thai/thbrk.h>
 
+
+//#define DEBUG_MOVED_LINES
 
 void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & lines2,
-		int numContextLines)
+		int numContextLines, int maxMovedLines)
 {
 	// first do line-level diff
 	StringDiff linediff(lines1, lines2);
@@ -37,7 +38,9 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 				// inserted lines
 				n = linediff[i].to.size();
 				for (j=0; j<n; j++) {
-					printAdd(*linediff[i].to[j]);
+					if (!printMovedLineDiff(linediff, i, j, maxMovedLines)) {
+						printAdd(*linediff[i].to[j]);
+					}
 				}
 				to_index += n;
 				break;
@@ -45,7 +48,9 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 				// deleted lines
 				n = linediff[i].from.size();
 				for (j=0; j<n; j++) {
-					printDelete(*linediff[i].from[j]);
+					if (!printMovedLineDiff(linediff, i, j, maxMovedLines)) {
+						printDelete(*linediff[i].from[j]);
+					}
 				}
 				from_index += n;
 				break;
@@ -91,6 +96,158 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 		// Not first line anymore, don't show line number by default
 		showLineNumber = false;
 	}
+}
+
+bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLine, int maxMovedLines)
+{
+	// helper fn creates 64-bit lookup key from opIndex and opLine
+	auto makeKey = [](int index, int line) {
+		return uint64_t(index) << 32 | line;
+	};
+
+	auto makeAnchorName = [](int index, int line, bool lhs) {
+		char ch[2048];
+		snprintf(ch, sizeof(ch), "movedpara_%d_%d_%s", index, line, lhs? "lhs": "rhs");
+		return String(ch);
+	};
+
+#ifdef DEBUG_MOVED_LINES
+	auto debugPrintf = [this](const char *fmt, ...) {
+		char ch[2048];
+		va_list ap;
+		va_start(ap, fmt);
+		vsnprintf(ch, sizeof(ch), fmt, ap);
+		va_end(ap);
+
+		result += "<tr><td /><td class=\"diff-context\" colspan=3>";
+		result += ch;
+		result += "</td></tr>";
+	};
+#else
+	auto debugPrintf = [](...) { };
+#endif
+
+	if(!allowPrintMovedLineDiff(linediff, maxMovedLines)) {
+		debugPrintf("printMovedLineDiff: diff too large (maxMovedLines=%ld), not detecting moved lines", maxMovedLines);
+		return false;
+	}
+
+	debugPrintf("printMovedLineDiff (...), %d, %d\n", opIndex, opLine);
+
+	bool printLeft = linediff[opIndex].op == DiffOp<String>::del ? true : false;
+	bool printRight = !printLeft;
+
+	// check whether this op actually refers to the diff map entry
+	auto cmpDiffMapEntries = [&](int otherIndex, int otherLine) -> bool {
+		uint64_t otherKey = makeKey(otherIndex, otherLine);
+		auto it = diffMap.find(otherKey);
+		if (it != diffMap.end()) {
+			auto other = it->second;
+			bool cmp = (printLeft ?
+				other->opIndexFrom == opIndex && other->opLineFrom == opLine :
+				other->opIndexTo == opIndex && other->opLineTo == opLine);
+			if(!cmp) {
+				debugPrintf("printMovedLineDiff(..., %d, %d): not printing diff again. op=%s", opIndex, opLine,
+					linediff[opIndex].op == DiffOp<String>::add ? "add": linediff[opIndex].op == DiffOp<String>::del ? "del": "???");
+				return false;
+			}
+		}
+		return true;
+	};
+
+	// look for corresponding moved line for the opposite case in moved-line-map
+	// if moved line exists:
+	//     print diff to the moved line, omitting the left/right side for added/deleted line
+	uint64_t key = makeKey(opIndex, opLine);
+	auto it = diffMap.find(key);
+	if (it != diffMap.end()) {
+		auto best = it->second;
+		int otherIndex = linediff[opIndex].op == DiffOp<String>::add ? best->opIndexFrom : best->opIndexTo;
+		int otherLine = linediff[opIndex].op == DiffOp<String>::add ? best->opLineFrom : best->opLineTo;
+
+		if(!cmpDiffMapEntries(otherIndex, otherLine))
+			return false;
+
+		// XXXX todo: we already have the diff, don't have to do it again, just have to print it
+		printWordDiff(*linediff[best->opIndexFrom].from[best->opLineFrom], *linediff[best->opIndexTo].to[best->opLineTo],
+			printLeft, printRight, makeAnchorName(opIndex, opLine, printLeft), makeAnchorName(otherIndex, otherLine, !printLeft));
+
+		if(printLeft)
+			best->lhsDisplayed = true;
+		else
+			best->rhsDisplayed = true;
+
+		debugPrintf("found in diffmap. copy: %d, del: %d, add: %d, change: %d, similarity: %.4f\n"
+					"from: (%d,%d) to: (%d,%d)\n",
+			best->opCharCount[DiffOp<Word>::copy], best->opCharCount[DiffOp<Word>::del], best->opCharCount[DiffOp<Word>::add], best->opCharCount[DiffOp<Word>::change], best->similarity,
+			best->opIndexFrom, best->opLineFrom, best->opIndexTo, best->opLineTo);
+
+		return true;
+	}
+
+	debugPrintf("nothing found in moved-line-map");
+
+	// else:
+	//     try to find a corresponding moved line in deleted/added lines
+	int otherOp = (linediff[opIndex].op == DiffOp<String>::add ? DiffOp<String>::del : DiffOp<String>::add);
+	std::shared_ptr<DiffMapEntry> found = nullptr;
+	for (int i = 0; i < linediff.size(); ++i) {
+		if (linediff[i].op == otherOp) {
+			auto& lines = (linediff[opIndex].op == DiffOp<String>::add ? linediff[i].from : linediff[i].to);
+			for (int k = 0; k < lines.size(); ++k) {
+				WordVector words1, words2;
+				std::shared_ptr<DiffMapEntry> tmp;
+				TextUtil::explodeWords(*lines[k], words1);
+				if (otherOp == DiffOp<String>::del) {
+					TextUtil::explodeWords(*linediff[opIndex].to[opLine], words2);
+					tmp = std::make_shared<DiffMapEntry>(words1, words2, i, k, opIndex, opLine);
+				} else {
+					TextUtil::explodeWords(*linediff[opIndex].from[opLine], words2);
+					tmp = std::make_shared<DiffMapEntry>(words1, words2, opIndex, opLine, i, k);
+				}
+				if (!found || tmp->similarity > found->similarity) {
+					found= tmp;
+				}
+			}
+		}
+	}
+
+	if(found)
+		debugPrintf("candidate found with similarity %.2f", found->similarity);
+
+	// if candidate exists:
+	//     add candidate to moved-line-map twice, for add/del case
+	//     print diff to the moved line, omitting the left/right side for added/deleted line
+	if (found && found->similarity > 0.4) {
+		// if we displayed a diff to the found block before, don't display this one as moved.
+		int otherIndex = linediff[opIndex].op == DiffOp<String>::add ? found->opIndexFrom : found->opIndexTo;
+		int otherLine = linediff[opIndex].op == DiffOp<String>::add ? found->opLineFrom : found->opLineTo;
+
+		if(!cmpDiffMapEntries(otherIndex, otherLine))
+			return false;
+
+		if(printLeft)
+			found->lhsDisplayed = true;
+		else
+			found->rhsDisplayed = true;
+
+		diffMap[key] = found;
+		diffMap[makeKey(otherIndex, otherLine)] = found;
+		debugPrintf("inserting (%d,%d) + (%d,%d)", opIndex, opLine, otherIndex, otherLine);
+
+		// XXXX todo: we already have the diff, don't have to do it again, just have to print it
+		printWordDiff(*linediff[found->opIndexFrom].from[found->opLineFrom], *linediff[found->opIndexTo].to[found->opLineTo],
+			printLeft, printRight, makeAnchorName(opIndex, opLine, printLeft), makeAnchorName(otherIndex, otherLine, !printLeft));
+
+		debugPrintf("copy: %d, del: %d, add: %d, change: %d, similarity: %.4f\n"
+					"from: (%d,%d) to: (%d,%d)\n",
+			found->opCharCount[DiffOp<Word>::copy], found->opCharCount[DiffOp<Word>::del], found->opCharCount[DiffOp<Word>::add], found->opCharCount[DiffOp<Word>::change], found->similarity,
+			found->opIndexFrom, found->opLineFrom, found->opIndexTo, found->opLineTo);
+
+		return true;
+	}
+
+	return false;
 }
 
 void Wikidiff2::debugPrintWordDiff(WordDiff & worddiff)
@@ -165,144 +322,6 @@ void Wikidiff2::printText(const String & input)
 	}
 }
 
-// Weak UTF-8 decoder
-// Will return garbage on invalid input (overshort sequences, overlong sequences, etc.)
-int Wikidiff2::nextUtf8Char(String::const_iterator & p, String::const_iterator & charStart,
-		String::const_iterator end)
-{
-	int c = 0;
-	unsigned char byte;
-	int seqLength = 0;
-	charStart = p;
-	if (p == end) {
-		return 0;
-	}
-	do {
-		byte = (unsigned char)*p;
-		if (byte < 0x80) {
-			c = byte;
-			seqLength = 0;
-		} else if (byte >= 0xc0) {
-			// Start of UTF-8 character
-			// If this is unexpected, due to an overshort sequence, we ignore the invalid
-			// sequence and resynchronise here
-			if (byte < 0xe0) {
-				seqLength = 1;
-				c = byte & 0x1f;
-			} else if (byte < 0xf0) {
-				seqLength = 2;
-				c = byte & 0x0f;
-			} else {
-				seqLength = 3;
-				c = byte & 7;
-			}
-		} else if (seqLength) {
-			c <<= 6;
-			c |= byte & 0x3f;
-			--seqLength;
-		} else {
-			// Unexpected continuation, ignore
-		}
-		++p;
-	} while (seqLength && p != end);
-	return c;
-}
-
-// Split a string into words
-//
-// TODO: I think the best way to do this would be to use ICU BreakIterator
-// instead of libthai + DIY. Basically you'd run BreakIterators from several
-// different locales (en, th, ja) and merge the results, i.e. if a break occurs
-// in any locale at a given position, split the string. I don't know if the
-// quality of the Thai dictionary in ICU matches the one in libthai, we would
-// have to check this somehow.
-void Wikidiff2::explodeWords(const String & text, WordVector &words)
-{
-	// Decode the UTF-8 in the string.
-	// * Save the character sizes (in bytes)
-	// * Convert the string to TIS-620, which is the internal character set of libthai.
-	// * Save the character offsets of any break positions (same format as libthai).
-
-	String tisText, charSizes;
-	String::const_iterator suffixEnd, charStart, p;
-	IntSet breaks;
-
-	tisText.reserve(text.size());
-	charSizes.reserve(text.size());
-	wchar_t ch, lastChar;
-	thchar_t thaiChar;
-	bool hasThaiChars = false;
-
-	p = text.begin();
-	ch = nextUtf8Char(p, charStart, text.end());
-	lastChar = 0;
-	int charIndex = 0;
-	while (ch) {
-		thaiChar = th_uni2tis(ch);
-		if (thaiChar >= 0x80 && thaiChar != THCHAR_ERR) {
-			hasThaiChars = true;
-		}
-		tisText += (char)thaiChar;
-		charSizes += (char)(p - charStart);
-
-		if (isLetter(ch)) {
-			if (lastChar && !isLetter(lastChar)) {
-				breaks.insert(charIndex);
-			}
-		} else {
-			breaks.insert(charIndex);
-		}
-		charIndex++;
-		lastChar = ch;
-		ch = nextUtf8Char(p, charStart, text.end());
-	}
-
-	// If there were any Thai characters in the string, run th_brk on it and add
-	// the resulting break positions
-	if (hasThaiChars) {
-		IntVector thaiBreakPositions;
-		tisText += '\0';
-		thaiBreakPositions.resize(tisText.size());
-		int numBreaks = th_brk((const thchar_t*)(tisText.data()),
-				&thaiBreakPositions[0], thaiBreakPositions.size());
-		thaiBreakPositions.resize(numBreaks);
-		breaks.insert(thaiBreakPositions.begin(), thaiBreakPositions.end());
-	}
-
-	// Add a fake end-of-string character and have a break on it, so that the
-	// last word gets added without special handling
-	breaks.insert(charSizes.size());
-	charSizes += (char)0;
-
-	// Now make the word array by traversing the breaks set
-	p = text.begin();
-	IntSet::iterator pBrk = breaks.begin();
-	String::const_iterator wordStart = text.begin();
-	String::const_iterator suffixStart = text.end();
-
-	// If there's a break at the start of the string, skip it
-	if (pBrk != breaks.end() && *pBrk == 0) {
-		pBrk++;
-	}
-
-	for (charIndex = 0; charIndex < charSizes.size(); p += charSizes[charIndex++]) {
-		// Assume all spaces are ASCII
-		if (isSpace(*p)) {
-			suffixStart = p;
-		}
-		if (pBrk != breaks.end() && charIndex == *pBrk) {
-			if (suffixStart == text.end()) {
-				words.push_back(Word(wordStart, p, p));
-			} else {
-				words.push_back(Word(wordStart, suffixStart, p));
-			}
-			pBrk++;
-			suffixStart = text.end();
-			wordStart = p;
-		}
-	}
-}
-
 void Wikidiff2::explodeLines(const String & text, StringVector &lines)
 {
 	String::const_iterator ptr = text.begin();
@@ -317,7 +336,7 @@ void Wikidiff2::explodeLines(const String & text, StringVector &lines)
 	}
 }
 
-const Wikidiff2::String & Wikidiff2::execute(const String & text1, const String & text2, int numContextLines)
+const Wikidiff2::String & Wikidiff2::execute(const String & text1, const String & text2, int numContextLines, int maxMovedLines)
 {
 	// Allocate some result space to avoid excessive copying
 	result.clear();
@@ -330,7 +349,7 @@ const Wikidiff2::String & Wikidiff2::execute(const String & text1, const String 
 	explodeLines(text2, lines2);
 
 	// Do the diff
-	diffLines(lines1, lines2, numContextLines);
+	diffLines(lines1, lines2, numContextLines, maxMovedLines);
 
 	// Return a reference to the result buffer
 	return result;

@@ -10,14 +10,16 @@ void InlineDiff::printDelete(const String& line)
 	printWrappedLine("<div class=\"mw-diff-inline-deleted\"><del>", line, "</del></div>\n");
 }
 
-void InlineDiff::printWordDiff(const String& text1, const String& text2)
+void InlineDiff::printWordDiff(const String& text1, const String& text2, bool printLeft, bool printRight, const String & srcAnchor, const String & dstAnchor)
 {
 	WordVector words1, words2;
 
-	explodeWords(text1, words1);
-	explodeWords(text2, words2);
+	TextUtil::explodeWords(text1, words1);
+	TextUtil::explodeWords(text2, words2);
 	WordDiff worddiff(words1, words2, MAX_WORD_LEVEL_DIFF_COMPLEXITY);
 	String word;
+
+	// XXXX todo: omit left side & do strike-through according to printLeft/printRight
 
 	result += "<div class=\"mw-diff-inline-changed\">";
 	for (unsigned i = 0; i < worddiff.size(); ++i) {

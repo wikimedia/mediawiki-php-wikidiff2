@@ -23,6 +23,7 @@ static int le_wikidiff2;
 zend_function_entry wikidiff2_functions[] = {
 	PHP_FE(wikidiff2_do_diff,     NULL)
 	PHP_FE(wikidiff2_inline_diff, NULL)
+	PHP_FE(wikidiff2_version, NULL)
 	{NULL, NULL, NULL}
 };
 
@@ -39,11 +40,10 @@ zend_module_entry wikidiff2_module_entry = {
 	PHP_RSHUTDOWN(wikidiff2),
 	PHP_MINFO(wikidiff2),
 #if ZEND_MODULE_API_NO >= 20010901
-	"0.2",
+	WIKIDIFF2_VERSION_STRING,
 #endif
 	STANDARD_MODULE_PROPERTIES
 };
-
 
 #ifdef COMPILE_DL_WIKIDIFF2
 ZEND_GET_MODULE(wikidiff2)
@@ -77,7 +77,7 @@ PHP_MINFO_FUNCTION(wikidiff2)
 
 }
 
-/* {{{ proto string wikidiff2_do_diff(string text1, string text2, int numContextLines)
+/* {{{ proto string wikidiff2_do_diff(string text1, string text2, int numContextLines, int maxMovedLines = 25)
  *
  * Warning: the input text must be valid UTF-8! Do not pass user input directly
  * to this function.
@@ -91,14 +91,16 @@ PHP_FUNCTION(wikidiff2_do_diff)
 	size_t text1_len;
 	size_t text2_len;
 	zend_long numContextLines;
+	zend_long maxMovedLines = 25;
 #else
 	int text1_len;
 	int text2_len;
 	long numContextLines;
+	long maxMovedLines = 25;
 #endif
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "ssl", &text1, &text1_len, &text2,
-		&text2_len, &numContextLines) == FAILURE)
+	if (zend_parse_parameters(argc TSRMLS_CC, "ssl|l", &text1, &text1_len, &text2,
+		&text2_len, &numContextLines, &maxMovedLines) == FAILURE)
 	{
 		return;
 	}
@@ -108,7 +110,7 @@ PHP_FUNCTION(wikidiff2_do_diff)
 		TableDiff wikidiff2;
 		Wikidiff2::String text1String(text1, text1_len);
 		Wikidiff2::String text2String(text2, text2_len);
-		const Wikidiff2::String & ret = wikidiff2.execute(text1String, text2String, (int)numContextLines);
+		const Wikidiff2::String & ret = wikidiff2.execute(text1String, text2String, (int)numContextLines, (int)maxMovedLines);
 		COMPAT_RETURN_STRINGL( const_cast<char*>(ret.data()), ret.size());
 	} catch (std::bad_alloc &e) {
 		zend_error(E_WARNING, "Out of memory in wikidiff2_do_diff().");
@@ -117,7 +119,7 @@ PHP_FUNCTION(wikidiff2_do_diff)
 	}
 }
 
-/* {{{ proto string wikidiff2_inline_diff(string text1, string text2, int numContextLines)
+/* {{{ proto string wikidiff2_inline_diff(string text1, string text2, int numContextLines, int maxMovedLines = 25)
  *
  * Warning: the input text must be valid UTF-8! Do not pass user input directly
  * to this function.
@@ -131,10 +133,12 @@ PHP_FUNCTION(wikidiff2_inline_diff)
 	size_t text1_len;
 	size_t text2_len;
 	zend_long numContextLines;
+	zend_long maxMovedLines = 25;
 #else
 	int text1_len;
 	int text2_len;
 	long numContextLines;
+	long maxMovedLines = 25;
 #endif
 
 	if (zend_parse_parameters(argc TSRMLS_CC, "ssl", &text1, &text1_len, &text2,
@@ -148,13 +152,20 @@ PHP_FUNCTION(wikidiff2_inline_diff)
 		InlineDiff wikidiff2;
 		Wikidiff2::String text1String(text1, text1_len);
 		Wikidiff2::String text2String(text2, text2_len);
-		const Wikidiff2::String& ret = wikidiff2.execute(text1String, text2String, (int)numContextLines);
+		const Wikidiff2::String& ret = wikidiff2.execute(text1String, text2String, (int)numContextLines, 0 /*inlinediff todo*/);
 		COMPAT_RETURN_STRINGL( const_cast<char*>(ret.data()), ret.size());
 	} catch (std::bad_alloc &e) {
 		zend_error(E_WARNING, "Out of memory in wikidiff2_inline_diff().");
 	} catch (...) {
 		zend_error(E_WARNING, "Unknown exception in wikidiff2_inline_diff().");
 	}
+}
+
+/* {{{ proto string wikidiff2_version()
+ */
+PHP_FUNCTION(wikidiff2_version)
+{
+	COMPAT_RETURN_STRINGL( const_cast<char*>(WIKIDIFF2_VERSION_STRING), strlen(WIKIDIFF2_VERSION_STRING));
 }
 
 /* }}} */
