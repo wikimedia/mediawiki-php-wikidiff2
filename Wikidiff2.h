@@ -16,11 +16,7 @@
 #include <set>
 #include <memory>
 
-#define STRINGIZE(v)				#v
-#define STRINGIFY(v)				STRINGIZE(v)
-#define WIKIDIFF2_VERSION_MAJOR		0
-#define WIKIDIFF2_VERSION_MINOR		3
-#define WIKIDIFF2_VERSION_STRING	STRINGIFY(WIKIDIFF2_VERSION_MAJOR) "." STRINGIFY(WIKIDIFF2_VERSION_MINOR)
+#define WIKIDIFF2_VERSION_STRING	"1.5.0"
 
 class Wikidiff2 {
 	public:
