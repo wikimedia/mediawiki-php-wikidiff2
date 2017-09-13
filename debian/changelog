@@ -1,3 +1,19 @@
+php-wikidiff2 (1.5.0) jessie-wikimedia; urgency=medium
+
+  [ Max Semenik ]
+  * test.php: add doctype and charset
+  * Document build requirements
+  * Fuzz test
+
+  [ Johannes Kroll & WMDE Technical Wishes Team ]
+  * Better change/add/delete distinction for DiffOps
+  * Extend WikiDiff2 to show changes inside moved paragraphs
+
+  [ Kunal Mehta ]
+  * Simply WIKIDIFF2_VERSION_STRING and bump to 1.5.0
+
+ -- Kunal Mehta <legoktm@member.fsf.org>  Wed, 13 Sep 2017 11:07:42 -0700
+
 php-wikidiff2 (1.4.1) trusty-wikimedia; urgency=medium
 
   * Fix postinst script issue
