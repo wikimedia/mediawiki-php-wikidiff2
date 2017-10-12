@@ -1,3 +1,10 @@
+php-wikidiff2 (1.5.1) jessie-wikimedia; urgency=medium
+
+  [ Johannes Kroll ]
+  * Allow for styling of RTL languages
+
+ -- Kunal Mehta <legoktm@member.fsf.org>  Thu, 12 Oct 2017 12:51:49 -0700
+
 php-wikidiff2 (1.5.0) jessie-wikimedia; urgency=medium
 
   [ Max Semenik ]
