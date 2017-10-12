@@ -39,7 +39,7 @@ void TableDiff::printWordDiff(const String & text1, const String & text2, bool p
 	if (printLeft) {
 		result += "  <td class=\"diff-marker\">";
 		if(dstAnchor != "")
-			result += "<a href=\"#" + dstAnchor + "\">&hookrightarrow;</a>";
+			result += "<a class=\"mw-diff-movedpara-left\" href=\"#" + dstAnchor + "\">&#x26AB;</a>";
 		else
 			result += "−";
 		result += "</td>\n";
@@ -56,7 +56,7 @@ void TableDiff::printWordDiff(const String & text1, const String & text2, bool p
 	if (printRight) {
 		result += "  <td class=\"diff-marker\">";
 		if(dstAnchor != "")
-			result += "<a href=\"#" + dstAnchor + "\">&hookleftarrow;</a>";
+			result += "<a class=\"mw-diff-movedpara-right\" href=\"#" + dstAnchor + "\">&#x26AB;</a>";
 		else
 			result += "+";
 		result += "</td>\n";
