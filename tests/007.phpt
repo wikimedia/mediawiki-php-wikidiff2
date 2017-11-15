@@ -43,7 +43,7 @@ print wikidiff2_do_diff( $x, $y, 2 );
   <td colspan="2" class="diff-lineno"><!--LINE 1--></td>
 </tr>
 <tr>
-  <td class="diff-marker"><a class="mw-diff-movedpara-left" href="#movedpara_6_1_rhs">&#x26AB;</a></td>
+  <td class="diff-marker"><a class="mw-diff-movedpara-left" href="#movedpara_6_1_rhs" data-title-tag="new">&#x26AB;</a></td>
   <td class="diff-deletedline"><div><a name="movedpara_0_0_lhs"></a>Substance, in the truest<del class="diffchange diffchange-inline"> and primary</del> and most definite sense of the word, is that which is neither predicable of a subject nor present in a subject; for instance, the individual man or horse. But in a secondary sense those things are called substances within which, as species, the primary substances are included; also those which, as genera, include the species. For instance, the individual man is included in the species 'man', and the genus to which the species belongs is 'animal'; these, therefore—that is to say, the species 'man' and the genus 'animal,-are termed secondary substances.</div></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
@@ -65,7 +65,7 @@ print wikidiff2_do_diff( $x, $y, 2 );
 </tr>
 <tr>
   <td colspan="2" class="diff-empty">&#160;</td>
-  <td class="diff-marker"><a class="mw-diff-movedpara-right" href="#movedpara_4_1_lhs">&#x26AB;</a></td>
+  <td class="diff-marker"><a class="mw-diff-movedpara-right" href="#movedpara_4_1_lhs" data-title-tag="old">&#x26AB;</a></td>
   <td class="diff-addedline"><div><a name="movedpara_2_1_rhs"></a>Everything except primary substances is either predicable of a primary substance or present in a primary substance. This becomes evident by reference to particular instances which occur. 'Animal' is predicated of the species 'man', therefore of the individual man, for if there were no individual man of whom it could be predicated, it could not be predicated of the species 'man' at all. Again, colour is present in body, therefore in individual bodies, for if there were no individual body in which it was present, it could not be present in body at all. Thus everything except primary substances is either predicated of primary substances, or is present in them, and if these last did not exist, it would be impossible for anything else to exist<ins class="diffchange diffchange-inline">. Never underestimate lawns</ins>.</div></td>
 </tr>
 <tr>
@@ -86,7 +86,7 @@ print wikidiff2_do_diff( $x, $y, 2 );
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
 <tr>
-  <td class="diff-marker"><a class="mw-diff-movedpara-left" href="#movedpara_2_1_rhs">&#x26AB;</a></td>
+  <td class="diff-marker"><a class="mw-diff-movedpara-left" href="#movedpara_2_1_rhs" data-title-tag="new">&#x26AB;</a></td>
   <td class="diff-deletedline"><div><a name="movedpara_4_1_lhs"></a>Everything except primary substances is either predicable of a primary substance or present in a primary substance. This becomes evident by reference to particular instances which occur. 'Animal' is predicated of the species 'man', therefore of the individual man, for if there were no individual man of whom it could be predicated, it could not be predicated of the species 'man' at all. Again, colour is present in body, therefore in individual bodies, for if there were no individual body in which it was present, it could not be present in body at all. Thus everything except primary substances is either predicated of primary substances, or is present in them, and if these last did not exist, it would be impossible for anything else to exist.</div></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
@@ -109,6 +109,6 @@ print wikidiff2_do_diff( $x, $y, 2 );
 </tr>
 <tr>
   <td colspan="2" class="diff-empty">&#160;</td>
-  <td class="diff-marker"><a class="mw-diff-movedpara-right" href="#movedpara_0_0_lhs">&#x26AB;</a></td>
+  <td class="diff-marker"><a class="mw-diff-movedpara-right" href="#movedpara_0_0_lhs" data-title-tag="old">&#x26AB;</a></td>
   <td class="diff-addedline"><div><a name="movedpara_6_1_rhs"></a>Substance, in the truest and most definite sense of the word, is that which is neither predicable of a subject nor present in a subject; for instance, the individual man or horse. But in a secondary sense those things are called substances within which, as species, the primary substances are included; also those which, as genera, include the species. For instance, the individual man is included in the species 'man', and the genus to which the species belongs is 'animal'; these, therefore—that is to say, the species 'man' and the genus 'animal,-are termed secondary substances.</div></td>
 </tr>
