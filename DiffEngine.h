@@ -23,6 +23,11 @@
 #include "Wikidiff2.h"
 #include "Word.h"
 #include "textutil.h"
+#ifdef HHVM_BUILD_DSO
+#include "hphp/runtime/base/ini-setting.h"
+#endif //HHVM_BUILD_DSO
+
+#define WIKIDIFF2_CHANGE_THRESHOLD_DEFAULT	"0.25"
 
 // helper function to calculate similarity of text lines, based on existing diff code.
 // used in DiffEngine and Wikidiff2.
@@ -146,6 +151,7 @@ class DiffEngine
 		int lcs;
 		bool done;
 		enum {MAX_CHUNKS=8};
+		double looksLikeChangeThreshold();
 		void detectDissimilarChanges(PointerVector& del, PointerVector& add, Diff<T>& diff, long long bailoutComplexity);
 		bool looksLikeChange(const T& del, const T& add, long long bailoutComplexity);
 };
@@ -167,6 +173,21 @@ void DiffEngine<T>::clear()
 	done = false;
 }
 
+template<typename T>
+inline double DiffEngine<T>::looksLikeChangeThreshold()
+{
+#ifdef HHVM_BUILD_DSO
+	// HHVM module
+	HPHP::Variant value(WIKIDIFF2_CHANGE_THRESHOLD_DEFAULT);
+	HPHP::IniSetting::Get(std::string("wikidiff2.change_threshold"), value);
+	return value.toDouble();
+#else
+	// Zend module
+	double ret = INI_FLT("wikidiff2.change_threshold");
+	return ret;
+#endif //HHVM_BUILD_DSO
+}
+
 // for a DiffOp::change, decide whether it should be treated as a successive add and delete based on similarity.
 template<typename T>
 inline bool DiffEngine<T>::looksLikeChange(const T& del, const T& add, long long bailoutComplexity)
@@ -174,7 +195,7 @@ inline bool DiffEngine<T>::looksLikeChange(const T& del, const T& add, long long
 	TextUtil::WordVector words1, words2;
 	TextUtil::explodeWords(del, words1);
 	TextUtil::explodeWords(add, words2);
-	return calculateSimilarity(words1, words2, bailoutComplexity) > 0.25;
+	return calculateSimilarity(words1, words2, bailoutComplexity) > looksLikeChangeThreshold();
 }
 
 // go through list of changed lines. if they are too dissimilar, convert to del+add.

@@ -70,6 +70,11 @@ static String HHVM_FUNCTION(wikidiff2_version)
 	return version;
 }
 
+// ini settings settable anywhere (PHP_INI_ALL)
+thread_local struct {
+	double changeThreshold;
+} s_ini;
+
 static class Wikidiff2Extension : public Extension {
 	public:
 		Wikidiff2Extension() : Extension("wikidiff2", WIKIDIFF2_VERSION_STRING) {}
@@ -78,6 +83,9 @@ static class Wikidiff2Extension : public Extension {
 			HHVM_FE(wikidiff2_inline_diff);
 			HHVM_FE(wikidiff2_version);
 			loadSystemlib();
+		}
+		void threadInit() override {
+			IniSetting::Bind(this, IniSetting::PHP_INI_ALL, "wikidiff2.change_threshold", WIKIDIFF2_CHANGE_THRESHOLD_DEFAULT, &s_ini.changeThreshold);
 		}
 } s_wikidiff2_extension;
 

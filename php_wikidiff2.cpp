@@ -45,17 +45,25 @@ zend_module_entry wikidiff2_module_entry = {
 	STANDARD_MODULE_PROPERTIES
 };
 
+/* {{{ INI Settings */
+PHP_INI_BEGIN()
+	PHP_INI_ENTRY("wikidiff2.change_threshold",  WIKIDIFF2_CHANGE_THRESHOLD_DEFAULT, PHP_INI_ALL, NULL)
+PHP_INI_END()
+/* }}} */
+
 #ifdef COMPILE_DL_WIKIDIFF2
 ZEND_GET_MODULE(wikidiff2)
 #endif
 
 PHP_MINIT_FUNCTION(wikidiff2)
 {
+	REGISTER_INI_ENTRIES();
 	return SUCCESS;
 }
 
 PHP_MSHUTDOWN_FUNCTION(wikidiff2)
 {
+	UNREGISTER_INI_ENTRIES();
 	return SUCCESS;
 }
 
@@ -73,8 +81,8 @@ PHP_MINFO_FUNCTION(wikidiff2)
 {
 	php_info_print_table_start();
 	php_info_print_table_header(2, "wikidiff2 support", "enabled");
+	php_info_print_table_row(2, "wikidiff2 version", WIKIDIFF2_VERSION_STRING);
 	php_info_print_table_end();
-
 }
 
 /* {{{ proto string wikidiff2_do_diff(string text1, string text2, int numContextLines, int maxMovedLines = 25)

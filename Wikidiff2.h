@@ -16,7 +16,7 @@
 #include <set>
 #include <memory>
 
-#define WIKIDIFF2_VERSION_STRING	"1.5.3"
+#define WIKIDIFF2_VERSION_STRING		"1.5.4"
 
 class Wikidiff2 {
 	public:
