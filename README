@@ -48,6 +48,21 @@ $ cmake .
 $ make
 $ sudo make install
 
+== LocalSettings configuration ==
 
+ini_set("wikidiff2.moved_line_threshold", <float>);
+
+Wikidiff2 estimates similarity of added and deleted lines based on changed character count. When the similarity of an added and deleted line is greater than this threshold, the lines are displayed as moved. 
+Range 0.0 .. 1.0. Default 0.4.
+
+ini_set("wikidiff2.change_threshold", <float>);
+
+Changed lines with a similarity value below this threshold will be split into a deleted line and added line. This helps matching up moved lines in some cases.
+Range 0.0 .. 1.0. Default 0.2.
+
+$wgWikiDiff2MovedParagraphDetectionCutoff = <int>;
+
+When the number of added and deleted lines in a diff is greater than this limit, no attempt to detect moved lines will be made.
+Default 30.
 
 vim: wrap

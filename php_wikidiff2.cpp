@@ -48,6 +48,7 @@ zend_module_entry wikidiff2_module_entry = {
 /* {{{ INI Settings */
 PHP_INI_BEGIN()
 	PHP_INI_ENTRY("wikidiff2.change_threshold",  WIKIDIFF2_CHANGE_THRESHOLD_DEFAULT, PHP_INI_ALL, NULL)
+	PHP_INI_ENTRY("wikidiff2.moved_line_threshold",  WIKIDIFF2_MOVED_LINE_THRESHOLD_DEFAULT, PHP_INI_ALL, NULL)
 PHP_INI_END()
 /* }}} */
 

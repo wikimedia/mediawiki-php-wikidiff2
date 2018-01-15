@@ -73,6 +73,7 @@ static String HHVM_FUNCTION(wikidiff2_version)
 // ini settings settable anywhere (PHP_INI_ALL)
 thread_local struct {
 	double changeThreshold;
+	double movedLineThreshold;
 } s_ini;
 
 static class Wikidiff2Extension : public Extension {
@@ -86,6 +87,7 @@ static class Wikidiff2Extension : public Extension {
 		}
 		void threadInit() override {
 			IniSetting::Bind(this, IniSetting::PHP_INI_ALL, "wikidiff2.change_threshold", WIKIDIFF2_CHANGE_THRESHOLD_DEFAULT, &s_ini.changeThreshold);
+			IniSetting::Bind(this, IniSetting::PHP_INI_ALL, "wikidiff2.moved_line_threshold", WIKIDIFF2_MOVED_LINE_THRESHOLD_DEFAULT, &s_ini.movedLineThreshold);
 		}
 } s_wikidiff2_extension;
 

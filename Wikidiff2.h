@@ -16,7 +16,7 @@
 #include <set>
 #include <memory>
 
-#define WIKIDIFF2_VERSION_STRING		"1.5.4"
+#define WIKIDIFF2_VERSION_STRING		"1.6.0"
 
 class Wikidiff2 {
 	public:
@@ -39,8 +39,7 @@ class Wikidiff2 {
 
 		struct DiffMapEntry
 		{
-			double similarity;
-			int opCharCount[4] = { 0 };
+			WordDiffStats ds;
 			int opIndexFrom, opLineFrom, opIndexTo, opLineTo;
 			bool lhsDisplayed = false, rhsDisplayed = false;
 
@@ -79,9 +78,9 @@ inline const Wikidiff2::String & Wikidiff2::getResult() const
 }
 
 inline Wikidiff2::DiffMapEntry::DiffMapEntry(Wikidiff2::WordVector& words1, Wikidiff2::WordVector& words2, int opIndexFrom_, int opLineFrom_, int opIndexTo_, int opLineTo_):
+	ds(words1, words2, MAX_WORD_LEVEL_DIFF_COMPLEXITY),
 	opIndexFrom(opIndexFrom_), opLineFrom(opLineFrom_), opIndexTo(opIndexTo_), opLineTo(opLineTo_)
 {
-	similarity = calculateSimilarity(words1, words2, MAX_WORD_LEVEL_DIFF_COMPLEXITY, opCharCount);
 }
 
 inline bool Wikidiff2::AllowPrintMovedLineDiff::operator () (StringDiff & linediff, int maxMovedLines)

@@ -44,11 +44,7 @@ print wikidiff2_do_diff( $x, $y, 2 );
 </tr>
 <tr>
   <td class="diff-marker">−</td>
-  <td class="diff-deletedline"><div>AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA</div></td>
-  <td colspan="2" class="diff-empty">&#160;</td>
-</tr>
-<tr>
-  <td colspan="2" class="diff-empty">&#160;</td>
+  <td class="diff-deletedline"><div>AAAAA <del class="diffchange diffchange-inline">AAAAA</del> <del class="diffchange diffchange-inline">AAAAA</del> <del class="diffchange diffchange-inline">AAAAA</del> <del class="diffchange diffchange-inline">AAAAA</del> <del class="diffchange diffchange-inline">AAAAA</del> <del class="diffchange diffchange-inline">AAAAA</del> <del class="diffchange diffchange-inline">AAAAA</del> <del class="diffchange diffchange-inline">AAAAA</del> <del class="diffchange diffchange-inline">AAAAA</del></div></td>
   <td class="diff-marker">+</td>
-  <td class="diff-addedline"><div>AAAAA BBBBB BBBBB BBBBB BBBBB BBBBB BBBBB BBBBB BBBBB BBBBB</div></td>
+  <td class="diff-addedline"><div>AAAAA <ins class="diffchange diffchange-inline">BBBBB</ins> <ins class="diffchange diffchange-inline">BBBBB</ins> <ins class="diffchange diffchange-inline">BBBBB</ins> <ins class="diffchange diffchange-inline">BBBBB</ins> <ins class="diffchange diffchange-inline">BBBBB</ins> <ins class="diffchange diffchange-inline">BBBBB</ins> <ins class="diffchange diffchange-inline">BBBBB</ins> <ins class="diffchange diffchange-inline">BBBBB</ins> <ins class="diffchange diffchange-inline">BBBBB</ins></div></td>
 </tr>

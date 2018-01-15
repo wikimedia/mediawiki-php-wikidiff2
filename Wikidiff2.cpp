@@ -8,11 +8,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
-//#define DIFFENGINE__EVERY_CHANGE_IS_AN_ADD_AND_DELETE
 #include "Wikidiff2.h"
 
 
-//#define DEBUG_MOVED_LINES
 
 void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & lines2,
 		int numContextLines, int maxMovedLines)
@@ -82,15 +80,6 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 				}
 				from_index += n;
 				to_index += n;
-				if (n1 > n2) {
-					for (j=n2; j<n1; j++) {
-						printDelete(*linediff[i].from[j]);
-					}
-				} else {
-					for (j=n1; j<n2; j++) {
-						printAdd(*linediff[i].to[j]);
-					}
-				}
 				break;
 		}
 		// Not first line anymore, don't show line number by default
@@ -109,6 +98,16 @@ bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLin
 		char ch[2048];
 		snprintf(ch, sizeof(ch), "movedpara_%d_%d_%s", index, line, lhs? "lhs": "rhs");
 		return String(ch);
+	};
+
+	// check whether this paragraph immediately follows the other.
+	// if so, they will be matched up next to each other and displayed as a change, not a move.
+	auto isNext = [] (int opIndex, int opLine, int otherIndex, int otherLine) {
+		if(otherIndex==opIndex && otherLine==opLine+1)
+			return true;
+		if(otherIndex==opIndex+1 && otherLine==0)
+			return true;
+		return false;
 	};
 
 #ifdef DEBUG_MOVED_LINES
@@ -168,9 +167,14 @@ bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLin
 		if(!cmpDiffMapEntries(otherIndex, otherLine))
 			return false;
 
-		// XXXX todo: we already have the diff, don't have to do it again, just have to print it
-		printWordDiff(*linediff[best->opIndexFrom].from[best->opLineFrom], *linediff[best->opIndexTo].to[best->opLineTo],
-			printLeft, printRight, makeAnchorName(opIndex, opLine, printLeft), makeAnchorName(otherIndex, otherLine, !printLeft));
+		if(isNext(otherIndex, otherLine, opIndex, opLine)) {
+			debugPrintf("this one was already shown as a change, not displaying again...");
+			return true;
+		} else {
+			// XXXX todo: we already have the diff, don't have to do it again, just have to print it
+			printWordDiff(*linediff[best->opIndexFrom].from[best->opLineFrom], *linediff[best->opIndexTo].to[best->opLineTo],
+				printLeft, printRight, makeAnchorName(opIndex, opLine, printLeft), makeAnchorName(otherIndex, otherLine, !printLeft));
+		}
 
 		if(printLeft)
 			best->lhsDisplayed = true;
@@ -179,7 +183,7 @@ bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLin
 
 		debugPrintf("found in diffmap. copy: %d, del: %d, add: %d, change: %d, similarity: %.4f\n"
 					"from: (%d,%d) to: (%d,%d)\n",
-			best->opCharCount[DiffOp<Word>::copy], best->opCharCount[DiffOp<Word>::del], best->opCharCount[DiffOp<Word>::add], best->opCharCount[DiffOp<Word>::change], best->similarity,
+			best->ds.opCharCount[DiffOp<Word>::copy], best->ds.opCharCount[DiffOp<Word>::del], best->ds.opCharCount[DiffOp<Word>::add], best->ds.opCharCount[DiffOp<Word>::change], best->ds.charSimilarity,
 			best->opIndexFrom, best->opLineFrom, best->opIndexTo, best->opLineTo);
 
 		return true;
@@ -205,7 +209,7 @@ bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLin
 					TextUtil::explodeWords(*linediff[opIndex].from[opLine], words2);
 					tmp = std::make_shared<DiffMapEntry>(words1, words2, opIndex, opLine, i, k);
 				}
-				if (!found || tmp->similarity > found->similarity) {
+				if (!found || tmp->ds.charSimilarity > found->ds.charSimilarity) {
 					found= tmp;
 				}
 			}
@@ -213,12 +217,12 @@ bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLin
 	}
 
 	if(found)
-		debugPrintf("candidate found with similarity %.2f", found->similarity);
+		debugPrintf("candidate found with similarity %.2f", found->ds.charSimilarity);
 
 	// if candidate exists:
 	//     add candidate to moved-line-map twice, for add/del case
 	//     print diff to the moved line, omitting the left/right side for added/deleted line
-	if (found && found->similarity > 0.4) {
+	if (found && found->ds.charSimilarity > movedLineThreshold()) {
 		// if we displayed a diff to the found block before, don't display this one as moved.
 		int otherIndex = linediff[opIndex].op == DiffOp<String>::add ? found->opIndexFrom : found->opIndexTo;
 		int otherLine = linediff[opIndex].op == DiffOp<String>::add ? found->opLineFrom : found->opLineTo;
@@ -235,13 +239,20 @@ bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLin
 		diffMap[makeKey(otherIndex, otherLine)] = found;
 		debugPrintf("inserting (%d,%d) + (%d,%d)", opIndex, opLine, otherIndex, otherLine);
 
-		// XXXX todo: we already have the diff, don't have to do it again, just have to print it
-		printWordDiff(*linediff[found->opIndexFrom].from[found->opLineFrom], *linediff[found->opIndexTo].to[found->opLineTo],
-			printLeft, printRight, makeAnchorName(opIndex, opLine, printLeft), makeAnchorName(otherIndex, otherLine, !printLeft));
+		if(isNext(opIndex, opLine, otherIndex, otherLine)) {
+			debugPrintf("This one immediately follows, displaying as change...");
+			printWordDiff(*linediff[found->opIndexFrom].from[found->opLineFrom], *linediff[found->opIndexTo].to[found->opLineTo]);
+			found->lhsDisplayed = true;
+		}
+		else {
+			// XXXX todo: we already have the diff, don't have to do it again, just have to print it
+			printWordDiff(*linediff[found->opIndexFrom].from[found->opLineFrom], *linediff[found->opIndexTo].to[found->opLineTo],
+				printLeft, printRight, makeAnchorName(opIndex, opLine, printLeft), makeAnchorName(otherIndex, otherLine, !printLeft));
+		}
 
 		debugPrintf("copy: %d, del: %d, add: %d, change: %d, similarity: %.4f\n"
 					"from: (%d,%d) to: (%d,%d)\n",
-			found->opCharCount[DiffOp<Word>::copy], found->opCharCount[DiffOp<Word>::del], found->opCharCount[DiffOp<Word>::add], found->opCharCount[DiffOp<Word>::change], found->similarity,
+			found->ds.opCharCount[DiffOp<Word>::copy], found->ds.opCharCount[DiffOp<Word>::del], found->ds.opCharCount[DiffOp<Word>::add], found->ds.opCharCount[DiffOp<Word>::change], found->ds.charSimilarity,
 			found->opIndexFrom, found->opLineFrom, found->opIndexTo, found->opLineTo);
 
 		return true;

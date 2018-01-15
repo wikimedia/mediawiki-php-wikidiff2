@@ -27,11 +27,36 @@
 #include "hphp/runtime/base/ini-setting.h"
 #endif //HHVM_BUILD_DSO
 
-#define WIKIDIFF2_CHANGE_THRESHOLD_DEFAULT	"0.25"
+#define WIKIDIFF2_CHANGE_THRESHOLD_DEFAULT		"0.2"
+#define WIKIDIFF2_MOVED_LINE_THRESHOLD_DEFAULT	"0.4"
 
-// helper function to calculate similarity of text lines, based on existing diff code.
-// used in DiffEngine and Wikidiff2.
-double calculateSimilarity(TextUtil::WordVector& words1, TextUtil::WordVector& words2, long long bailoutComplexity, int *opCountPtr = nullptr);
+
+#ifdef DEBUG_MOVED_LINES
+inline void debugLog(const char *fmt, ...) {
+	static FILE *f = nullptr;
+	char ch[2048];
+	va_list ap;
+	va_start(ap, fmt);
+	vsnprintf(ch, sizeof(ch), fmt, ap);
+	va_end(ap);
+	if(!f) f = fopen("/tmp/wd2-debug-log.log", "a");
+	if(!f) throw std::runtime_error("failed to open debug log...");
+	fwrite(ch, 1, strlen(ch), f);
+	fflush(f);
+};
+#else
+#define debugLog(...)
+#endif
+
+
+struct WordDiffStats
+{
+	int charsTotal = 0;
+	int opCharCount[4] = { 0 };
+	double charSimilarity;
+
+	WordDiffStats(TextUtil::WordVector& words1, TextUtil::WordVector& words2, long long bailoutComplexity);
+};
 
 /**
  * Diff operation
@@ -151,9 +176,9 @@ class DiffEngine
 		int lcs;
 		bool done;
 		enum {MAX_CHUNKS=8};
-		double looksLikeChangeThreshold();
 		void detectDissimilarChanges(PointerVector& del, PointerVector& add, Diff<T>& diff, long long bailoutComplexity);
 		bool looksLikeChange(const T& del, const T& add, long long bailoutComplexity);
+		void writeChange(Diff<T>& diff, PointerVector& del, PointerVector& add, const PointerVector& empty);
 };
 
 //-----------------------------------------------------------------------------
@@ -173,8 +198,7 @@ void DiffEngine<T>::clear()
 	done = false;
 }
 
-template<typename T>
-inline double DiffEngine<T>::looksLikeChangeThreshold()
+inline double characterSimilarityThreshold()
 {
 #ifdef HHVM_BUILD_DSO
 	// HHVM module
@@ -188,6 +212,20 @@ inline double DiffEngine<T>::looksLikeChangeThreshold()
 #endif //HHVM_BUILD_DSO
 }
 
+inline double movedLineThreshold()
+{
+#ifdef HHVM_BUILD_DSO
+	// HHVM module
+	HPHP::Variant value(WIKIDIFF2_MOVED_LINE_THRESHOLD_DEFAULT);
+	HPHP::IniSetting::Get(std::string("wikidiff2.moved_line_threshold"), value);
+	return value.toDouble();
+#else
+	// Zend module
+	double ret = INI_FLT("wikidiff2.moved_line_threshold");
+	return ret;
+#endif //HHVM_BUILD_DSO
+}
+
 // for a DiffOp::change, decide whether it should be treated as a successive add and delete based on similarity.
 template<typename T>
 inline bool DiffEngine<T>::looksLikeChange(const T& del, const T& add, long long bailoutComplexity)
@@ -195,7 +233,8 @@ inline bool DiffEngine<T>::looksLikeChange(const T& del, const T& add, long long
 	TextUtil::WordVector words1, words2;
 	TextUtil::explodeWords(del, words1);
 	TextUtil::explodeWords(add, words2);
-	return calculateSimilarity(words1, words2, bailoutComplexity) > looksLikeChangeThreshold();
+	WordDiffStats ds(words1, words2, bailoutComplexity);
+	return ds.charSimilarity > characterSimilarityThreshold();
 }
 
 // go through list of changed lines. if they are too dissimilar, convert to del+add.
@@ -204,16 +243,32 @@ inline void DiffEngine<T>::detectDissimilarChanges(PointerVector& del, PointerVe
 {
 	int i;
 	static PointerVector empty;
-	for (i = 0; i<del.size() && i<add.size() && !looksLikeChange(*del[i], *add[i], bailoutComplexity); ++i) {
-		PointerVector d, a;
-		d.push_back(del[i]);
-		a.push_back(add[i]);
-		diff.add_edit(DiffOp<T>(DiffOp<T>::del, d, empty));
-		diff.add_edit(DiffOp<T>(DiffOp<T>::add, empty, a));
-	}
-	if (i) {
-		add.erase(add.begin(), add.begin()+i);
-		del.erase(del.begin(), del.begin()+i);
+	int lastChange = 0;
+	for (i = 0; i < del.size() && i < add.size(); ++i) {
+		if (!looksLikeChange(*del[i], *add[i], bailoutComplexity)) {
+			if(i > lastChange) {
+				// add the changed segment
+				PointerVector d, a;
+				int changeBegin = lastChange;
+				for(; lastChange < i; ++lastChange) {
+					d.push_back(del[lastChange]);
+					a.push_back(add[lastChange]);
+				}
+				diff.add_edit(DiffOp<T>(DiffOp<T>::change, d, a));
+				add.erase(add.begin() + changeBegin, add.begin() + i);
+				del.erase(del.begin() + changeBegin, del.begin() + i);
+				i -= (lastChange - changeBegin);
+			}
+			// convert dissimilar piece to delete + add
+			PointerVector d, a;
+			d.push_back(del[i]);
+			a.push_back(add[i]);
+			diff.add_edit(DiffOp<T>(DiffOp<T>::add, empty, a));
+			diff.add_edit(DiffOp<T>(DiffOp<T>::del, d, empty));
+			add.erase(add.begin() + i);
+			del.erase(del.begin() + i);
+			--i;
+		}
 	}
 }
 
@@ -334,17 +389,9 @@ void DiffEngine<T>::diff (const ValueVector & from_lines,
 
 		detectDissimilarChanges(del, add, diff, bailoutComplexity);
 
-		if (del.size() && add.size())
-#ifdef DIFFENGINE__EVERY_CHANGE_IS_AN_ADD_AND_DELETE
-		// for generating a worst-case benchmark of the "show moved paragraphs" patch (gerrit change 319866)
-		{
-			diff.add_edit(DiffOp<T>(DiffOp<T>::del, del, empty));
-			diff.add_edit(DiffOp<T>(DiffOp<T>::add, empty, add));
-		}
-#else
-			diff.add_edit(DiffOp<T>(DiffOp<T>::change, del, add));
-#endif
-		else if (del.size())
+		if (del.size() && add.size()) {
+			writeChange(diff, del, add, empty);
+		} else if (del.size())
 			diff.add_edit(DiffOp<T>(DiffOp<T>::del, del, empty));
 		else if (add.size())
 			diff.add_edit(DiffOp<T>(DiffOp<T>::add, empty, add));
@@ -352,6 +399,33 @@ void DiffEngine<T>::diff (const ValueVector & from_lines,
 
 	done = true;
 }
+
+template<class T>
+inline void DiffEngine<T>::writeChange(Diff<T>& diff, PointerVector& del, PointerVector& add, const PointerVector& empty)
+{
+	if ( del.size() == add.size() ) {
+		diff.add_edit(DiffOp<T>(DiffOp<T>::change, del, add));
+	} else {
+		// this is a change containing added and deleted lines; convert them to the right DiffOps so the
+		// moved paragraph detection code gets a chance to see them
+		size_t commonSize = std::min(del.size(), add.size());
+		PointerVector changeDel(del.begin(), del.begin() + commonSize);
+		PointerVector changeAdd(add.begin(), add.begin() + commonSize);
+		diff.add_edit(DiffOp<T>(DiffOp<T>::change, changeDel, changeAdd));
+		if (del.size() > commonSize)
+			diff.add_edit(DiffOp<T>(DiffOp<T>::del, PointerVector(del.begin() + commonSize, del.end()), empty));
+		if (add.size() > commonSize)
+			diff.add_edit(DiffOp<T>(DiffOp<T>::add, empty, PointerVector(add.begin() + commonSize, add.end())));
+	}
+}
+
+template<>
+inline void DiffEngine<Word>::writeChange(Diff<Word>& diff, PointerVector& del, PointerVector& add, const PointerVector& empty)
+{
+	diff.add_edit(DiffOp<Word>(DiffOp<Word>::change, del, add));
+}
+
+
 
 /* Divide the Largest Common Subsequence (LCS) of the sequences
  * [XOFF, XLIM) and [YOFF, YLIM) into NCHUNKS approximately equally
@@ -677,22 +751,19 @@ Diff<T>::Diff(const ValueVector & from_lines, const ValueVector & to_lines,
 	engine.diff(from_lines, to_lines, *this, bailoutComplexity);
 }
 
-inline double calculateSimilarity(TextUtil::WordVector& words1, TextUtil::WordVector& words2, long long bailoutComplexity, int *opCountPtr /* = nullptr*/)
+inline WordDiffStats::WordDiffStats(TextUtil::WordVector& words1, TextUtil::WordVector& words2, long long bailoutComplexity)
 {
-	typedef Diff<Word> WordDiff;
-	WordDiff diff(words1, words2, bailoutComplexity);
-	int charsTotal = 0;
-	int opCharCount[4] = { 0 };
-	double similarity;
 	auto countOpChars = [] (DiffEngine<Word>::PointerVector& p) {
 		return std::accumulate(p.begin(), p.end(), 0, [] (int a, const Word *b) {
 			return a + (b->suffixEnd - b->bodyStart);
 		});
 	};
+
+	Diff<Word> diff(words1, words2, bailoutComplexity);
 	for (int i = 0; i < diff.size(); ++i) {
 		int op = diff[i].op;
 		int charCount;
-		switch (diff[i].op) {
+		switch (op) {
 			case DiffOp<Word>::del:
 			case DiffOp<Word>::copy:
 				charCount = countOpChars(diff[i].from);
@@ -708,22 +779,15 @@ inline double calculateSimilarity(TextUtil::WordVector& words1, TextUtil::WordVe
 		charsTotal += charCount;
 	}
 	if (opCharCount[DiffOp<Word>::copy] == 0) {
-		similarity = 0.0;
+		charSimilarity = 0.0;
 	} else {
 		if (charsTotal) {
-			similarity = double(opCharCount[DiffOp<Word>::copy]) / charsTotal;
+			charSimilarity = double(opCharCount[DiffOp<Word>::copy]) / charsTotal;
 		} else {
-			similarity = 0.0;
+			charSimilarity = 0.0;
 		}
 	}
-
-	if (opCountPtr) {
-		for(int i = 0; i < sizeof(opCharCount)/sizeof(opCharCount[0]); ++i) {
-			opCountPtr[i] = opCharCount[i];
-		}
-	}
-
-	return similarity;
 }
+
 
 #endif
