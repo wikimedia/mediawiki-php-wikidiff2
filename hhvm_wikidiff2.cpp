@@ -45,15 +45,14 @@ static String HHVM_FUNCTION(wikidiff2_do_diff,
 static String HHVM_FUNCTION(wikidiff2_inline_diff,
 	const String& text1,
 	const String& text2,
-	int64_t numContextLines,
-	int64_t maxMovedLines)
+	int64_t numContextLines)
 {
     String result;
 	try {
 		InlineDiff wikidiff2;
 		Wikidiff2::String text1String(text1.c_str());
 		Wikidiff2::String text2String(text2.c_str());
-		result = wikidiff2.execute(text1String, text2String, numContextLines, 0 /*inlinediff todo*/);
+		result = wikidiff2.execute(text1String, text2String, numContextLines, movedParagraphDetectionCutoff());
 	} catch (OutOfMemoryException &e) {
 		raise_error("Out of memory in wikidiff2_do_diff().");
 	} catch (...) {
@@ -74,6 +73,7 @@ static String HHVM_FUNCTION(wikidiff2_version)
 thread_local struct {
 	double changeThreshold;
 	double movedLineThreshold;
+	int movedParagraphDetectionCutoff;
 } s_ini;
 
 static class Wikidiff2Extension : public Extension {
@@ -88,6 +88,7 @@ static class Wikidiff2Extension : public Extension {
 		void threadInit() override {
 			IniSetting::Bind(this, IniSetting::PHP_INI_ALL, "wikidiff2.change_threshold", WIKIDIFF2_CHANGE_THRESHOLD_DEFAULT, &s_ini.changeThreshold);
 			IniSetting::Bind(this, IniSetting::PHP_INI_ALL, "wikidiff2.moved_line_threshold", WIKIDIFF2_MOVED_LINE_THRESHOLD_DEFAULT, &s_ini.movedLineThreshold);
+			IniSetting::Bind(this, IniSetting::PHP_INI_ALL, "wikidiff2.moved_paragraph_detection_cutoff_mobile", WIKIDIFF2_MOVED_PARAGRAPH_DETECTION_CUTOFF_MOBILE, &s_ini.movedParagraphDetectionCutoff);
 		}
 } s_wikidiff2_extension;
 

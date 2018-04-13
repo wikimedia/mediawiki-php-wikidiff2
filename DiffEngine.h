@@ -27,9 +27,12 @@
 #include "hphp/runtime/base/ini-setting.h"
 #endif //HHVM_BUILD_DSO
 
+// Default value for INI setting wikidiff2.change_threshold
 #define WIKIDIFF2_CHANGE_THRESHOLD_DEFAULT		"0.2"
+// Default value for INI setting wikidiff2.moved_line_threshold
 #define WIKIDIFF2_MOVED_LINE_THRESHOLD_DEFAULT	"0.4"
-
+// Default value for INI setting wikidiff2.moved_paragraph_detection_cutoff_mobile
+#define WIKIDIFF2_MOVED_PARAGRAPH_DETECTION_CUTOFF_MOBILE "30"
 
 #ifdef DEBUG_MOVED_LINES
 inline void debugLog(const char *fmt, ...) {
@@ -222,6 +225,20 @@ inline double movedLineThreshold()
 #else
 	// Zend module
 	double ret = INI_FLT("wikidiff2.moved_line_threshold");
+	return ret;
+#endif //HHVM_BUILD_DSO
+}
+
+inline int movedParagraphDetectionCutoff()
+{
+#ifdef HHVM_BUILD_DSO
+	// HHVM module
+	HPHP::Variant value(WIKIDIFF2_MOVED_PARAGRAPH_DETECTION_CUTOFF_MOBILE);
+	HPHP::IniSetting::Get(std::string("wikidiff2.moved_paragraph_detection_cutoff_mobile"), value);
+	return value.toInt32();
+#else
+	// Zend module
+	int ret = INI_INT("wikidiff2.moved_paragraph_detection_cutoff_mobile");
 	return ret;
 #endif //HHVM_BUILD_DSO
 }

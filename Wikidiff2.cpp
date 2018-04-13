@@ -110,6 +110,11 @@ bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLin
 		return false;
 	};
 
+	// compare positions of moved lines, return true if moved downwards
+	auto movedir = [] (int opIndex, int opLine, int otherIndex, int otherLine) {
+		return (otherIndex > opIndex) || (otherIndex == opIndex && otherLine > opLine);
+	};
+
 #ifdef DEBUG_MOVED_LINES
 	auto debugPrintf = [this](const char *fmt, ...) {
 		char ch[2048];
@@ -173,7 +178,7 @@ bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLin
 		} else {
 			// XXXX todo: we already have the diff, don't have to do it again, just have to print it
 			printWordDiff(*linediff[best->opIndexFrom].from[best->opLineFrom], *linediff[best->opIndexTo].to[best->opLineTo],
-				printLeft, printRight, makeAnchorName(opIndex, opLine, printLeft), makeAnchorName(otherIndex, otherLine, !printLeft));
+				printLeft, printRight, makeAnchorName(opIndex, opLine, printLeft), makeAnchorName(otherIndex, otherLine, !printLeft), movedir(opIndex,opLine, otherIndex,otherLine));
 		}
 
 		if(printLeft)
@@ -247,7 +252,7 @@ bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLin
 		else {
 			// XXXX todo: we already have the diff, don't have to do it again, just have to print it
 			printWordDiff(*linediff[found->opIndexFrom].from[found->opLineFrom], *linediff[found->opIndexTo].to[found->opLineTo],
-				printLeft, printRight, makeAnchorName(opIndex, opLine, printLeft), makeAnchorName(otherIndex, otherLine, !printLeft));
+				printLeft, printRight, makeAnchorName(opIndex, opLine, printLeft), makeAnchorName(otherIndex, otherLine, !printLeft), movedir(opIndex,opLine, otherIndex,otherLine));
 		}
 
 		debugPrintf("copy: %d, del: %d, add: %d, change: %d, similarity: %.4f\n"

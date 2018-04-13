@@ -10,7 +10,7 @@ void InlineDiff::printDelete(const String& line)
 	printWrappedLine("<div class=\"mw-diff-inline-deleted\"><del>", line, "</del></div>\n");
 }
 
-void InlineDiff::printWordDiff(const String& text1, const String& text2, bool printLeft, bool printRight, const String & srcAnchor, const String & dstAnchor)
+void InlineDiff::printWordDiff(const String& text1, const String& text2, bool printLeft, bool printRight, const String & srcAnchor, const String & dstAnchor, bool moveDirectionDownwards)
 {
 	WordVector words1, words2;
 
@@ -19,9 +19,24 @@ void InlineDiff::printWordDiff(const String& text1, const String& text2, bool pr
 	WordDiff worddiff(words1, words2, MAX_WORD_LEVEL_DIFF_COMPLEXITY);
 	String word;
 
-	// XXXX todo: omit left side & do strike-through according to printLeft/printRight
+	bool moved = printLeft != printRight,
+		 isMoveSrc = moved && printLeft,
+		 isMoveDest = moved && printRight;
 
-	result += "<div class=\"mw-diff-inline-changed\">";
+	if (moved) {
+		result += String("<div class=\"mw-diff-inline-moved mw-diff-inline-moved-") +
+			(printLeft ? "source" : "destination") + " mw-diff-inline-moved-" +
+			(moveDirectionDownwards ? "downwards" : "upwards") + "\">";
+		result += "<a name=\"" + srcAnchor + "\"></a>";
+		if (!moveDirectionDownwards) {
+			result += "<a class=\"mw-diff-movedpara-" +
+				String(printLeft ? "left" : "right") + " data-title-tag=\"" +
+				(printRight ? "new" : "old") + "\" href=\"#" + dstAnchor + "\">" + "&#9650;" + "</a>";
+		}
+	} else {
+		result += "<div class=\"mw-diff-inline-changed\">";
+	}
+
 	for (unsigned i = 0; i < worddiff.size(); ++i) {
 		DiffOp<Word> & op = worddiff[i];
 		int n, j;
@@ -33,13 +48,17 @@ void InlineDiff::printWordDiff(const String& text1, const String& text2, bool pr
 			}
 		} else if (op.op == DiffOp<Word>::del) {
 			n = op.from.size();
-			result += "<del>";
+			if (!isMoveSrc)
+				result += "<del>";
 			for (j=0; j<n; j++) {
 				op.from[j]->get_whole(word);
 				printText(word);
 			}
-			result += "</del>";
+			if (!isMoveSrc)
+				result += "</del>";
 		} else if (op.op == DiffOp<Word>::add) {
+			if (isMoveSrc)
+				continue;
 			n = op.to.size();
 			result += "<ins>";
 			for (j=0; j<n; j++) {
@@ -49,11 +68,14 @@ void InlineDiff::printWordDiff(const String& text1, const String& text2, bool pr
 			result += "</ins>";
 		} else if (op.op == DiffOp<Word>::change) {
 			n = op.from.size();
-			result += "<del>";
+			if (!isMoveSrc)
+				result += "<del>";
 			for (j=0; j<n; j++) {
 				op.from[j]->get_whole(word);
 				printText(word);
 			}
+			if (isMoveSrc)
+				continue;
 			result += "</del>";
 			n = op.to.size();
 			result += "<ins>";
@@ -63,6 +85,11 @@ void InlineDiff::printWordDiff(const String& text1, const String& text2, bool pr
 			}
 			result += "</ins>";
 		}
+	}
+	if (moved && moveDirectionDownwards) {
+		result += "<a class=\"mw-diff-movedpara-" +
+			String(printLeft ? "left" : "right") + " data-title-tag=\"" +
+			(printRight ? "new" : "old") + "\" href=\"#" + dstAnchor + "\">" + "&#9660;" + "</a>";
 	}
 	result += "</div>\n";
 }

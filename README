@@ -62,7 +62,14 @@ Range 0.0 .. 1.0. Default 0.2.
 
 $wgWikiDiff2MovedParagraphDetectionCutoff = <int>;
 
-When the number of added and deleted lines in a diff is greater than this limit, no attempt to detect moved lines will be made.
+When the number of added and deleted lines in a table diff is greater than this limit, no attempt to detect moved lines will be made.
+Default 30.
+
+ini_set("wikidiff2.moved_paragraph_detection_cutoff_mobile", <int>);
+
+When the number of added and deleted lines in a diff is greater than this limit, no attempt to detect moved lines will be made in the mobile/inline diff.
+Corresponds to $wgWikiDiff2MovedParagraphDetectionCutoff for table/desktop diff.
+We intend to merge $wgWikiDiff2MovedParagraphDetectionCutoff and wikidiff2.moved_paragraph_detection_cutoff_mobile into one setting after testing on Beta is finished.
 Default 30.
 
 vim: wrap

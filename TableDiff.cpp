@@ -23,7 +23,7 @@ void TableDiff::printDelete(const String & line)
 		"</tr>\n";
 }
 
-void TableDiff::printWordDiff(const String & text1, const String & text2, bool printLeft, bool printRight, const String & srcAnchor, const String & dstAnchor)
+void TableDiff::printWordDiff(const String & text1, const String & text2, bool printLeft, bool printRight, const String & srcAnchor, const String & dstAnchor, bool moveDirectionDownwards)
 {
 	WordVector words1, words2;
 
