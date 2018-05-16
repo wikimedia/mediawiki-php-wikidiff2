@@ -97,7 +97,7 @@ class Diff
 {
 	public:
 		typedef std::vector<T, WD2_ALLOCATOR<T> > ValueVector;
-		typedef std::vector<DiffOp<T>, WD2_ALLOCATOR<T> > DiffOpVector;
+		typedef std::vector<DiffOp<T>, WD2_ALLOCATOR<DiffOp<T>> > DiffOpVector;
 
 		Diff(const ValueVector & from_lines, const ValueVector & to_lines,
 			long long bailoutComplexity = 0);
@@ -147,7 +147,7 @@ class DiffEngine
 #ifdef USE_JUDY
 		typedef JudyHS<IntVector> MatchesMap;
 #else
-		typedef std::map<T, IntVector, std::less<T>, WD2_ALLOCATOR<IntVector> > MatchesMap;
+		typedef std::map<T, IntVector, std::less<T>, WD2_ALLOCATOR<std::pair<const T, IntVector>>> MatchesMap;
 #endif
 
 		// Sets
