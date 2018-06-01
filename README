@@ -48,6 +48,11 @@ $ cmake .
 $ make
 $ sudo make install
 
+== License ==
+wikidiff2 is licensed under the GPL v2 or any later version. The GPL is incompatible
+with the PHP license, meaning that any binaries of wikidiff2 are not redistributable
+under either license.
+
 == LocalSettings configuration ==
 
 ini_set("wikidiff2.moved_line_threshold", <float>);
