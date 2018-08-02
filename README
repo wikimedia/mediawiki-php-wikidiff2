@@ -16,7 +16,7 @@ These files are 2.3MB each, and give a worst-case performance test. Performance 
 Wikidiff2 is a PHP extension.
 
 == Dependencies ==
-It requires the following library:
+It requires at least GCC 4.7 and the following library:
 
 * libthai, a Thai language support library
   http://linux.thai.net/plone/TLWG/libthai/

@@ -16,7 +16,7 @@
 #include <set>
 #include <memory>
 
-#define WIKIDIFF2_VERSION_STRING		"1.7.2"
+#define WIKIDIFF2_VERSION_STRING		"1.7.3"
 // uncomment this for inline HTML debug output related to moved lines
 //#define DEBUG_MOVED_LINES
 
