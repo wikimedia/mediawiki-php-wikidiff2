@@ -260,32 +260,24 @@ inline void DiffEngine<T>::detectDissimilarChanges(PointerVector& del, PointerVe
 {
 	int i;
 	static PointerVector empty;
-	int lastChange = 0;
-	debugLog("detectDissimilarChanges:\n");
 	for (i = 0; i < del.size() && i < add.size(); ++i) {
 		if (!looksLikeChange(*del[i], *add[i], bailoutComplexity)) {
-			if(i > lastChange) {
-				// add the changed segment
+			if (i > 0) {
+				// Turn all "add" and "del" operations that have been detected as "looksLikeChange"
+				// so far into a single combined "change" operation in the resulting diff.
 				PointerVector d, a;
-				int changeBegin = lastChange;
-				for(; lastChange < i; ++lastChange) {
-					debugLog("add_edit change: '%s', add '%s'\n", del[lastChange]->c_str(), add[lastChange]->c_str());
-					d.push_back(del[lastChange]);
-					a.push_back(add[lastChange]);
+				for (int k = 0; k < i; ++k) {
+					d.push_back(del[k]);
+					a.push_back(add[k]);
 				}
 				diff.add_edit(DiffOp<T>(DiffOp<T>::change, d, a));
-				debugLog("erasing: \n");
-				for(int k= changeBegin; k<i; ++k)
-					debugLog("\t[add] %s\n\t[del] %s\n", add[k]->c_str(), del[k]->c_str());
-				add.erase(add.begin() + changeBegin, add.begin() + i);
-				del.erase(del.begin() + changeBegin, del.begin() + i);
-				i -= (lastChange - changeBegin);
-				lastChange -= (lastChange - changeBegin);
+				add.erase(add.begin(), add.begin() + i);
+				del.erase(del.begin(), del.begin() + i);
+				// All elements [0..i - 1] got removed, which moves element i to position 0.
+				i = 0;
 			}
+
 			// convert dissimilar piece to delete + add
-			debugLog("add_edit add: '%s'\n", add[i]->c_str());
-			debugLog("add_edit del: '%s'\n", del[i]->c_str());
-			debugLog("i=%d, del.size()=%zu, add.size()=%zu, lastChange=%d\n", i, del.size(), add.size(), lastChange);
 			PointerVector d, a;
 			d.push_back(del[i]);
 			a.push_back(add[i]);
@@ -296,7 +288,6 @@ inline void DiffEngine<T>::detectDissimilarChanges(PointerVector& del, PointerVe
 			--i;
 		}
 	}
-	debugLog("\n");
 }
 
 template<>
