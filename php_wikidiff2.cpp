@@ -49,7 +49,7 @@ zend_module_entry wikidiff2_module_entry = {
 PHP_INI_BEGIN()
 	PHP_INI_ENTRY("wikidiff2.change_threshold",  WIKIDIFF2_CHANGE_THRESHOLD_DEFAULT, PHP_INI_ALL, NULL)
 	PHP_INI_ENTRY("wikidiff2.moved_line_threshold",  WIKIDIFF2_MOVED_LINE_THRESHOLD_DEFAULT, PHP_INI_ALL, NULL)
-	PHP_INI_ENTRY("wikidiff2.moved_paragraph_detection_cutoff_mobile",  WIKIDIFF2_MOVED_PARAGRAPH_DETECTION_CUTOFF_MOBILE, PHP_INI_ALL, NULL)
+	PHP_INI_ENTRY("wikidiff2.moved_paragraph_detection_cutoff",  WIKIDIFF2_MOVED_PARAGRAPH_DETECTION_CUTOFF_DEFAULT, PHP_INI_ALL, NULL)
 PHP_INI_END()
 /* }}} */
 
@@ -87,7 +87,7 @@ PHP_MINFO_FUNCTION(wikidiff2)
 	php_info_print_table_end();
 }
 
-/* {{{ proto string wikidiff2_do_diff(string text1, string text2, int numContextLines, int maxMovedLines = 25)
+/* {{{ proto string wikidiff2_do_diff(string text1, string text2, int numContextLines)
  *
  * Warning: the input text must be valid UTF-8! Do not pass user input directly
  * to this function.
@@ -101,16 +101,14 @@ PHP_FUNCTION(wikidiff2_do_diff)
 	size_t text1_len;
 	size_t text2_len;
 	zend_long numContextLines;
-	zend_long maxMovedLines = 25;
 #else
 	int text1_len;
 	int text2_len;
 	long numContextLines;
-	long maxMovedLines = 25;
 #endif
 
 	if (zend_parse_parameters(argc TSRMLS_CC, "ssl|l", &text1, &text1_len, &text2,
-		&text2_len, &numContextLines, &maxMovedLines) == FAILURE)
+		&text2_len, &numContextLines) == FAILURE)
 	{
 		return;
 	}
@@ -120,7 +118,7 @@ PHP_FUNCTION(wikidiff2_do_diff)
 		TableDiff wikidiff2;
 		Wikidiff2::String text1String(text1, text1_len);
 		Wikidiff2::String text2String(text2, text2_len);
-		const Wikidiff2::String & ret = wikidiff2.execute(text1String, text2String, (int)numContextLines, (int)maxMovedLines);
+		const Wikidiff2::String & ret = wikidiff2.execute(text1String, text2String, (int)numContextLines, movedParagraphDetectionCutoff());
 		COMPAT_RETURN_STRINGL( const_cast<char*>(ret.data()), ret.size());
 	} catch (std::bad_alloc &e) {
 		zend_error(E_WARNING, "Out of memory in wikidiff2_do_diff().");
