@@ -5,11 +5,12 @@
 #include <thai/thwchar.h>
 #include <thai/thbrk.h>
 
+#include <algorithm>
+
 namespace TextUtil
 {
 	typedef std::basic_string<char, std::char_traits<char>, WD2_ALLOCATOR<char> > String;
 	typedef std::vector<Word, WD2_ALLOCATOR<Word> > WordVector;
-	typedef std::set<int, std::less<int>, WD2_ALLOCATOR<int> > IntSet;
 	typedef std::vector<int, WD2_ALLOCATOR<int> > IntVector;
 
 	// helper functions used in both DiffEngine and Wikidiff2
@@ -98,7 +99,7 @@ namespace TextUtil
 
 		String tisText, charSizes;
 		String::const_iterator suffixEnd, charStart, p;
-		IntSet breaks;
+		IntVector breaks;
 
 		tisText.reserve(text.size());
 		charSizes.reserve(text.size());
@@ -120,10 +121,10 @@ namespace TextUtil
 
 			if (isLetter(ch)) {
 				if (lastChar && !isLetter(lastChar)) {
-					breaks.insert(charIndex);
+					breaks.push_back(charIndex);
 				}
 			} else {
-				breaks.insert(charIndex);
+				breaks.push_back(charIndex);
 			}
 			charIndex++;
 			lastChar = ch;
@@ -133,23 +134,26 @@ namespace TextUtil
 		// If there were any Thai characters in the string, run th_brk on it and add
 		// the resulting break positions
 		if (hasThaiChars) {
-			IntVector thaiBreakPositions;
 			tisText += '\0';
-			thaiBreakPositions.resize(tisText.size());
-			int numBreaks = th_brk((const thchar_t*)(tisText.data()),
-					&thaiBreakPositions[0], thaiBreakPositions.size());
-			thaiBreakPositions.resize(numBreaks);
-			breaks.insert(thaiBreakPositions.begin(), thaiBreakPositions.end());
+			int numBreaks = breaks.size();
+			breaks.resize(numBreaks + tisText.size());
+			IntVector::iterator thaiBreaksBegin = breaks.begin() + numBreaks;
+			numBreaks += th_brk((const thchar_t*)(tisText.data()),
+					&*thaiBreaksBegin, tisText.size());
+			breaks.resize(numBreaks);
+			// Merge break positions and de-dupe.
+			std::inplace_merge(breaks.begin(), thaiBreaksBegin, breaks.end());
+			breaks.erase(std::unique(breaks.begin(), breaks.end()), breaks.end());
 		}
 
 		// Add a fake end-of-string character and have a break on it, so that the
 		// last word gets added without special handling
-		breaks.insert(charSizes.size());
+		breaks.push_back(charSizes.size());
 		charSizes += (char)0;
 
-		// Now make the word array by traversing the breaks set
+		// Now make the word array by traversing the breaks vector
 		p = text.begin();
-		IntSet::iterator pBrk = breaks.begin();
+		IntVector::iterator pBrk = breaks.begin();
 		String::const_iterator wordStart = text.begin();
 		String::const_iterator suffixStart = text.end();
 
