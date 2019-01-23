@@ -38,7 +38,7 @@ void InlineDiff::printWordDiff(const String& text1, const String& text2, bool pr
 		result += "<a name=\"" + srcAnchor + "\"></a>";
 		if (!moveDirectionDownwards) {
 			result += "<a class=\"mw-diff-movedpara-" +
-				String(printLeft ? "left" : "right") + " data-title-tag=\"" +
+				String(printLeft ? "left" : "right") + "\" data-title-tag=\"" +
 				(printRight ? "new" : "old") + "\" href=\"#" + dstAnchor + "\">" + "&#9650;" + "</a>";
 		}
 	} else {
@@ -96,7 +96,7 @@ void InlineDiff::printWordDiff(const String& text1, const String& text2, bool pr
 	}
 	if (moved && moveDirectionDownwards) {
 		result += "<a class=\"mw-diff-movedpara-" +
-			String(printLeft ? "left" : "right") + " data-title-tag=\"" +
+			String(printLeft ? "left" : "right") + "\" data-title-tag=\"" +
 			(printRight ? "new" : "old") + "\" href=\"#" + dstAnchor + "\">" + "&#9660;" + "</a>";
 	}
 	result += "</div>\n";
