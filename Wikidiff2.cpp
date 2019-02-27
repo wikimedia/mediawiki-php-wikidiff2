@@ -154,11 +154,13 @@ bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLin
 				other->opIndexTo == opIndex && other->opLineTo == opLine);
 			if(!cmp && (printLeft ? other->lhsDisplayed : other->rhsDisplayed)) {
 				// the paragraph was already moved to a different place. a move operation can only have one source and one destination.
-				debugPrintf("printMovedLineDiff(..., %d, %d): excluding this candidate (multiple potential matches). op=%s, printLeft %s, otheridx/line %d/%d, found %d/%d",
+				debugPrintf("printMovedLineDiff(..., %d, %d): excluding this candidate (multiple potential matches). op=%s, printLeft %s, otheridx/line %d/%d, found %d/%d, other->lhsDisplayed %s, other->rhsDisplayed  %s",
 					opIndex, opLine,
 					linediff[opIndex].op == DiffOp<String>::add ? "add": linediff[opIndex].op == DiffOp<String>::del ? "del": "???",
 					printLeft ? "true" : "false",
-					otherIndex, otherLine, (printLeft ? other->opIndexFrom : other->opIndexTo), (printLeft? other->opLineFrom: other->opLineTo));
+					otherIndex, otherLine, (printLeft ? other->opIndexFrom : other->opIndexTo), (printLeft? other->opLineFrom: other->opLineTo),
+					other->lhsDisplayed ? "true" : "false",
+					other->rhsDisplayed ? "true" : "false");
 				return false;
 			}
 			// the entry in the diff map refers to this paragraph.
@@ -223,13 +225,24 @@ bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLin
 		if (linediff[i].op == otherOp) {
 			auto& lines = (linediff[opIndex].op == DiffOp<String>::add ? linediff[i].from : linediff[i].to);
 			for (int k = 0; k < lines.size(); ++k) {
+				auto it= diffMap.find(makeKey(i, k));
+				if(it!=diffMap.end())
+				{
+					auto found = it->second;
+					debugPrintf("found: lhsDisplayed=%s, rhsDisplayed=%s\n", found->lhsDisplayed? "true": "false", found->rhsDisplayed? "true": "false");
+					if( (printLeft && found->lhsDisplayed) || (printRight && found->rhsDisplayed) )
+					{
+						debugPrintf("%chs already displayed, not considering this one", printLeft? 'l': 'r');
+						continue;
+					}
+				}
 				WordVector words1, words2;
 				std::shared_ptr<DiffMapEntry> tmp;
 				TextUtil::explodeWords(*lines[k], words1);
 				bool potentialMatch = false;
 				if (otherOp == DiffOp<String>::del) {
 					TextUtil::explodeWords(*linediff[opIndex].to[opLine], words2);
-					tmp = std::make_shared<DiffMapEntry>(words1, words2, i, k, opIndex, opLine);
+					tmp = std::make_shared<DiffMapEntry>(words2, words1, i, k, opIndex, opLine);
 					potentialMatch = cmpDiffMapEntries(tmp->opIndexFrom, tmp->opLineFrom);
 				} else {
 					TextUtil::explodeWords(*linediff[opIndex].from[opLine], words2);
@@ -244,7 +257,7 @@ bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLin
 	}
 
 	if(found)
-		debugPrintf("candidate found with similarity %.2f", found->ds.charSimilarity);
+		debugPrintf("candidate found with similarity %.2f (from %d:%d to %d:%d)", found->ds.charSimilarity, found->opIndexFrom, found->opLineFrom, found->opIndexTo, found->opLineTo);
 
 	// if candidate exists:
 	//     add candidate to moved-line-map twice, for add/del case
@@ -256,6 +269,11 @@ bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLin
 
 		if(!cmpDiffMapEntries(otherIndex, otherLine))
 			return false;
+
+		if(diffMap.find(makeKey(otherIndex, otherLine)) != diffMap.end()) {
+			debugPrintf("found existing diffMap entry -- not overwriting.");
+			return false;
+		}
 
 		if(printLeft)
 			found->lhsDisplayed = true;

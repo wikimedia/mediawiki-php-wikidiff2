@@ -58,13 +58,13 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
 <tr>
-  <td class="diff-marker"><a class="mw-diff-movedpara-left" href="#movedpara_1_0_rhs">&#x26AB;</a></td>
-  <td class="diff-deletedline"><div><a name="movedpara_3_0_lhs"></a><del class="diffchange diffchange-inline">|</del>Navigationsleiste <del class="diffchange diffchange-inline">Einträge</del> <del class="diffchange diffchange-inline">im</del> National<del class="diffchange diffchange-inline"> Register of</del> Historic Places <del class="diffchange diffchange-inline">in</del> <del class="diffchange diffchange-inline">Arizona</del></div></td>
+  <td class="diff-marker">−</td>
+  <td class="diff-deletedline"><div>|Navigationsleiste Einträge im National Register of Historic Places in Arizona</div></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
-  <td class="diff-deletedline"><div>|Navigationsleiste Listen der National Historic Places der Vereinigten Staaten</div></td>
+  <td class="diff-marker"><a class="mw-diff-movedpara-left" href="#movedpara_1_0_rhs">&#x26AB;</a></td>
+  <td class="diff-deletedline"><div><a name="movedpara_3_1_lhs"></a><del class="diffchange diffchange-inline">|</del>Navigationsleiste Listen der National Historic Places der Vereinigten Staaten</div></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
 <tr>
