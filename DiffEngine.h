@@ -20,6 +20,7 @@
 #include "JudyHS.h"
 #endif
 
+#include "IntSet.h"
 #include "Wikidiff2.h"
 #include "Word.h"
 #include "textutil.h"
@@ -151,7 +152,6 @@ class DiffEngine
 #endif
 
 		// Sets
-		typedef std::set<int, std::less<int>, WD2_ALLOCATOR<int> > IntSet;
 #ifdef USE_JUDY
 		typedef JudySet ValueSet;
 #else
@@ -518,7 +518,7 @@ int DiffEngine<T>::diag (int xoff, int xlim, int yoff, int ylim, int nchunks,
 			int k = 0;
 
 			for (y = pMatches->begin(); y != pMatches->end(); ++y) {
-				if (!in_seq.count(*y)) {
+				if (!in_seq.contains(*y)) {
 					k = lcs_pos(*y);
 					assert(k > 0);
 					copy(ymids.begin() + (k-1) * nchunks, ymids.begin() + k * nchunks,
@@ -535,7 +535,7 @@ int DiffEngine<T>::diag (int xoff, int xlim, int yoff, int ylim, int nchunks,
 					in_seq.erase(seq[k]);
 					seq[k] = *y;
 					in_seq.insert(*y);
-				} else if (!in_seq.count(*y)) {
+				} else if (!in_seq.contains(*y)) {
 					k = lcs_pos(*y);
 					assert(k > 0);
 					copy(ymids.begin() + (k-1) * nchunks, ymids.begin() + k * nchunks,

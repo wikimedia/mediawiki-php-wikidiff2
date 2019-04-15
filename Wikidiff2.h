@@ -26,7 +26,6 @@ class Wikidiff2 {
 		typedef std::vector<String, WD2_ALLOCATOR<String> > StringVector;
 		typedef std::vector<Word, WD2_ALLOCATOR<Word> > WordVector;
 		typedef std::vector<int, WD2_ALLOCATOR<int> > IntVector;
-		typedef std::set<int, std::less<int>, WD2_ALLOCATOR<int> > IntSet;
 
 		typedef Diff<String> StringDiff;
 		typedef Diff<Word> WordDiff;
