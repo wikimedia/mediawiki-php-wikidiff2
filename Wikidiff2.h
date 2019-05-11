@@ -16,7 +16,7 @@
 #include <set>
 #include <memory>
 
-#define WIKIDIFF2_VERSION_STRING "1.8.1"
+#define WIKIDIFF2_VERSION_STRING "1.8.2"
 // uncomment this for inline HTML debug output related to moved lines
 //#define DEBUG_MOVED_LINES
 
@@ -91,9 +91,9 @@ inline bool Wikidiff2::AllowPrintMovedLineDiff::operator () (StringDiff & linedi
 		int adds = 0, deletes = 0;
 		for(int i = 0; i < linediff.size(); ++i) {
 			if(linediff[i].op == DiffOp<String>::add)
-				++adds;
+				adds += linediff[i].to.size();
 			if(linediff[i].op == DiffOp<String>::del)
-				++deletes;
+				deletes += linediff[i].from.size();
 			// number of comparisons is (number of additions) x (number of deletions).
 			// if count is too large, don't try detecting moved lines.
 			if(adds+deletes > maxMovedLines) {

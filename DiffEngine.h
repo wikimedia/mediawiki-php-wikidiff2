@@ -33,7 +33,7 @@
 // Default value for INI setting wikidiff2.moved_line_threshold
 #define WIKIDIFF2_MOVED_LINE_THRESHOLD_DEFAULT	"0.4"
 // Default value for INI setting wikidiff2.moved_paragraph_detection_cutoff
-#define WIKIDIFF2_MOVED_PARAGRAPH_DETECTION_CUTOFF_DEFAULT "30"
+#define WIKIDIFF2_MOVED_PARAGRAPH_DETECTION_CUTOFF_DEFAULT "100"
 
 #ifdef DEBUG_MOVED_LINES
 inline void debugLog(const char *fmt, ...) {
