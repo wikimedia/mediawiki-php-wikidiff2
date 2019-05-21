@@ -15,7 +15,7 @@ CMake*
 
 install_manifest.txt
 .deps
-configure
+configure*
 install-sh
 libtool
 ltmain.sh
