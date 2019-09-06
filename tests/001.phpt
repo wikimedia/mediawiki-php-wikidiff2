@@ -1,9 +1,7 @@
 --TEST--
 Diff test A
---SKIPIF--
-<?php if (!extension_loaded("wikidiff2")) print "skip"; ?>
 --FILE--
-<?php 
+<?php
 $x = <<<EOT
 == Added line ==
 

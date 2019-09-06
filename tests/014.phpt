@@ -1,7 +1,5 @@
 --TEST--
 Test case for T182300 from https://de.wikipedia.org/wiki/Special:Diff/171771634
---SKIPIF--
-<?php if (!extension_loaded("wikidiff2")) print "skip"; ?>
 --FILE--
 <?php
 $before = <<<EOT

@@ -1,7 +1,5 @@
 --TEST--
 Diff test D: inline diffs
---SKIPIF--
-<?php if (!extension_loaded("wikidiff2")) print "skip"; ?>
 --FILE--
 <?php
 $x = <<<EOT
@@ -36,4 +34,3 @@ print wikidiff2_inline_diff( $x, $y, 2 );
 <div class="mw-diff-inline-deleted"><del>quux</del></div>
 <div class="mw-diff-inline-added mw-diff-empty-line"><ins>&#160;</ins></div>
 <div class="mw-diff-inline-context">bang</div>
-

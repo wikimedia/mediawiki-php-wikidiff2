@@ -1,7 +1,5 @@
 --TEST--
 Diff test G: moved paragraphs
---SKIPIF--
-<?php if (!extension_loaded("wikidiff2")) print "skip"; ?>
 --FILE--
 <?php
 $x = <<<EOT

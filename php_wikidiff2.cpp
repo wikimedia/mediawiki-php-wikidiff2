@@ -11,6 +11,7 @@
 #include "Wikidiff2.h"
 #include "TableDiff.h"
 #include "InlineDiff.h"
+#include "InlineDiffJSON.h"
 
 #if PHP_MAJOR_VERSION >= 7
 #define COMPAT_RETURN_STRINGL(s, l) { RETURN_STRINGL(s, l); return; }
@@ -23,6 +24,7 @@ static int le_wikidiff2;
 zend_function_entry wikidiff2_functions[] = {
 	PHP_FE(wikidiff2_do_diff,     NULL)
 	PHP_FE(wikidiff2_inline_diff, NULL)
+	PHP_FE(wikidiff2_inline_json_diff, NULL)
 	PHP_FE(wikidiff2_version, NULL)
 	{NULL, NULL, NULL}
 };
@@ -167,6 +169,46 @@ PHP_FUNCTION(wikidiff2_inline_diff)
 	}
 }
 
+/* {{{ proto string wikidiff2_inline_json_diff(string text1, string text2, int numContextLines)
+ *
+ * Warning: the input text must be valid UTF-8! Do not pass user input directly
+ * to this function.
+ */
+PHP_FUNCTION(wikidiff2_inline_json_diff)
+{
+	char *text1 = NULL;
+	char *text2 = NULL;
+	int argc = ZEND_NUM_ARGS();
+#if PHP_MAJOR_VERSION >= 7
+	size_t text1_len;
+	size_t text2_len;
+	zend_long numContextLines;
+#else
+	int text1_len;
+	int text2_len;
+	long numContextLines;
+#endif
+
+	if (zend_parse_parameters(argc TSRMLS_CC, "ssl", &text1, &text1_len, &text2,
+		&text2_len, &numContextLines) == FAILURE)
+	{
+		return;
+	}
+
+
+	try {
+		InlineDiffJSON wikidiff2;
+		Wikidiff2::String text1String(text1, text1_len);
+		Wikidiff2::String text2String(text2, text2_len);
+		const Wikidiff2::String& ret = wikidiff2.execute(text1String, text2String, (int)numContextLines, movedParagraphDetectionCutoff());
+		COMPAT_RETURN_STRINGL( const_cast<char*>(ret.data()), ret.size());
+	} catch (std::bad_alloc &e) {
+		zend_error(E_WARNING, "Out of memory in wikidiff2_inline_json_diff().");
+	} catch (...) {
+		zend_error(E_WARNING, "Unknown exception in wikidiff2_inline_json_diff().");
+	}
+}
+
 /* {{{ proto string wikidiff2_version()
  */
 PHP_FUNCTION(wikidiff2_version)
@@ -175,5 +217,3 @@ PHP_FUNCTION(wikidiff2_version)
 }
 
 /* }}} */
-
-

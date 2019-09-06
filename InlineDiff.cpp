@@ -1,6 +1,6 @@
 #include "InlineDiff.h"
 
-void InlineDiff::printAdd(const String& line)
+void InlineDiff::printAdd(const String& line, int leftLine, int rightLine)
 {
 	if(line.empty()) {
 		printWrappedLine("<div class=\"mw-diff-inline-added mw-diff-empty-line\"><ins>", line, "</ins></div>\n");
@@ -9,7 +9,7 @@ void InlineDiff::printAdd(const String& line)
 	}
 }
 
-void InlineDiff::printDelete(const String& line)
+void InlineDiff::printDelete(const String& line, int leftLine, int rightLine)
 {
 	if(line.empty()) {
 		printWrappedLine("<div class=\"mw-diff-inline-deleted mw-diff-empty-line\"><del>", line, "</del></div>\n");
@@ -18,7 +18,7 @@ void InlineDiff::printDelete(const String& line)
 	}
 }
 
-void InlineDiff::printWordDiff(const String& text1, const String& text2, bool printLeft, bool printRight, const String & srcAnchor, const String & dstAnchor, bool moveDirectionDownwards)
+void InlineDiff::printWordDiff(const String& text1, const String& text2, int leftLine, int rightLine, bool printLeft, bool printRight, const String & srcAnchor, const String & dstAnchor, bool moveDirectionDownwards)
 {
 	WordVector words1, words2;
 
@@ -52,7 +52,7 @@ void InlineDiff::printWordDiff(const String& text1, const String& text2, bool pr
 			n = op.from.size();
 			for (j=0; j<n; j++) {
 				op.from[j]->get_whole(word);
-				printText(word);
+				printHtmlEncodedText(word);
 			}
 		} else if (op.op == DiffOp<Word>::del) {
 			n = op.from.size();
@@ -60,7 +60,7 @@ void InlineDiff::printWordDiff(const String& text1, const String& text2, bool pr
 				result += "<del>";
 			for (j=0; j<n; j++) {
 				op.from[j]->get_whole(word);
-				printText(word);
+				printHtmlEncodedText(word);
 			}
 			if (!isMoveSrc)
 				result += "</del>";
@@ -71,7 +71,7 @@ void InlineDiff::printWordDiff(const String& text1, const String& text2, bool pr
 			result += "<ins>";
 			for (j=0; j<n; j++) {
 				op.to[j]->get_whole(word);
-				printText(word);
+				printHtmlEncodedText(word);
 			}
 			result += "</ins>";
 		} else if (op.op == DiffOp<Word>::change) {
@@ -80,7 +80,7 @@ void InlineDiff::printWordDiff(const String& text1, const String& text2, bool pr
 				result += "<del>";
 			for (j=0; j<n; j++) {
 				op.from[j]->get_whole(word);
-				printText(word);
+				printHtmlEncodedText(word);
 			}
 			if (isMoveSrc)
 				continue;
@@ -89,7 +89,7 @@ void InlineDiff::printWordDiff(const String& text1, const String& text2, bool pr
 			result += "<ins>";
 			for (j=0; j<n; j++) {
 				op.to[j]->get_whole(word);
-				printText(word);
+				printHtmlEncodedText(word);
 			}
 			result += "</ins>";
 		}
@@ -111,7 +111,7 @@ void InlineDiff::printBlockHeader(int leftLine, int rightLine)
 	result += buf;
 }
 
-void InlineDiff::printContext(const String & input)
+void InlineDiff::printContext(const String & input, int leftLine, int rightLine)
 {
 	printWrappedLine("<div class=\"mw-diff-inline-context\">", input, "</div>\n");
 }
@@ -122,7 +122,7 @@ void InlineDiff::printWrappedLine(const char* pre, const String& line, const cha
 	if (line.empty()) {
 		result += "&#160;";
 	} else {
-		printText(line);
+		printHtmlEncodedText(line);
 	}
 	result += post;
 }

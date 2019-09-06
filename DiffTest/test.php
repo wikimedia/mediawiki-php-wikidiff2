@@ -10,6 +10,9 @@
 if ( !function_exists( 'wikidiff2_inline_diff' ) ) {
 	die( "wikidiff2 not found, nothing to test\n" );
 }
+if ( !function_exists( 'wikidiff2_inline_json_diff' ) ) {
+	die( "wikidiff2 not found, nothing to test\n" );
+}
 ini_set( 'user_agent', 'Hi, Domas!' );
 // Bail out early in case of any problems
 error_reporting( E_ALL | E_STRICT );
@@ -60,7 +63,7 @@ require 'Api.php';
 require 'Change.php';
 require 'Differ.php';
 
-$differ = new BothDiffer;
+$differ = new AllDiffer;
 
 $site = "http://en.wikipedia.org/w";
 $apiUrl = "$site/api.php";

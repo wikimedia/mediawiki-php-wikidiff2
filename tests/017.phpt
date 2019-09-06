@@ -1,7 +1,5 @@
 --TEST--
 Test case for T217546 derived from https://en.wikipedia.org/w/index.php?title=New_Hampshire_Route_145&type=revision&diff=100781760&oldid=80300958
---SKIPIF--
-<?php if (!extension_loaded("wikidiff2")) print "skip"; ?>
 --FILE--
 <?php
 $before = <<<EOT

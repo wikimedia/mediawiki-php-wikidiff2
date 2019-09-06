@@ -1,7 +1,5 @@
 --TEST--
 Diff test E: small change in a big paragraph
---SKIPIF--
-<?php if (!extension_loaded("wikidiff2")) print "skip"; ?>
 --FILE--
 <?php
 $x = str_repeat( 'test ', 2002 );

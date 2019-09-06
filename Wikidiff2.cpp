@@ -7,9 +7,10 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <sstream>
 #include <stdarg.h>
 #include "Wikidiff2.h"
-
+#include <regex>
 
 
 void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & lines2,
@@ -24,6 +25,10 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 	// Set to true initially so we get a line number on line 1
 	bool showLineNumber = true;
 
+	if (needsJSONFormat()) {
+		result += "{\"diff\": [";
+	}
+
 	for (int i = 0; i < linediff.size(); ++i) {
 		int n, j, n1, n2;
 		// Line 1 changed, show heading with no leading context
@@ -36,8 +41,9 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 				// inserted lines
 				n = linediff[i].to.size();
 				for (j=0; j<n; j++) {
-					if (!printMovedLineDiff(linediff, i, j, maxMovedLines)) {
-						printAdd(*linediff[i].to[j]);
+
+					if (!printMovedLineDiff(linediff, i, j, maxMovedLines, from_index, to_index+j)) {
+						printAdd(*linediff[i].to[j], from_index, to_index+j);
 					}
 				}
 				to_index += n;
@@ -46,8 +52,9 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 				// deleted lines
 				n = linediff[i].from.size();
 				for (j=0; j<n; j++) {
-					if (!printMovedLineDiff(linediff, i, j, maxMovedLines)) {
-						printDelete(*linediff[i].from[j]);
+
+					if (!printMovedLineDiff(linediff, i, j, maxMovedLines, from_index+j, to_index)) {
+						printDelete(*linediff[i].from[j], from_index+j, to_index);
 					}
 				}
 				from_index += n;
@@ -56,13 +63,14 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 				// copy/context
 				n = linediff[i].from.size();
 				for (j=0; j<n; j++) {
+
 					if ((i != 0 && j < numContextLines) /*trailing*/
 							|| (i != linediff.size() - 1 && j >= n - numContextLines)) /*leading*/ {
 						if (showLineNumber) {
 							printBlockHeader(from_index, to_index);
 							showLineNumber = false;
 						}
-						printContext(*linediff[i].from[j]);
+						printContext(*linediff[i].from[j], from_index, to_index);
 					} else {
 						showLineNumber = true;
 					}
@@ -76,7 +84,8 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 				n2 = linediff[i].to.size();
 				n = std::min(n1, n2);
 				for (j=0; j<n; j++) {
-					printWordDiff(*linediff[i].from[j], *linediff[i].to[j]);
+
+					printWordDiff(*linediff[i].from[j], *linediff[i].to[j], from_index+j, to_index+j);
 				}
 				from_index += n;
 				to_index += n;
@@ -85,9 +94,13 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 		// Not first line anymore, don't show line number by default
 		showLineNumber = false;
 	}
+
+	if (needsJSONFormat()) {
+		result += "]}";
+	}
 }
 
-bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLine, int maxMovedLines)
+bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLine, int maxMovedLines, int leftLine, int rightLine)
 {
 	// helper fn creates 64-bit lookup key from opIndex and opLine
 	auto makeKey = [](int index, int line) {
@@ -198,7 +211,7 @@ bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLin
 			return true;
 		} else {
 			// XXXX todo: we already have the diff, don't have to do it again, just have to print it
-			printWordDiff(*linediff[best->opIndexFrom].from[best->opLineFrom], *linediff[best->opIndexTo].to[best->opLineTo],
+			printWordDiff(*linediff[best->opIndexFrom].from[best->opLineFrom], *linediff[best->opIndexTo].to[best->opLineTo], leftLine, rightLine,
 				printLeft, printRight, makeAnchorName(opIndex, opLine, printLeft), makeAnchorName(otherIndex, otherLine, !printLeft), movedir(opIndex,opLine, otherIndex,otherLine));
 		}
 
@@ -286,13 +299,13 @@ bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLin
 
 		if(isNext(opIndex, opLine, otherIndex, otherLine)) {
 			debugPrintf("This one immediately follows, displaying as change...");
-			printWordDiff(*linediff[found->opIndexFrom].from[found->opLineFrom], *linediff[found->opIndexTo].to[found->opLineTo]);
+			printWordDiff(*linediff[found->opIndexFrom].from[found->opLineFrom], *linediff[found->opIndexTo].to[found->opLineTo], leftLine, rightLine);
 			found->lhsDisplayed = true;
 			found->rhsDisplayed = true;
 		}
 		else {
 			// XXXX todo: we already have the diff, don't have to do it again, just have to print it
-			printWordDiff(*linediff[found->opIndexFrom].from[found->opLineFrom], *linediff[found->opIndexTo].to[found->opLineTo],
+			printWordDiff(*linediff[found->opIndexFrom].from[found->opLineFrom], *linediff[found->opIndexTo].to[found->opLineTo], leftLine, rightLine,
 				printLeft, printRight, makeAnchorName(opIndex, opLine, printLeft), makeAnchorName(otherIndex, otherLine, !printLeft), movedir(opIndex,opLine, otherIndex,otherLine));
 		}
 
@@ -352,7 +365,7 @@ void Wikidiff2::debugPrintWordDiff(WordDiff & worddiff)
 	}
 }
 
-void Wikidiff2::printText(const String & input)
+void Wikidiff2::printHtmlEncodedText(const String & input)
 {
 	size_t start = 0;
 	size_t end = input.find_first_of("<>&");
@@ -410,4 +423,16 @@ const Wikidiff2::String & Wikidiff2::execute(const String & text1, const String 
 
 	// Return a reference to the result buffer
 	return result;
+}
+
+const Wikidiff2::String Wikidiff2::toString(long input)
+{
+	StringStream stream;
+	stream << input;
+	return String(stream.str());
+}
+
+bool Wikidiff2::needsJSONFormat()
+{
+	return false;
 }

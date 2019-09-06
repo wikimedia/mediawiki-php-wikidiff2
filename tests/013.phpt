@@ -1,7 +1,5 @@
 --TEST--
 Test case for https://gerrit.wikimedia.org/r/404293 from https://de.wikipedia.org/wiki/Special:Diff/169304779/169305386
---SKIPIF--
-<?php if (!extension_loaded("wikidiff2")) print "skip"; ?>
 --FILE--
 <?php
 $before = <<<EOT

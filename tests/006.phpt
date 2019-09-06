@@ -1,7 +1,5 @@
 --TEST--
 Diff test F: don't diff reeeal long paragraph-level changes
---SKIPIF--
-<?php if (!extension_loaded("wikidiff2")) print "skip"; ?>
 --FILE--
 <?php
 $x = str_repeat( 'a ', 6500 );

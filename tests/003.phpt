@@ -1,9 +1,7 @@
 --TEST--
 Diff test C: https://phabricator.wikimedia.org/T29993
---SKIPIF--
-<?php if (!extension_loaded("wikidiff2")) print "skip"; ?>
 --FILE--
-<?php 
+<?php
 $x = <<<EOT
 !!FUZZY!!Rajaa
 

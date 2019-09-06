@@ -23,6 +23,7 @@
 class Wikidiff2 {
 	public:
 		typedef std::basic_string<char, std::char_traits<char>, WD2_ALLOCATOR<char> > String;
+		typedef std::basic_stringstream<char, std::char_traits<char>, WD2_ALLOCATOR<char> > StringStream;
 		typedef std::vector<String, WD2_ALLOCATOR<String> > StringVector;
 		typedef std::vector<Word, WD2_ALLOCATOR<Word> > WordVector;
 		typedef std::vector<int, WD2_ALLOCATOR<int> > IntVector;
@@ -57,20 +58,22 @@ class Wikidiff2 {
 				bool operator() (StringDiff & linediff, int maxMovedLines);	// calculates & caches comparison count
 		} allowPrintMovedLineDiff;
 
+		virtual bool needsJSONFormat();
 		virtual void diffLines(const StringVector & lines1, const StringVector & lines2,
 				int numContextLines, int maxMovedLines);
-		virtual void printAdd(const String & line) = 0;
-		virtual void printDelete(const String & line) = 0;
-		virtual void printWordDiff(const String & text1, const String & text2, bool printLeft = true, bool printRight = true, const String & srcAnchor = "", const String & dstAnchor = "", bool moveDirectionDownwards = false) = 0;
+		virtual void printAdd(const String & line, int leftLine, int rightLine) = 0;
+		virtual void printDelete(const String & line, int leftLine, int rightLine) = 0;
+		virtual void printWordDiff(const String & text1, const String & text2, int leftLine, int rightLine, bool printLeft = true, bool printRight = true, const String & srcAnchor = "", const String & dstAnchor = "", bool moveDirectionDownwards = false) = 0;
 		virtual void printBlockHeader(int leftLine, int rightLine) = 0;
-		virtual void printContext(const String & input) = 0;
+		virtual void printContext(const String & input, int leftLine, int rightLine) = 0;
 
-		void printText(const String & input);
+		void printHtmlEncodedText(const String & input);
 		void debugPrintWordDiff(WordDiff & worddiff);
 
 		void explodeLines(const String & text, StringVector &lines);
+		const String toString(long input);
 
-		bool printMovedLineDiff(StringDiff & linediff, int opIndex, int opLine, int maxMovedLines);
+		bool printMovedLineDiff(StringDiff & linediff, int opIndex, int opLine, int maxMovedLines, int leftLine, int rightLine);
 };
 
 inline const Wikidiff2::String & Wikidiff2::getResult() const

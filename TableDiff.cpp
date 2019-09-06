@@ -2,7 +2,7 @@
 #include "Wikidiff2.h"
 #include "TableDiff.h"
 
-void TableDiff::printAdd(const String & line)
+void TableDiff::printAdd(const String & line, int leftLine, int rightLine)
 {
 	result += "<tr>\n"
 		"  <td colspan=\"2\" class=\"diff-empty\">&#160;</td>\n"
@@ -12,7 +12,7 @@ void TableDiff::printAdd(const String & line)
 	result += "</td>\n</tr>\n";
 }
 
-void TableDiff::printDelete(const String & line)
+void TableDiff::printDelete(const String & line, int leftLine, int rightLine)
 {
 	result += "<tr>\n"
 		"  <td class=\"diff-marker\">−</td>\n"
@@ -23,7 +23,7 @@ void TableDiff::printDelete(const String & line)
 		"</tr>\n";
 }
 
-void TableDiff::printWordDiff(const String & text1, const String & text2, bool printLeft, bool printRight, const String & srcAnchor, const String & dstAnchor, bool moveDirectionDownwards)
+void TableDiff::printWordDiff(const String & text1, const String & text2, int leftLine, int rightLine, bool printLeft, bool printRight, const String & srcAnchor, const String & dstAnchor, bool moveDirectionDownwards)
 {
 	WordVector words1, words2;
 
@@ -83,12 +83,12 @@ void TableDiff::printWordDiffSide(WordDiff &worddiff, bool added)
 			if (added) {
 				for (j=0; j<n; j++) {
 					op.to[j]->get_whole(word);
-					printText(word);
+					printHtmlEncodedText(word);
 				}
 			} else {
 				for (j=0; j<n; j++) {
 					op.from[j]->get_whole(word);
-					printText(word);
+					printHtmlEncodedText(word);
 				}
 			}
 		} else if (!added && (op.op == DiffOp<Word>::del || op.op == DiffOp<Word>::change)) {
@@ -96,7 +96,7 @@ void TableDiff::printWordDiffSide(WordDiff &worddiff, bool added)
 			result += "<del class=\"diffchange diffchange-inline\">";
 			for (j=0; j<n; j++) {
 				op.from[j]->get_whole(word);
-				printText(word);
+				printHtmlEncodedText(word);
 			}
 			result += "</del>";
 		} else if (added && (op.op == DiffOp<Word>::add || op.op == DiffOp<Word>::change)) {
@@ -104,7 +104,7 @@ void TableDiff::printWordDiffSide(WordDiff &worddiff, bool added)
 			result += "<ins class=\"diffchange diffchange-inline\">";
 			for (j=0; j<n; j++) {
 				op.to[j]->get_whole(word);
-				printText(word);
+				printHtmlEncodedText(word);
 			}
 			result += "</ins>";
 		}
@@ -116,7 +116,7 @@ void TableDiff::printTextWithDiv(const String & input)
 	// Wrap string in a <div> if it's not empty
 	if (input.size() > 0) {
 		result.append("<div>");
-		printText(input);
+		printHtmlEncodedText(input);
 		result.append("</div>");
 	}
 }
@@ -133,7 +133,7 @@ void TableDiff::printBlockHeader(int leftLine, int rightLine)
 	result += buf;
 }
 
-void TableDiff::printContext(const String & input)
+void TableDiff::printContext(const String & input, int leftLine, int rightLine)
 {
 	result +=
 		"<tr>\n"

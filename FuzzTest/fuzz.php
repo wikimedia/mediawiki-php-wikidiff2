@@ -8,6 +8,9 @@ require 'random.php';
 if ( !function_exists( 'wikidiff2_inline_diff' ) ) {
 	die( "wikidiff2 not found, nothing to test\n" );
 }
+if ( !function_exists( 'wikidiff2_inline_json_diff' ) ) {
+	die( "wikidiff2 not found, nothing to test\n" );
+}
 
 // Bail out early in case of any problems
 error_reporting( E_ALL | E_STRICT );
@@ -30,6 +33,7 @@ while ( true ) {
 	$time = microtime( true );
 	wikidiff2_do_diff( $left, $right, $contextLines );
 	wikidiff2_inline_diff( $left, $right, $contextLines );
+	wikidiff2_inline_json_diff( $left, $right, $contextLines );
 	$time = microtime( true ) - $time;
 
 	$totalTime += $time;

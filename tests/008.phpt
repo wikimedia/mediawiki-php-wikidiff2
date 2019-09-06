@@ -1,7 +1,5 @@
 --TEST--
 Test detection of dissimilar paragraphs
---SKIPIF--
-<?php if (!extension_loaded("wikidiff2")) print "skip"; ?>
 --FILE--
 <?php
 $x = <<<EOT

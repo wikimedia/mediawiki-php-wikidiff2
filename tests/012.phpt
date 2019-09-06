@@ -1,7 +1,5 @@
 --TEST--
 Test case for WIKIDIFF2_CHANGE_THRESHOLD_DEFAULT reduced from 0.25 to 0.2 from https://de.wikipedia.org/wiki/Special:Diff/170728571/170728517
---SKIPIF--
-<?php if (!extension_loaded("wikidiff2")) print "skip"; ?>
 --FILE--
 <?php
 $before = <<<EOT

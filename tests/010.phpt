@@ -1,7 +1,5 @@
 --TEST--
 Test case for T197157 from https://ru.wikipedia.org/wiki/Special:Diff/93301102
---SKIPIF--
-<?php if (!extension_loaded("wikidiff2")) print "skip"; ?>
 --FILE--
 <?php
 $before = <<<EOT

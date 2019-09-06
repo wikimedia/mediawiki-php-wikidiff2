@@ -7,6 +7,7 @@
 #include "Wikidiff2.h"
 #include "TableDiff.h"
 #include "InlineDiff.h"
+#include "InlineDiffJSON.h"
 
 #include <string>
 
@@ -46,16 +47,40 @@ static String HHVM_FUNCTION(wikidiff2_inline_diff,
 	const String& text2,
 	int64_t numContextLines)
 {
-    String result;
+	String result;
 	try {
 		InlineDiff wikidiff2;
 		Wikidiff2::String text1String(text1.c_str());
 		Wikidiff2::String text2String(text2.c_str());
 		result = wikidiff2.execute(text1String, text2String, numContextLines, movedParagraphDetectionCutoff());
 	} catch (OutOfMemoryException &e) {
-		raise_error("Out of memory in wikidiff2_do_diff().");
+		raise_error("Out of memory in wikidiff2_inline_diff().");
 	} catch (...) {
-		raise_error("Unknown exception in wikidiff2_do_diff().");
+		raise_error("Unknown exception in wikidiff2_inline_diff().");
+	}
+	return result;
+}
+
+/* {{{ proto string wikidiff2_inline_json_diff(string text1, string text2, int numContextLines)
+ *
+ * Warning: the input text must be valid UTF-8! Do not pass user input directly
+ * to this function.
+ */
+static String HHVM_FUNCTION(wikidiff2_inline_json_diff,
+	const String& text1,
+	const String& text2,
+	int64_t numContextLines)
+{
+	String result;
+	try {
+		InlineDiffJSON wikidiff2;
+		Wikidiff2::String text1String(text1.c_str());
+		Wikidiff2::String text2String(text2.c_str());
+		result = wikidiff2.execute(text1String, text2String, numContextLines, movedParagraphDetectionCutoff());
+	} catch (OutOfMemoryException &e) {
+		raise_error("Out of memory in wikidiff2_inline_json_diff().");
+	} catch (...) {
+		raise_error("Unknown exception in wikidiff2_inline_json_diff().");
 	}
 	return result;
 }
@@ -64,7 +89,7 @@ static String HHVM_FUNCTION(wikidiff2_inline_diff,
  */
 static String HHVM_FUNCTION(wikidiff2_version)
 {
-    String version = WIKIDIFF2_VERSION_STRING;
+	String version = WIKIDIFF2_VERSION_STRING;
 	return version;
 }
 
@@ -81,6 +106,7 @@ static class Wikidiff2Extension : public Extension {
 		virtual void moduleInit() {
 			HHVM_FE(wikidiff2_do_diff);
 			HHVM_FE(wikidiff2_inline_diff);
+			HHVM_FE(wikidiff2_inline_json_diff);
 			HHVM_FE(wikidiff2_version);
 			loadSystemlib();
 		}

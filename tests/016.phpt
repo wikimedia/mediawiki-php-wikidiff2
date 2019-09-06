@@ -1,7 +1,5 @@
 --TEST--
 Test case for T215293 derived from https://ru.wikipedia.org/w/index.php?title=MediaWiki:Gadget-markadmins.json&diff=0&oldid=97533626
---SKIPIF--
-<?php if (!extension_loaded("wikidiff2")) print "skip"; ?>
 --FILE--
 <?php
 $before = <<<EOT
