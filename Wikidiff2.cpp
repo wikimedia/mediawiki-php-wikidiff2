@@ -14,7 +14,7 @@
 
 
 void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & lines2,
-		int numContextLines, int maxMovedLines)
+		int numContextLines, int maxMovedLines, IntList & sectionOffsets)
 {
 	// first do line-level diff
 	StringDiff linediff(lines1, lines2);
@@ -29,6 +29,9 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 		result += "{\"diff\": [";
 	}
 
+	int currentByteOffset = 0;
+	String currentSectionTitle;
+	StringVector sectionTitles;
 	for (int i = 0; i < linediff.size(); ++i) {
 		int n, j, n1, n2;
 		// Line 1 changed, show heading with no leading context
@@ -42,8 +45,18 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 				n = linediff[i].to.size();
 				for (j=0; j<n; j++) {
 
-					if (!printMovedLineDiff(linediff, i, j, maxMovedLines, from_index, to_index+j)) {
-						printAdd(*linediff[i].to[j], from_index, to_index+j);
+					String line = *linediff[i].to[j];
+					bool sectionTitleHasChanged = calculateCurrentSectionTitle(line, currentByteOffset,
+						currentSectionTitle, sectionOffsets);
+
+					if (sectionTitleHasChanged) {
+						sectionTitles.push_back(currentSectionTitle);
+					}
+
+					int currentSectionIndex = static_cast<int>(sectionTitles.size()) - 1;
+					if (!printMovedLineDiff(linediff, i, j, maxMovedLines, from_index, to_index+j,
+						currentSectionIndex)) {
+						printAdd(line, from_index, to_index+j, currentSectionIndex);
 					}
 				}
 				to_index += n;
@@ -53,8 +66,10 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 				n = linediff[i].from.size();
 				for (j=0; j<n; j++) {
 
-					if (!printMovedLineDiff(linediff, i, j, maxMovedLines, from_index+j, to_index)) {
-						printDelete(*linediff[i].from[j], from_index+j, to_index);
+					int currentSectionIndex = static_cast<int>(sectionTitles.size()) - 1;
+					if (!printMovedLineDiff(linediff, i, j, maxMovedLines, from_index+j, to_index,
+						currentSectionIndex)) {
+						printDelete(*linediff[i].from[j], from_index+j, to_index, currentSectionIndex);
 					}
 				}
 				from_index += n;
@@ -62,7 +77,13 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 			case DiffOp<String>::copy:
 				// copy/context
 				n = linediff[i].from.size();
+				bool skippedLastSectionTitleAppend;
+				skippedLastSectionTitleAppend = false;
 				for (j=0; j<n; j++) {
+
+					String line = *linediff[i].from[j];
+					bool sectionTitleHasChanged = calculateCurrentSectionTitle(line, currentByteOffset,
+						currentSectionTitle, sectionOffsets);
 
 					if ((i != 0 && j < numContextLines) /*trailing*/
 							|| (i != linediff.size() - 1 && j >= n - numContextLines)) /*leading*/ {
@@ -70,9 +91,19 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 							printBlockHeader(from_index, to_index);
 							showLineNumber = false;
 						}
-						printContext(*linediff[i].from[j], from_index, to_index);
+
+						if (sectionTitleHasChanged || skippedLastSectionTitleAppend) {
+							sectionTitles.push_back(currentSectionTitle);
+							skippedLastSectionTitleAppend = false;
+						}
+
+						int currentSectionIndex = static_cast<int>(sectionTitles.size()) - 1;
+						printContext(line, from_index, to_index, currentSectionIndex);
 					} else {
 						showLineNumber = true;
+						if (sectionTitleHasChanged) {
+							skippedLastSectionTitleAppend = true;
+						}
 					}
 					from_index++;
 					to_index++;
@@ -85,7 +116,16 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 				n = std::min(n1, n2);
 				for (j=0; j<n; j++) {
 
-					printWordDiff(*linediff[i].from[j], *linediff[i].to[j], from_index+j, to_index+j);
+					String toLine = *linediff[i].to[j];
+					bool sectionTitleHasChanged = calculateCurrentSectionTitle(toLine, currentByteOffset,
+						currentSectionTitle, sectionOffsets);
+
+					if (sectionTitleHasChanged) {
+						sectionTitles.push_back(currentSectionTitle);
+					}
+
+					int currentSectionIndex = static_cast<int>(sectionTitles.size()) - 1;
+					printWordDiff(*linediff[i].from[j], toLine, from_index+j, to_index+j, currentSectionIndex);
 				}
 				from_index += n;
 				to_index += n;
@@ -96,11 +136,39 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 	}
 
 	if (needsJSONFormat()) {
-		result += "]}";
+		result.append("]");
+		printSectionTitles(sectionTitles);
+		result.append("}");
 	}
 }
 
-bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLine, int maxMovedLines, int leftLine, int rightLine)
+bool Wikidiff2::calculateCurrentSectionTitle(const String & line, int & currentByteOffset,
+	String & sectionTitle, IntList & sectionOffsets)
+{
+
+	if (sectionOffsets.empty()) {
+		return false;
+	}
+
+	int newLineLength = 1;
+	int firstOffset = sectionOffsets.front();
+	bool hasChanged = false;
+	if (currentByteOffset == firstOffset) {
+		sectionTitle = line;
+
+		hasChanged = true;
+		if (!sectionOffsets.empty()) {
+			sectionOffsets.pop_front();
+		}
+	}
+
+	currentByteOffset += line.length() + newLineLength;
+
+	return hasChanged;
+}
+
+bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLine, int maxMovedLines,
+	int leftLine, int rightLine, const int sectionTitleIndex)
 {
 	// helper fn creates 64-bit lookup key from opIndex and opLine
 	auto makeKey = [](int index, int line) {
@@ -211,8 +279,12 @@ bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLin
 			return true;
 		} else {
 			// XXXX todo: we already have the diff, don't have to do it again, just have to print it
-			printWordDiff(*linediff[best->opIndexFrom].from[best->opLineFrom], *linediff[best->opIndexTo].to[best->opLineTo], leftLine, rightLine,
-				printLeft, printRight, makeAnchorName(opIndex, opLine, printLeft), makeAnchorName(otherIndex, otherLine, !printLeft), movedir(opIndex,opLine, otherIndex,otherLine));
+			printWordDiff(*linediff[best->opIndexFrom].from[best->opLineFrom],
+				*linediff[best->opIndexTo].to[best->opLineTo],
+				leftLine, rightLine, sectionTitleIndex, printLeft, printRight,
+				makeAnchorName(opIndex, opLine, printLeft),
+				makeAnchorName(otherIndex, otherLine, !printLeft),
+				movedir(opIndex,opLine, otherIndex,otherLine));
 		}
 
 		if(printLeft)
@@ -299,14 +371,20 @@ bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLin
 
 		if(isNext(opIndex, opLine, otherIndex, otherLine)) {
 			debugPrintf("This one immediately follows, displaying as change...");
-			printWordDiff(*linediff[found->opIndexFrom].from[found->opLineFrom], *linediff[found->opIndexTo].to[found->opLineTo], leftLine, rightLine);
+			printWordDiff(*linediff[found->opIndexFrom].from[found->opLineFrom],
+				*linediff[found->opIndexTo].to[found->opLineTo],
+				leftLine, rightLine, sectionTitleIndex);
 			found->lhsDisplayed = true;
 			found->rhsDisplayed = true;
 		}
 		else {
 			// XXXX todo: we already have the diff, don't have to do it again, just have to print it
-			printWordDiff(*linediff[found->opIndexFrom].from[found->opLineFrom], *linediff[found->opIndexTo].to[found->opLineTo], leftLine, rightLine,
-				printLeft, printRight, makeAnchorName(opIndex, opLine, printLeft), makeAnchorName(otherIndex, otherLine, !printLeft), movedir(opIndex,opLine, otherIndex,otherLine));
+			printWordDiff(*linediff[found->opIndexFrom].from[found->opLineFrom],
+				*linediff[found->opIndexTo].to[found->opLineTo],
+				leftLine, rightLine, sectionTitleIndex, printLeft, printRight,
+				makeAnchorName(opIndex, opLine, printLeft),
+				makeAnchorName(otherIndex, otherLine, !printLeft),
+				movedir(opIndex,opLine, otherIndex,otherLine));
 		}
 
 		debugPrintf("copy: %d, del: %d, add: %d, change: %d, similarity: %.4f\n"
@@ -406,7 +484,8 @@ void Wikidiff2::explodeLines(const String & text, StringVector &lines)
 	}
 }
 
-const Wikidiff2::String & Wikidiff2::execute(const String & text1, const String & text2, int numContextLines, int maxMovedLines)
+const Wikidiff2::String & Wikidiff2::execute(const String & text1, const String & text2,
+	const String & sectionOffsets, int numContextLines, int maxMovedLines)
 {
 	// Allocate some result space to avoid excessive copying
 	result.clear();
@@ -418,8 +497,23 @@ const Wikidiff2::String & Wikidiff2::execute(const String & text1, const String 
 	explodeLines(text1, lines1);
 	explodeLines(text2, lines2);
 
+	//split section offsets into list of ints
+	StringStream sectionOffsetStream(sectionOffsets);
+	StringVector sectionOffsetStrings((std::istream_iterator<String>(sectionOffsetStream)),
+	std::istream_iterator<String>());
+
+	IntList sectionOffsetList;
+	for (String &byteOffset : sectionOffsetStrings) {
+		StringStream byteOffsetStream(byteOffset);
+		int byteOffsetInt = -1;
+		byteOffsetStream >> byteOffsetInt;
+		if (byteOffsetInt > -1) {
+			sectionOffsetList.push_back(byteOffsetInt);
+		}
+	}
+
 	// Do the diff
-	diffLines(lines1, lines2, numContextLines, maxMovedLines);
+	diffLines(lines1, lines2, numContextLines, maxMovedLines, sectionOffsetList);
 
 	// Return a reference to the result buffer
 	return result;
@@ -435,4 +529,9 @@ const Wikidiff2::String Wikidiff2::toString(long input)
 bool Wikidiff2::needsJSONFormat()
 {
 	return false;
+}
+
+void Wikidiff2::printSectionTitles(const StringVector & sectionTitles)
+{
+	//override
 }

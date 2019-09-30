@@ -15,6 +15,7 @@
 #include <vector>
 #include <set>
 #include <memory>
+#include <list>
 
 #define WIKIDIFF2_VERSION_STRING "1.9.0"
 // uncomment this for inline HTML debug output related to moved lines
@@ -27,11 +28,13 @@ class Wikidiff2 {
 		typedef std::vector<String, WD2_ALLOCATOR<String> > StringVector;
 		typedef std::vector<Word, WD2_ALLOCATOR<Word> > WordVector;
 		typedef std::vector<int, WD2_ALLOCATOR<int> > IntVector;
+		typedef std::list<int, WD2_ALLOCATOR<int> > IntList;
 
 		typedef Diff<String> StringDiff;
 		typedef Diff<Word> WordDiff;
 
-		const String & execute(const String & text1, const String & text2, int numContextLines, int maxMovedLines);
+		const String & execute(const String & text1, const String & text2, const String & sectionOffsets,
+			int numContextLines, int maxMovedLines);
 
 		inline const String & getResult() const;
 
@@ -60,12 +63,19 @@ class Wikidiff2 {
 
 		virtual bool needsJSONFormat();
 		virtual void diffLines(const StringVector & lines1, const StringVector & lines2,
-				int numContextLines, int maxMovedLines);
-		virtual void printAdd(const String & line, int leftLine, int rightLine) = 0;
-		virtual void printDelete(const String & line, int leftLine, int rightLine) = 0;
-		virtual void printWordDiff(const String & text1, const String & text2, int leftLine, int rightLine, bool printLeft = true, bool printRight = true, const String & srcAnchor = "", const String & dstAnchor = "", bool moveDirectionDownwards = false) = 0;
+				int numContextLines, int maxMovedLines, IntList & sectionOffsets);
+		virtual void printAdd(const String & line, int leftLine, int rightLine,
+			const int sectionTitleIndex) = 0;
+		virtual void printDelete(const String & line, int leftLine, int rightLine,
+			const int sectionTitleIndex) = 0;
+		virtual void printWordDiff(const String & text1, const String & text2, int leftLine,
+			int rightLine, const int sectionTitleIndex, bool printLeft = true, bool printRight = true,
+			const String & srcAnchor = "", const String & dstAnchor = "",
+			bool moveDirectionDownwards = false) = 0;
 		virtual void printBlockHeader(int leftLine, int rightLine) = 0;
-		virtual void printContext(const String & input, int leftLine, int rightLine) = 0;
+		virtual void printContext(const String & input, int leftLine, int rightLine,
+			const int sectionTitleIndex) = 0;
+		virtual void printSectionTitles(const StringVector & sectionTitles);
 
 		void printHtmlEncodedText(const String & input);
 		void debugPrintWordDiff(WordDiff & worddiff);
@@ -73,7 +83,10 @@ class Wikidiff2 {
 		void explodeLines(const String & text, StringVector &lines);
 		const String toString(long input);
 
-		bool printMovedLineDiff(StringDiff & linediff, int opIndex, int opLine, int maxMovedLines, int leftLine, int rightLine);
+		bool printMovedLineDiff(StringDiff & linediff, int opIndex, int opLine, int maxMovedLines,
+			int leftLine, int rightLine, const int sectionTitleIndex);
+		bool calculateCurrentSectionTitle(const String & line, int & currentByteOffset,
+			String & sectionTitle, IntList & sectionOffsets);
 };
 
 inline const Wikidiff2::String & Wikidiff2::getResult() const

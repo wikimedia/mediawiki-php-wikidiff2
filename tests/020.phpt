@@ -18,8 +18,8 @@ EOT;
 
 #---------------------------------------------------
 
-print wikidiff2_inline_json_diff( $x, $y, 2 );
+print wikidiff2_inline_json_diff( $x, $y, "", 2 );
 
 ?>
 --EXPECT--
-{"diff": [{"type": 3, "lineNumber": 1, "text": "!!FUZZY!!Rajaa", "highlightRanges": [{"start": 0, "length": 9, "type": 1 }]}]}
+{"diff": [{"type": 3, "lineNumber": 1, "text": "!!FUZZY!!Rajaa", "highlightRanges": [{"start": 0, "length": 9, "type": 1 }]}], "sectionTitles": []}

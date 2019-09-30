@@ -4,36 +4,38 @@
 #include <sstream>
 #include <iomanip>
 
-void InlineDiffJSON::printAdd(const String& line, int leftLine,
-	int rightLine)
+void InlineDiffJSON::printAdd(const String& line, int leftLine, int rightLine,
+	const int sectionTitleIndex)
 {
-	printAddDelete(line, DiffType::AddLine, toString(rightLine));
+	printAddDelete(line, DiffType::AddLine, toString(rightLine), sectionTitleIndex);
 }
 
-void InlineDiffJSON::printDelete(const String& line, int leftLine,
-	int rightLine)
+void InlineDiffJSON::printDelete(const String& line, int leftLine, int rightLine,
+	const int sectionTitleIndex)
 {
-	printAddDelete(line, DiffType::DeleteLine, "");
+	printAddDelete(line, DiffType::DeleteLine, "", sectionTitleIndex);
 }
 
-void InlineDiffJSON::printAddDelete(const String& line, DiffType diffType,
-	const String& lineNumber) {
+void InlineDiffJSON::printAddDelete(const String& line, DiffType diffType, const String& lineNumber,
+	const int sectionTitleIndex) {
 	if (hasResults)
 		result.append(",");
 
-	String lineNumberJSON = lineNumber.length() == 0 ? "" : ", \"lineNumber\": " +
-		lineNumber;
+	String lineNumberJSON = lineNumber.length() == 0 ? "" : ", \"lineNumber\": " + lineNumber;
 	String preStr = "{\"type\": " + toString(diffType) + lineNumberJSON + ", \"text\": ";
 	result.append(preStr + "\"");
 	printEscapedJSON(line);
-	result.append("\"}");
+
+	result.append("\"");
+	appendSectionTitleIndex(sectionTitleIndex);
+	result.append("}");
 
 	hasResults = true;
 }
 
 void InlineDiffJSON::printWordDiff(const String& text1, const String& text2, int leftLine,
-	int rightLine, bool printLeft, bool printRight, const String & srcAnchor,
-	const String & dstAnchor, bool moveDirectionDownwards)
+	int rightLine, const int sectionTitleIndex, bool printLeft, bool printRight,
+	const String & srcAnchor, const String & dstAnchor, bool moveDirectionDownwards)
 {
 	WordVector words1, words2;
 
@@ -160,10 +162,12 @@ void InlineDiffJSON::printWordDiff(const String& text1, const String& text2, int
 		}
 	}
 
+	result.append("\"");
+	appendSectionTitleIndex(sectionTitleIndex);
 	if (moved && isMoveSrc) {
-		result.append("\"}");
+		result.append("}");
 	} else {
-		result.append("\", \"highlightRanges\": [" + ranges + "]}");
+		result.append(", \"highlightRanges\": [" + ranges + "]}");
 	}
 
 }
@@ -174,7 +178,7 @@ void InlineDiffJSON::printBlockHeader(int leftLine, int rightLine)
 }
 
 void InlineDiffJSON::printContext(const String & input, int leftLine,
-	int rightLine)
+	int rightLine, const int sectionTitleIndex)
 {
 	if (hasResults)
 		result.append(",");
@@ -184,7 +188,9 @@ void InlineDiffJSON::printContext(const String & input, int leftLine,
 
 	result.append(preString + "\"");
 	printEscapedJSON(input);
-	result.append("\"}");
+	result.append("\"");
+	appendSectionTitleIndex(sectionTitleIndex);
+	result.append("}");
 	hasResults = true;
 }
 
@@ -211,7 +217,29 @@ void InlineDiffJSON::printEscapedJSON(const String &s) {
 	}
 }
 
+void InlineDiffJSON::appendSectionTitleIndex(const int sectionTitleIndex) {
+	if (sectionTitleIndex > -1) {
+		result.append(", \"sectionTitleIndex\": ");
+		result.append(toString(sectionTitleIndex));
+	}
+}
+
 bool InlineDiffJSON::needsJSONFormat()
 {
 	return true;
+}
+
+void InlineDiffJSON::printSectionTitles(const StringVector & sectionTitles) {
+	result.append(", \"sectionTitles\": [");
+	int i = 0;
+	for(const String & sectionTitle : sectionTitles) {
+		if (i > 0)
+			result.append(",");
+
+		result.append("\"");
+		printEscapedJSON(sectionTitle);
+		result.append("\"");
+		i++;
+	}
+	result.append("]");
 }

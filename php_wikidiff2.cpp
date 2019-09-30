@@ -120,7 +120,7 @@ PHP_FUNCTION(wikidiff2_do_diff)
 		TableDiff wikidiff2;
 		Wikidiff2::String text1String(text1, text1_len);
 		Wikidiff2::String text2String(text2, text2_len);
-		const Wikidiff2::String & ret = wikidiff2.execute(text1String, text2String, (int)numContextLines, movedParagraphDetectionCutoff());
+		const Wikidiff2::String & ret = wikidiff2.execute(text1String, text2String, "", (int)numContextLines, movedParagraphDetectionCutoff());
 		COMPAT_RETURN_STRINGL( const_cast<char*>(ret.data()), ret.size());
 	} catch (std::bad_alloc &e) {
 		zend_error(E_WARNING, "Out of memory in wikidiff2_do_diff().");
@@ -160,7 +160,7 @@ PHP_FUNCTION(wikidiff2_inline_diff)
 		InlineDiff wikidiff2;
 		Wikidiff2::String text1String(text1, text1_len);
 		Wikidiff2::String text2String(text2, text2_len);
-		const Wikidiff2::String& ret = wikidiff2.execute(text1String, text2String, (int)numContextLines, movedParagraphDetectionCutoff());
+		const Wikidiff2::String& ret = wikidiff2.execute(text1String, text2String, "", (int)numContextLines, movedParagraphDetectionCutoff());
 		COMPAT_RETURN_STRINGL( const_cast<char*>(ret.data()), ret.size());
 	} catch (std::bad_alloc &e) {
 		zend_error(E_WARNING, "Out of memory in wikidiff2_inline_diff().");
@@ -178,19 +178,22 @@ PHP_FUNCTION(wikidiff2_inline_json_diff)
 {
 	char *text1 = NULL;
 	char *text2 = NULL;
+	char *sectionTitleOffsets = NULL;
 	int argc = ZEND_NUM_ARGS();
 #if PHP_MAJOR_VERSION >= 7
 	size_t text1_len;
 	size_t text2_len;
+	size_t sectionTitleOffsets_len;
 	zend_long numContextLines;
 #else
 	int text1_len;
 	int text2_len;
+	int sectionTitleOffsets_len;
 	long numContextLines;
 #endif
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "ssl", &text1, &text1_len, &text2,
-		&text2_len, &numContextLines) == FAILURE)
+	if (zend_parse_parameters(argc TSRMLS_CC, "sssl", &text1, &text1_len, &text2,
+		&text2_len, &sectionTitleOffsets, &sectionTitleOffsets_len, &numContextLines) == FAILURE)
 	{
 		return;
 	}
@@ -200,7 +203,9 @@ PHP_FUNCTION(wikidiff2_inline_json_diff)
 		InlineDiffJSON wikidiff2;
 		Wikidiff2::String text1String(text1, text1_len);
 		Wikidiff2::String text2String(text2, text2_len);
-		const Wikidiff2::String& ret = wikidiff2.execute(text1String, text2String, (int)numContextLines, movedParagraphDetectionCutoff());
+		Wikidiff2::String sectionTitleOffsetsString(sectionTitleOffsets, sectionTitleOffsets_len);
+		const Wikidiff2::String& ret = wikidiff2.execute(text1String, text2String,
+			sectionTitleOffsetsString, (int)numContextLines, movedParagraphDetectionCutoff());
 		COMPAT_RETURN_STRINGL( const_cast<char*>(ret.data()), ret.size());
 	} catch (std::bad_alloc &e) {
 		zend_error(E_WARNING, "Out of memory in wikidiff2_inline_json_diff().");
