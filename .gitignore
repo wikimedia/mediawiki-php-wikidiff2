@@ -9,7 +9,6 @@
 *.m4
 Makefile*
 config.*
-CMake*
 *.iml
 *.so
 
