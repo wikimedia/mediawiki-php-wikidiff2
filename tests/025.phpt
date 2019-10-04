@@ -195,7 +195,7 @@ EOT;
 
 #---------------------------------------------------
 
-print wikidiff2_inline_json_diff( $before, $after, "1620 1791 1862", 2 );
+print wikidiff2_inline_json_diff( $before, $after, [ 1620, 1791, 1862 ], 2 );
 
 ?>
 --EXPECT--

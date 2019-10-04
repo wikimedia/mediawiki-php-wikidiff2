@@ -33,7 +33,7 @@ class Wikidiff2 {
 		typedef Diff<String> StringDiff;
 		typedef Diff<Word> WordDiff;
 
-		const String & execute(const String & text1, const String & text2, const String & sectionOffsets,
+		const String & execute(const String & text1, const String & text2, IntList & sectionOffsetList,
 			int numContextLines, int maxMovedLines);
 
 		inline const String & getResult() const;

@@ -7,7 +7,7 @@ $y = str_repeat( 'b ', 6000 ) . "\n" . str_repeat( 'b ', 500 );
 
 #---------------------------------------------------
 
-print wikidiff2_inline_json_diff( $x, $y, "", 2 );
+print wikidiff2_inline_json_diff( $x, $y, [], 2 );
 
 ?>
 --EXPECT--

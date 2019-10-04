@@ -485,7 +485,7 @@ void Wikidiff2::explodeLines(const String & text, StringVector &lines)
 }
 
 const Wikidiff2::String & Wikidiff2::execute(const String & text1, const String & text2,
-	const String & sectionOffsets, int numContextLines, int maxMovedLines)
+	IntList & sectionOffsetList, int numContextLines, int maxMovedLines)
 {
 	// Allocate some result space to avoid excessive copying
 	result.clear();
@@ -496,21 +496,6 @@ const Wikidiff2::String & Wikidiff2::execute(const String & text1, const String 
 	StringVector lines2;
 	explodeLines(text1, lines1);
 	explodeLines(text2, lines2);
-
-	//split section offsets into list of ints
-	StringStream sectionOffsetStream(sectionOffsets);
-	StringVector sectionOffsetStrings((std::istream_iterator<String>(sectionOffsetStream)),
-	std::istream_iterator<String>());
-
-	IntList sectionOffsetList;
-	for (String &byteOffset : sectionOffsetStrings) {
-		StringStream byteOffsetStream(byteOffset);
-		int byteOffsetInt = -1;
-		byteOffsetStream >> byteOffsetInt;
-		if (byteOffsetInt > -1) {
-			sectionOffsetList.push_back(byteOffsetInt);
-		}
-	}
 
 	// Do the diff
 	diffLines(lines1, lines2, numContextLines, maxMovedLines, sectionOffsetList);

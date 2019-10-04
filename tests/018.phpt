@@ -114,7 +114,7 @@ EOT;
 
 #---------------------------------------------------
 
-print wikidiff2_inline_json_diff( $x, $y, "0 29 49 95 169 250", 2 );
+print wikidiff2_inline_json_diff( $x, $y, [ 0, 29, 49, 95, 169, 250 ], 2 );
 
 ?>
 --EXPECT--

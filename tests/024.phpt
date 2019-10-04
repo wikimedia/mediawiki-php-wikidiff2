@@ -31,7 +31,7 @@ EOT;
 
 #---------------------------------------------------
 
-print wikidiff2_inline_json_diff( $before, $after, "", 2 );
+print wikidiff2_inline_json_diff( $before, $after, [], 2 );
 
 ?>
 --EXPECT--

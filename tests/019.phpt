@@ -40,7 +40,7 @@ EOT;
 
 #---------------------------------------------------
 
-print wikidiff2_inline_json_diff( $x, $y, "0", 2 );
+print wikidiff2_inline_json_diff( $x, $y, [ 0 ], 2 );
 
 ?>
 --EXPECT--
