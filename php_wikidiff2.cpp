@@ -190,7 +190,6 @@ PHP_FUNCTION(wikidiff2_inline_json_diff)
 #if PHP_MAJOR_VERSION >= 7
 	size_t text1_len;
 	size_t text2_len;
-	size_t sectionTitleOffsets_len;
 	zend_long numContextLines;
 #else
 	int text1_len;
