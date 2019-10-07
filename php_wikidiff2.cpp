@@ -13,11 +13,7 @@
 #include "InlineDiff.h"
 #include "InlineDiffJSON.h"
 
-#if PHP_MAJOR_VERSION >= 7
 #define COMPAT_RETURN_STRINGL(s, l) { RETURN_STRINGL(s, l); return; }
-#else
-#define COMPAT_RETURN_STRINGL(s, l) { RETURN_STRINGL(s, l, 1); return; }
-#endif
 
 static int le_wikidiff2;
 
@@ -99,15 +95,9 @@ PHP_FUNCTION(wikidiff2_do_diff)
 	char *text1 = NULL;
 	char *text2 = NULL;
 	int argc = ZEND_NUM_ARGS();
-#if PHP_MAJOR_VERSION >= 7
 	size_t text1_len;
 	size_t text2_len;
 	zend_long numContextLines;
-#else
-	int text1_len;
-	int text2_len;
-	long numContextLines;
-#endif
 
 	if (zend_parse_parameters(argc TSRMLS_CC, "ssl|l", &text1, &text1_len, &text2,
 		&text2_len, &numContextLines) == FAILURE)
@@ -140,15 +130,9 @@ PHP_FUNCTION(wikidiff2_inline_diff)
 	char *text1 = NULL;
 	char *text2 = NULL;
 	int argc = ZEND_NUM_ARGS();
-#if PHP_MAJOR_VERSION >= 7
 	size_t text1_len;
 	size_t text2_len;
 	zend_long numContextLines;
-#else
-	int text1_len;
-	int text2_len;
-	long numContextLines;
-#endif
 
 	if (zend_parse_parameters(argc TSRMLS_CC, "ssl", &text1, &text1_len, &text2,
 		&text2_len, &numContextLines) == FAILURE)
@@ -187,17 +171,10 @@ PHP_FUNCTION(wikidiff2_inline_json_diff)
 	char *text2 = NULL;
 	zval *sectionTitleOffsetsArray = NULL;
 	int argc = ZEND_NUM_ARGS();
-#if PHP_MAJOR_VERSION >= 7
 	size_t text1_len;
 	size_t text2_len;
 	size_t sectionTitleOffsets_len;
 	zend_long numContextLines;
-#else
-	int text1_len;
-	int text2_len;
-	int sectionTitleOffsets_len;
-	long numContextLines;
-#endif
 
 	if (zend_parse_parameters(argc TSRMLS_CC, "ssal", &text1, &text1_len, &text2,
 		&text2_len, &sectionTitleOffsetsArray, &numContextLines) == FAILURE)
