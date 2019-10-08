@@ -11,6 +11,7 @@ Makefile*
 config.*
 *.iml
 *.so
+!config.m4
 
 install_manifest.txt
 .deps
