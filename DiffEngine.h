@@ -24,9 +24,6 @@
 #include "Wikidiff2.h"
 #include "Word.h"
 #include "textutil.h"
-#ifdef HHVM_BUILD_DSO
-#include "hphp/runtime/base/ini-setting.h"
-#endif //HHVM_BUILD_DSO
 
 // Default value for INI setting wikidiff2.change_threshold
 #define WIKIDIFF2_CHANGE_THRESHOLD_DEFAULT		"0.2"
@@ -203,44 +200,20 @@ void DiffEngine<T>::clear()
 
 inline double characterSimilarityThreshold()
 {
-#ifdef HHVM_BUILD_DSO
-	// HHVM module
-	HPHP::Variant value(WIKIDIFF2_CHANGE_THRESHOLD_DEFAULT);
-	HPHP::IniSetting::Get(std::string("wikidiff2.change_threshold"), value);
-	return value.toDouble();
-#else
-	// Zend module
 	double ret = INI_FLT("wikidiff2.change_threshold");
 	return ret;
-#endif //HHVM_BUILD_DSO
 }
 
 inline double movedLineThreshold()
 {
-#ifdef HHVM_BUILD_DSO
-	// HHVM module
-	HPHP::Variant value(WIKIDIFF2_MOVED_LINE_THRESHOLD_DEFAULT);
-	HPHP::IniSetting::Get(std::string("wikidiff2.moved_line_threshold"), value);
-	return value.toDouble();
-#else
-	// Zend module
 	double ret = INI_FLT("wikidiff2.moved_line_threshold");
 	return ret;
-#endif //HHVM_BUILD_DSO
 }
 
 inline int movedParagraphDetectionCutoff()
 {
-#ifdef HHVM_BUILD_DSO
-	// HHVM module
-	HPHP::Variant value(WIKIDIFF2_MOVED_PARAGRAPH_DETECTION_CUTOFF_DEFAULT);
-	HPHP::IniSetting::Get(std::string("wikidiff2.moved_paragraph_detection_cutoff"), value);
-	return value.toInt32();
-#else
-	// Zend module
 	int ret = INI_INT("wikidiff2.moved_paragraph_detection_cutoff");
 	return ret;
-#endif //HHVM_BUILD_DSO
 }
 
 // for a DiffOp::change, decide whether it should be treated as a successive add and delete based on similarity.
