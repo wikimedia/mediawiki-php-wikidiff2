@@ -156,7 +156,7 @@ PHP_FUNCTION(wikidiff2_inline_diff)
 }
 
 int copy_list_element(zval *val, Wikidiff2::IntList *out) {
-    out->push_back(Z_LVAL_P(val));
+    out->push_back(zval_get_long(val));
     return ZEND_HASH_APPLY_KEEP;
 }
 
