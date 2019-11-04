@@ -23,9 +23,9 @@ if test "$PHP_WIKIDIFF2" != "no"; then
 	AC_MSG_ERROR([required utility 'pkg-config' not found])
   fi
 
-  if ! $PKG_CONFIG --exists libthai
+  if ! $PKG_CONFIG --atleast-version=0.1.25 --exists libthai
   then
-	AC_MSG_ERROR(['libthai' not known to pkg-config])
+	AC_MSG_ERROR(['libthai' is not in pkg-config or version < 0.1.25])
   fi
 
   PHP_EVAL_INCLINE(`$PKG_CONFIG --cflags-only-I libthai`)
@@ -39,5 +39,5 @@ if test "$PHP_WIKIDIFF2" != "no"; then
   PHP_SUBST(WIKIDIFF2_SHARED_LIBADD)
   AC_DEFINE(HAVE_WIKIDIFF2, 1, [ ])
   export CXXFLAGS="-Wno-write-strings -std=c++11 $CXXFLAGS"
-  PHP_NEW_EXTENSION(wikidiff2, php_wikidiff2.cpp Wikidiff2.cpp TableDiff.cpp InlineDiff.cpp InlineDiffJSON.cpp, $ext_shared)
+  PHP_NEW_EXTENSION(wikidiff2, php_wikidiff2.cpp Wikidiff2.cpp TableDiff.cpp InlineDiff.cpp InlineDiffJSON.cpp TextUtil.cpp, $ext_shared)
 fi

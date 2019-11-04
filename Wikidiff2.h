@@ -1,20 +1,13 @@
 #ifndef WIKIDIFF2_H
 #define WIKIDIFF2_H
 
-/** Set WD2_USE_STD_ALLOCATOR depending on whether we're compiling as a PHP module or not */
-#if defined(HAVE_CONFIG_H)
-	#define WD2_ALLOCATOR PhpAllocator
-	#include "php_cpp_allocator.h"
-#else
-	#define WD2_ALLOCATOR std::allocator
-#endif
-
+#include "wd2_allocator.h"
 #include "DiffEngine.h"
 #include "Word.h"
+#include "TextUtil.h"
 #include <string>
 #include <vector>
 #include <set>
-#include <memory>
 #include <list>
 
 #define WIKIDIFF2_VERSION_STRING "1.9.0"
@@ -41,6 +34,7 @@ class Wikidiff2 {
 	protected:
 		enum { MAX_WORD_LEVEL_DIFF_COMPLEXITY = 40000000 };
 		String result;
+		TextUtil & textUtil;
 
 		struct DiffMapEntry
 		{
@@ -60,6 +54,10 @@ class Wikidiff2 {
 			public:
 				bool operator() (StringDiff & linediff, int maxMovedLines);	// calculates & caches comparison count
 		} allowPrintMovedLineDiff;
+
+		Wikidiff2()
+			: textUtil(TextUtil::getInstance())
+		{}
 
 		virtual bool needsJSONFormat();
 		virtual void diffLines(const StringVector & lines1, const StringVector & lines2,
@@ -121,6 +119,5 @@ inline bool Wikidiff2::AllowPrintMovedLineDiff::operator () (StringDiff & linedi
 	}
 	return detectMovedLines;
 }
-
 
 #endif

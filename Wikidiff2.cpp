@@ -323,14 +323,14 @@ bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLin
 				}
 				WordVector words1, words2;
 				std::shared_ptr<DiffMapEntry> tmp;
-				TextUtil::explodeWords(*lines[k], words1);
+				textUtil.explodeWords(*lines[k], words1);
 				bool potentialMatch = false;
 				if (otherOp == DiffOp<String>::del) {
-					TextUtil::explodeWords(*linediff[opIndex].to[opLine], words2);
+					textUtil.explodeWords(*linediff[opIndex].to[opLine], words2);
 					tmp = std::make_shared<DiffMapEntry>(words2, words1, i, k, opIndex, opLine);
 					potentialMatch = cmpDiffMapEntries(tmp->opIndexFrom, tmp->opLineFrom);
 				} else {
-					TextUtil::explodeWords(*linediff[opIndex].from[opLine], words2);
+					textUtil.explodeWords(*linediff[opIndex].from[opLine], words2);
 					tmp = std::make_shared<DiffMapEntry>(words1, words2, opIndex, opLine, i, k);
 					potentialMatch = cmpDiffMapEntries(tmp->opIndexTo, tmp->opLineTo);
 				}

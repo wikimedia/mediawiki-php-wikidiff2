@@ -23,7 +23,7 @@
 #include "IntSet.h"
 #include "Wikidiff2.h"
 #include "Word.h"
-#include "textutil.h"
+#include "TextUtil.h"
 
 // Default value for INI setting wikidiff2.change_threshold
 #define WIKIDIFF2_CHANGE_THRESHOLD_DEFAULT		"0.2"
@@ -155,7 +155,10 @@ class DiffEngine
 		typedef std::set<T, std::less<T>, WD2_ALLOCATOR<T> > ValueSet;
 #endif
 
-		DiffEngine() : done(false) {}
+		DiffEngine()
+			: done(false), textUtil(TextUtil::getInstance())
+		{}
+
 		void clear();
 		void diff (const ValueVector & from_lines,
 				const ValueVector & to_lines, Diff<T> & diff,
@@ -168,6 +171,7 @@ class DiffEngine
 		int diag (int xoff, int xlim, int yoff, int ylim, int nchunks,
 				IntPairVector & seps);
 
+		TextUtil & textUtil;
 		BoolVector xchanged, ychanged;
 		PointerVector xv, yv;
 		IntVector xind, yind;
@@ -221,8 +225,8 @@ template<typename T>
 inline bool DiffEngine<T>::looksLikeChange(const T& del, const T& add, long long bailoutComplexity)
 {
 	TextUtil::WordVector words1, words2;
-	TextUtil::explodeWords(del, words1);
-	TextUtil::explodeWords(add, words2);
+	textUtil.explodeWords(del, words1);
+	textUtil.explodeWords(add, words2);
 	WordDiffStats ds(words1, words2, bailoutComplexity);
 	return ds.charSimilarity > characterSimilarityThreshold();
 }
