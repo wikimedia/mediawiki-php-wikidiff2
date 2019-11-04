@@ -65,16 +65,16 @@ class Wikidiff2 {
 		virtual void diffLines(const StringVector & lines1, const StringVector & lines2,
 				int numContextLines, int maxMovedLines, IntList & sectionOffsets);
 		virtual void printAdd(const String & line, int leftLine, int rightLine,
-			const int sectionTitleIndex) = 0;
+			int sectionTitleIndex) = 0;
 		virtual void printDelete(const String & line, int leftLine, int rightLine,
-			const int sectionTitleIndex) = 0;
+			int sectionTitleIndex) = 0;
 		virtual void printWordDiff(const String & text1, const String & text2, int leftLine,
-			int rightLine, const int sectionTitleIndex, bool printLeft = true, bool printRight = true,
+			int rightLine, int sectionTitleIndex, bool printLeft = true, bool printRight = true,
 			const String & srcAnchor = "", const String & dstAnchor = "",
 			bool moveDirectionDownwards = false) = 0;
 		virtual void printBlockHeader(int leftLine, int rightLine) = 0;
 		virtual void printContext(const String & input, int leftLine, int rightLine,
-			const int sectionTitleIndex) = 0;
+			int sectionTitleIndex) = 0;
 		virtual void printSectionTitles(const StringVector & sectionTitles);
 
 		void printHtmlEncodedText(const String & input);
@@ -84,7 +84,7 @@ class Wikidiff2 {
 		const String toString(long input);
 
 		bool printMovedLineDiff(StringDiff & linediff, int opIndex, int opLine, int maxMovedLines,
-			int leftLine, int rightLine, const int sectionTitleIndex);
+			int leftLine, int rightLine, int sectionTitleIndex);
 		bool calculateCurrentSectionTitle(const String & line, int & currentByteOffset,
 			String & sectionTitle, IntList & sectionOffsets);
 };

@@ -5,19 +5,19 @@
 #include <iomanip>
 
 void InlineDiffJSON::printAdd(const String& line, int leftLine, int rightLine,
-	const int sectionTitleIndex)
+	int sectionTitleIndex)
 {
 	printAddDelete(line, DiffType::AddLine, toString(rightLine), sectionTitleIndex);
 }
 
 void InlineDiffJSON::printDelete(const String& line, int leftLine, int rightLine,
-	const int sectionTitleIndex)
+	int sectionTitleIndex)
 {
 	printAddDelete(line, DiffType::DeleteLine, "", sectionTitleIndex);
 }
 
 void InlineDiffJSON::printAddDelete(const String& line, DiffType diffType, const String& lineNumber,
-	const int sectionTitleIndex) {
+	int sectionTitleIndex) {
 	if (hasResults)
 		result.append(",");
 
@@ -34,7 +34,7 @@ void InlineDiffJSON::printAddDelete(const String& line, DiffType diffType, const
 }
 
 void InlineDiffJSON::printWordDiff(const String& text1, const String& text2, int leftLine,
-	int rightLine, const int sectionTitleIndex, bool printLeft, bool printRight,
+	int rightLine, int sectionTitleIndex, bool printLeft, bool printRight,
 	const String & srcAnchor, const String & dstAnchor, bool moveDirectionDownwards)
 {
 	WordVector words1, words2;
@@ -178,7 +178,7 @@ void InlineDiffJSON::printBlockHeader(int leftLine, int rightLine)
 }
 
 void InlineDiffJSON::printContext(const String & input, int leftLine,
-	int rightLine, const int sectionTitleIndex)
+	int rightLine, int sectionTitleIndex)
 {
 	if (hasResults)
 		result.append(",");
@@ -217,7 +217,7 @@ void InlineDiffJSON::printEscapedJSON(const String &s) {
 	}
 }
 
-void InlineDiffJSON::appendSectionTitleIndex(const int sectionTitleIndex) {
+void InlineDiffJSON::appendSectionTitleIndex(int sectionTitleIndex) {
 	if (sectionTitleIndex > -1) {
 		result.append(", \"sectionTitleIndex\": ");
 		result.append(toString(sectionTitleIndex));

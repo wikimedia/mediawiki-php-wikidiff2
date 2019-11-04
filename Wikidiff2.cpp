@@ -168,7 +168,7 @@ bool Wikidiff2::calculateCurrentSectionTitle(const String & line, int & currentB
 }
 
 bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLine, int maxMovedLines,
-	int leftLine, int rightLine, const int sectionTitleIndex)
+	int leftLine, int rightLine, int sectionTitleIndex)
 {
 	// helper fn creates 64-bit lookup key from opIndex and opLine
 	auto makeKey = [](int index, int line) {

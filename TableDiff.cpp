@@ -2,7 +2,7 @@
 #include "Wikidiff2.h"
 #include "TableDiff.h"
 
-void TableDiff::printAdd(const String & line, int leftLine, int rightLine, const int sectionTitleIndex)
+void TableDiff::printAdd(const String & line, int leftLine, int rightLine, int sectionTitleIndex)
 {
 	result += "<tr>\n"
 		"  <td colspan=\"2\" class=\"diff-empty\">&#160;</td>\n"
@@ -12,7 +12,7 @@ void TableDiff::printAdd(const String & line, int leftLine, int rightLine, const
 	result += "</td>\n</tr>\n";
 }
 
-void TableDiff::printDelete(const String & line, int leftLine, int rightLine, const int sectionTitleIndex)
+void TableDiff::printDelete(const String & line, int leftLine, int rightLine, int sectionTitleIndex)
 {
 	result += "<tr>\n"
 		"  <td class=\"diff-marker\">−</td>\n"
@@ -24,7 +24,7 @@ void TableDiff::printDelete(const String & line, int leftLine, int rightLine, co
 }
 
 void TableDiff::printWordDiff(const String & text1, const String & text2, int leftLine,
-	int rightLine, const int sectionTitleIndex, bool printLeft, bool printRight,
+	int rightLine, int sectionTitleIndex, bool printLeft, bool printRight,
 	const String & srcAnchor, const String & dstAnchor, bool moveDirectionDownwards)
 {
 	WordVector words1, words2;
@@ -135,7 +135,7 @@ void TableDiff::printBlockHeader(int leftLine, int rightLine)
 	result += buf;
 }
 
-void TableDiff::printContext(const String & input, int leftLine, int rightLine, const int sectionTitleIndex)
+void TableDiff::printContext(const String & input, int leftLine, int rightLine, int sectionTitleIndex)
 {
 	result +=
 		"<tr>\n"
