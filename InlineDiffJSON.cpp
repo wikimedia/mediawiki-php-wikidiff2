@@ -5,19 +5,19 @@
 #include <iomanip>
 
 void InlineDiffJSON::printAdd(const String& line, int leftLine, int rightLine,
-	int sectionTitleIndex)
+	int offsetFrom, int offsetTo)
 {
-	printAddDelete(line, DiffType::AddLine, toString(rightLine), sectionTitleIndex);
+	printAddDelete(line, DiffType::AddLine, toString(rightLine), offsetFrom, offsetTo);
 }
 
 void InlineDiffJSON::printDelete(const String& line, int leftLine, int rightLine,
-	int sectionTitleIndex)
+	int offsetFrom, int offsetTo)
 {
-	printAddDelete(line, DiffType::DeleteLine, "", sectionTitleIndex);
+	printAddDelete(line, DiffType::DeleteLine, "", offsetFrom, offsetTo);
 }
 
 void InlineDiffJSON::printAddDelete(const String& line, DiffType diffType, const String& lineNumber,
-	int sectionTitleIndex) {
+	int offsetFrom, int offsetTo) {
 	if (hasResults)
 		result.append(",");
 
@@ -27,14 +27,14 @@ void InlineDiffJSON::printAddDelete(const String& line, DiffType diffType, const
 	printEscapedJSON(line);
 
 	result.append("\"");
-	appendSectionTitleIndex(sectionTitleIndex);
+	appendOffset(offsetFrom, offsetTo);
 	result.append("}");
 
 	hasResults = true;
 }
 
 void InlineDiffJSON::printWordDiff(const String& text1, const String& text2, int leftLine,
-	int rightLine, int sectionTitleIndex, bool printLeft, bool printRight,
+	int rightLine, int offsetFrom, int offsetTo, bool printLeft, bool printRight,
 	const String & srcAnchor, const String & dstAnchor, bool moveDirectionDownwards)
 {
 	WordVector words1, words2;
@@ -163,7 +163,7 @@ void InlineDiffJSON::printWordDiff(const String& text1, const String& text2, int
 	}
 
 	result.append("\"");
-	appendSectionTitleIndex(sectionTitleIndex);
+	appendOffset(offsetFrom, offsetTo);
 	if (moved && isMoveSrc) {
 		result.append("}");
 	} else {
@@ -177,8 +177,8 @@ void InlineDiffJSON::printBlockHeader(int leftLine, int rightLine)
 	//inline diff json not setup to print this
 }
 
-void InlineDiffJSON::printContext(const String & input, int leftLine,
-	int rightLine, int sectionTitleIndex)
+void InlineDiffJSON::printContext(const String & input, int leftLine, int rightLine,
+	int offsetFrom, int offsetTo)
 {
 	if (hasResults)
 		result.append(",");
@@ -189,7 +189,7 @@ void InlineDiffJSON::printContext(const String & input, int leftLine,
 	result.append(preString + "\"");
 	printEscapedJSON(input);
 	result.append("\"");
-	appendSectionTitleIndex(sectionTitleIndex);
+	appendOffset(offsetFrom, offsetTo);
 	result.append("}");
 	hasResults = true;
 }
@@ -217,29 +217,17 @@ void InlineDiffJSON::printEscapedJSON(const String &s) {
 	}
 }
 
-void InlineDiffJSON::appendSectionTitleIndex(int sectionTitleIndex) {
-	if (sectionTitleIndex > -1) {
-		result.append(", \"sectionTitleIndex\": ");
-		result.append(toString(sectionTitleIndex));
-	}
+void InlineDiffJSON::appendOffset(int offsetFrom, int offsetTo) {
+
+  String fromStringToReturn = (offsetFrom > -1) ? toString(offsetFrom) : "null";
+	String toStringToReturn = (offsetTo > -1) ? toString(offsetTo) : "null";
+	result.append(", \"offset\": {");
+	result.append("\"from\": " + fromStringToReturn + ",");
+	result.append("\"to\": " + toStringToReturn);
+	result.append("}");
 }
 
 bool InlineDiffJSON::needsJSONFormat()
 {
 	return true;
-}
-
-void InlineDiffJSON::printSectionTitles(const StringVector & sectionTitles) {
-	result.append(", \"sectionTitles\": [");
-	int i = 0;
-	for(const String & sectionTitle : sectionTitles) {
-		if (i > 0)
-			result.append(",");
-
-		result.append("\"");
-		printEscapedJSON(sectionTitle);
-		result.append("\"");
-		i++;
-	}
-	result.append("]");
 }

@@ -1,5 +1,5 @@
 --TEST--
-Inline JSON - JSON skip section titles test
+Inline JSON - JSON byte offset tests
 --FILE--
 <?php
 $x = <<<EOT
@@ -114,8 +114,8 @@ EOT;
 
 #---------------------------------------------------
 
-print wikidiff2_inline_json_diff( $x, $y, [ 27, 67, 108, 171, 202 ], 2 );
+print wikidiff2_inline_json_diff( $x, $y, 2 );
 
 ?>
 --EXPECT--
-{"diff": [{"type": 3, "lineNumber": 1, "text": "Intro text here (changed)", "highlightRanges": [{"start": 15, "length": 10, "type": 0 }]},{"type": 0, "lineNumber": 2, "text": ""},{"type": 0, "lineNumber": 3, "text": "== Section 1 ==", "sectionTitleIndex": 0},{"type": 0, "lineNumber": 20, "text": "Line G", "sectionTitleIndex": 1},{"type": 0, "lineNumber": 21, "text": "", "sectionTitleIndex": 1},{"type": 3, "lineNumber": 22, "text": "Line H (changed)", "sectionTitleIndex": 1, "highlightRanges": [{"start": 6, "length": 10, "type": 0 }]},{"type": 0, "lineNumber": 23, "text": "", "sectionTitleIndex": 1},{"type": 0, "lineNumber": 24, "text": "Line I", "sectionTitleIndex": 1},{"type": 0, "lineNumber": 40, "text": "Line O", "sectionTitleIndex": 2},{"type": 0, "lineNumber": 41, "text": "", "sectionTitleIndex": 2},{"type": 3, "lineNumber": 42, "text": "Line P (changed)", "sectionTitleIndex": 2, "highlightRanges": [{"start": 6, "length": 10, "type": 0 }]},{"type": 0, "lineNumber": 43, "text": "", "sectionTitleIndex": 2},{"type": 0, "lineNumber": 44, "text": "Line Q", "sectionTitleIndex": 2}], "sectionTitles": ["== Section 1 ==","=== Subsection 3===","== Section 5 =="]}
+{"diff": [{"type": 3, "lineNumber": 1, "text": "Intro text here (changed)", "offset": {"from": 0,"to": 0}, "highlightRanges": [{"start": 15, "length": 10, "type": 0 }]},{"type": 0, "lineNumber": 2, "text": "", "offset": {"from": 16,"to": 26}},{"type": 0, "lineNumber": 3, "text": "== Section 1 ==", "offset": {"from": 17,"to": 27}},{"type": 0, "lineNumber": 20, "text": "Line G", "offset": {"from": 119,"to": 129}},{"type": 0, "lineNumber": 21, "text": "", "offset": {"from": 126,"to": 136}},{"type": 3, "lineNumber": 22, "text": "Line H (changed)", "offset": {"from": 127,"to": 137}, "highlightRanges": [{"start": 6, "length": 10, "type": 0 }]},{"type": 0, "lineNumber": 23, "text": "", "offset": {"from": 134,"to": 154}},{"type": 0, "lineNumber": 24, "text": "Line I", "offset": {"from": 135,"to": 155}},{"type": 0, "lineNumber": 40, "text": "Line O", "offset": {"from": 215,"to": 235}},{"type": 0, "lineNumber": 41, "text": "", "offset": {"from": 222,"to": 242}},{"type": 3, "lineNumber": 42, "text": "Line P (changed)", "offset": {"from": 223,"to": 243}, "highlightRanges": [{"start": 6, "length": 10, "type": 0 }]},{"type": 0, "lineNumber": 43, "text": "", "offset": {"from": 230,"to": 260}},{"type": 0, "lineNumber": 44, "text": "Line Q", "offset": {"from": 231,"to": 261}}]}

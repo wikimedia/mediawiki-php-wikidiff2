@@ -110,8 +110,8 @@ PHP_FUNCTION(wikidiff2_do_diff)
 		TableDiff wikidiff2;
 		Wikidiff2::String text1String(text1, text1_len);
 		Wikidiff2::String text2String(text2, text2_len);
-		Wikidiff2::IntList emptyOffsetsList;
-		const Wikidiff2::String & ret = wikidiff2.execute(text1String, text2String, emptyOffsetsList, (int)numContextLines, movedParagraphDetectionCutoff());
+		const Wikidiff2::String & ret = wikidiff2.execute(text1String, text2String, (int)numContextLines,
+		movedParagraphDetectionCutoff());
 		COMPAT_RETURN_STRINGL( const_cast<char*>(ret.data()), ret.size());
 	} catch (std::bad_alloc &e) {
 		zend_error(E_WARNING, "Out of memory in wikidiff2_do_diff().");
@@ -145,19 +145,14 @@ PHP_FUNCTION(wikidiff2_inline_diff)
 		InlineDiff wikidiff2;
 		Wikidiff2::String text1String(text1, text1_len);
 		Wikidiff2::String text2String(text2, text2_len);
-		Wikidiff2::IntList emptyOffsetsList;
-		const Wikidiff2::String& ret = wikidiff2.execute(text1String, text2String, emptyOffsetsList, (int)numContextLines, movedParagraphDetectionCutoff());
+		const Wikidiff2::String& ret = wikidiff2.execute(text1String, text2String, (int)numContextLines,
+		movedParagraphDetectionCutoff());
 		COMPAT_RETURN_STRINGL( const_cast<char*>(ret.data()), ret.size());
 	} catch (std::bad_alloc &e) {
 		zend_error(E_WARNING, "Out of memory in wikidiff2_inline_diff().");
 	} catch (...) {
 		zend_error(E_WARNING, "Unknown exception in wikidiff2_inline_diff().");
 	}
-}
-
-int copy_list_element(zval *val, Wikidiff2::IntList *out) {
-    out->push_back(zval_get_long(val));
-    return ZEND_HASH_APPLY_KEEP;
 }
 
 /* {{{ proto string wikidiff2_inline_json_diff(string text1, string text2, int numContextLines)
@@ -169,14 +164,13 @@ PHP_FUNCTION(wikidiff2_inline_json_diff)
 {
 	char *text1 = NULL;
 	char *text2 = NULL;
-	zval *sectionTitleOffsetsArray = NULL;
 	int argc = ZEND_NUM_ARGS();
 	size_t text1_len;
 	size_t text2_len;
 	zend_long numContextLines;
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "ssal", &text1, &text1_len, &text2,
-		&text2_len, &sectionTitleOffsetsArray, &numContextLines) == FAILURE)
+	if (zend_parse_parameters(argc TSRMLS_CC, "ssl", &text1, &text1_len, &text2,
+		&text2_len, &numContextLines) == FAILURE)
 	{
 		return;
 	}
@@ -187,14 +181,8 @@ PHP_FUNCTION(wikidiff2_inline_json_diff)
 		Wikidiff2::String text1String(text1, text1_len);
 		Wikidiff2::String text2String(text2, text2_len);
 
-		Wikidiff2::IntList sectionTitleOffsetsList;
-		zend_hash_apply_with_argument(
-				Z_ARRVAL_P(sectionTitleOffsetsArray),
-				(apply_func_arg_t)copy_list_element,
-				&sectionTitleOffsetsList);
-
 		const Wikidiff2::String& ret = wikidiff2.execute(text1String, text2String,
-			sectionTitleOffsetsList, (int)numContextLines, movedParagraphDetectionCutoff());
+			(int)numContextLines, movedParagraphDetectionCutoff());
 		COMPAT_RETURN_STRINGL( const_cast<char*>(ret.data()), ret.size());
 	} catch (std::bad_alloc &e) {
 		zend_error(E_WARNING, "Out of memory in wikidiff2_inline_json_diff().");
