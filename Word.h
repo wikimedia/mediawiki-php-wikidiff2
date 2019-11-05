@@ -3,7 +3,7 @@
 
 #include <string>
 #include <algorithm>
-#include "Wikidiff2.h"
+#include "wd2_allocator.h"
 
 // a small class to accomodate word-level diffs; basically, a body and an
 // optional suffix (the latter consisting of a single whitespace), where
