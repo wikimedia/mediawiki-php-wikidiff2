@@ -7,29 +7,41 @@
 #include "php.h"
 #include "php_ini.h"
 #include "ext/standard/info.h"
+#include "zend_API.h"
 #include "php_wikidiff2.h"
 #include "Wikidiff2.h"
 #include "TableDiff.h"
 #include "InlineDiff.h"
 #include "InlineDiffJSON.h"
 
+#if PHP_VERSION_ID >= 80000
+#	include "wikidiff2_arginfo.h"
+#else
+#	define arginfo_wikidiff2_do_diff NULL
+#	define arginfo_wikidiff2_inline_diff NULL
+#	define arginfo_wikidiff2_inline_json_diff NULL
+#	define arginfo_wikidiff2_version NULL
+#endif
+
 #define COMPAT_RETURN_STRINGL(s, l) { RETURN_STRINGL(s, l); return; }
+
+#if PHP_VERSION_ID < 70000
+#    error "PHP version 7 or later is required."
+#endif
 
 static int le_wikidiff2;
 
 zend_function_entry wikidiff2_functions[] = {
-	PHP_FE(wikidiff2_do_diff,     NULL)
-	PHP_FE(wikidiff2_inline_diff, NULL)
-	PHP_FE(wikidiff2_inline_json_diff, NULL)
-	PHP_FE(wikidiff2_version, NULL)
+	PHP_FE(wikidiff2_do_diff, arginfo_wikidiff2_do_diff)
+	PHP_FE(wikidiff2_inline_diff, arginfo_wikidiff2_inline_diff)
+	PHP_FE(wikidiff2_inline_json_diff, arginfo_wikidiff2_inline_json_diff)
+	PHP_FE(wikidiff2_version, arginfo_wikidiff2_version)
 	{NULL, NULL, NULL}
 };
 
 
 zend_module_entry wikidiff2_module_entry = {
-#if ZEND_MODULE_API_NO >= 20010901
 	STANDARD_MODULE_HEADER,
-#endif
 	"wikidiff2",
 	wikidiff2_functions,
 	PHP_MINIT(wikidiff2),
@@ -37,9 +49,7 @@ zend_module_entry wikidiff2_module_entry = {
 	PHP_RINIT(wikidiff2),
 	PHP_RSHUTDOWN(wikidiff2),
 	PHP_MINFO(wikidiff2),
-#if ZEND_MODULE_API_NO >= 20010901
 	WIKIDIFF2_VERSION_STRING,
-#endif
 	STANDARD_MODULE_PROPERTIES
 };
 
@@ -99,7 +109,7 @@ PHP_FUNCTION(wikidiff2_do_diff)
 	size_t text2_len;
 	zend_long numContextLines;
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "ssl|l", &text1, &text1_len, &text2,
+	if (zend_parse_parameters(argc, "ssl|l", &text1, &text1_len, &text2,
 		&text2_len, &numContextLines) == FAILURE)
 	{
 		return;
@@ -134,7 +144,7 @@ PHP_FUNCTION(wikidiff2_inline_diff)
 	size_t text2_len;
 	zend_long numContextLines;
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "ssl", &text1, &text1_len, &text2,
+	if (zend_parse_parameters(argc, "ssl", &text1, &text1_len, &text2,
 		&text2_len, &numContextLines) == FAILURE)
 	{
 		return;
@@ -169,7 +179,7 @@ PHP_FUNCTION(wikidiff2_inline_json_diff)
 	size_t text2_len;
 	zend_long numContextLines;
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "ssl", &text1, &text1_len, &text2,
+	if (zend_parse_parameters(argc, "ssl", &text1, &text1_len, &text2,
 		&text2_len, &numContextLines) == FAILURE)
 	{
 		return;

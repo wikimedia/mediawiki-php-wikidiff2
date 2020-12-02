@@ -32,10 +32,6 @@ extern zend_module_entry wikidiff2_module_entry;
 #	define PHP_WIKIDIFF2_API
 #endif
 
-#ifdef ZTS
-#include "TSRM.h"
-#endif
-
 PHP_MINIT_FUNCTION(wikidiff2);
 PHP_MSHUTDOWN_FUNCTION(wikidiff2);
 PHP_RINIT_FUNCTION(wikidiff2);
@@ -46,14 +42,6 @@ PHP_FUNCTION(wikidiff2_do_diff);
 PHP_FUNCTION(wikidiff2_inline_diff);
 PHP_FUNCTION(wikidiff2_inline_json_diff);
 PHP_FUNCTION(wikidiff2_version);
-
-
-
-#ifdef ZTS
-#define WIKIDIFF2_G(v) TSRMG(wikidiff2_globals_id, zend_wikidiff2_globals *, v)
-#else
-#define WIKIDIFF2_G(v) (wikidiff2_globals.v)
-#endif
 
 #endif
 

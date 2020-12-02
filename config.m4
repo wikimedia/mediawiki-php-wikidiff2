@@ -2,14 +2,6 @@ PHP_ARG_ENABLE(wikidiff2, whether to enable wikidiff2 support,
 [  --enable-wikidiff2           Enable wikidiff2 support])
 
 if test "$PHP_WIKIDIFF2" != "no"; then
-  AC_DEFUN([PHP_REQUIRE_MAJOR_VERSION],[
-    _PHP_MAJOR_VERSION=`$PHP_EXECUTABLE -r 'echo PHP_MAJOR_VERSION;'`
-    if test "$_PHP_MAJOR_VERSION" != "$1"; then
-      AC_MSG_ERROR([Must have PHP major version $1, but found $_PHP_MAJOR_VERSION.])
-    fi
-  ])
-  PHP_REQUIRE_MAJOR_VERSION(7)
-
   PHP_REQUIRE_CXX
   AC_LANG_CPLUSPLUS
   PHP_ADD_LIBRARY(stdc++,,WIKIDIFF2_SHARED_LIBADD)
