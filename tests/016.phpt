@@ -183,7 +183,7 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td class="diff-context"><div>        "Ar": [</div></td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>            "Drbug",</div></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
@@ -193,7 +193,7 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>            "Sir Shurf",</div></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>

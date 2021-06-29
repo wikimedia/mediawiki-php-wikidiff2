@@ -46,21 +46,21 @@ print wikidiff2_do_diff( $before, $after, 2 );
 </tr>
 <tr>
   <td colspan="2" class="diff-empty">&#160;</td>
-  <td class="diff-marker">+</td>
+  <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div>==Non-participating athletes==</div></td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>==Squads==</div></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
 <tr>
   <td colspan="2" class="diff-empty">&#160;</td>
-  <td class="diff-marker">+</td>
+  <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div>{{columns-list|2|</div></td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>Athletes who did not participate in any matches</div></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
@@ -70,7 +70,7 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td class="diff-addedline"><div><a name="movedpara_4_0_rhs"></a>*{{flagIOC2athlete|[[Sarah <ins class="diffchange diffchange-inline">Al-Zayani</ins>]]|<ins class="diffchange diffchange-inline">BRN</ins>|2006 Asian Games}}</div></td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>{{col-begin}}</div></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
@@ -80,26 +80,26 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td class="diff-addedline"><div><a name="movedpara_6_0_rhs"></a>*{{flagIOC2athlete|[[<ins class="diffchange diffchange-inline">Peng</ins> <ins class="diffchange diffchange-inline">Shuai</ins>]]|<ins class="diffchange diffchange-inline">CHN</ins>|2006 Asian Games}}</div></td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>{{Col-1-of-3}}</div></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>*<del class="diffchange diffchange-inline"> </del>{{flagIOC2athlete|[[<del class="diffchange diffchange-inline">Sarah</del> <del class="diffchange diffchange-inline">Al-Zayani</del>]]|<del class="diffchange diffchange-inline">BRN</del>|2006 Asian Games}}</div></td>
-  <td class="diff-marker">+</td>
+  <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div>*{{flagIOC2athlete|[[<ins class="diffchange diffchange-inline">Yan</ins> <ins class="diffchange diffchange-inline">Zi</ins>]]|<ins class="diffchange diffchange-inline">CHN</ins>|2006 Asian Games}}</div></td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>*<del class="diffchange diffchange-inline"> </del>{{flagIOC2athlete|[[<del class="diffchange diffchange-inline">Peng</del> <del class="diffchange diffchange-inline">Shuai</del>]]|<del class="diffchange diffchange-inline">CHN</del>|2006 Asian Games}}</div></td>
-  <td class="diff-marker">+</td>
+  <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div>*{{flagIOC2athlete|[[<ins class="diffchange diffchange-inline">Angelique</ins> <ins class="diffchange diffchange-inline">Widjaja</ins>]]|<ins class="diffchange diffchange-inline">INA</ins>|2006 Asian Games}}</div></td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>*<del class="diffchange diffchange-inline"> </del>{{flagIOC2athlete|[[<del class="diffchange diffchange-inline">Yan</del> <del class="diffchange diffchange-inline">Zi</del>]]|<del class="diffchange diffchange-inline">CHN</del>|2006 Asian Games}}</div></td>
-  <td class="diff-marker">+</td>
+  <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div>*{{flagIOC2athlete|[[<ins class="diffchange diffchange-inline">Asrar</ins> <ins class="diffchange diffchange-inline">Abdulmajid</ins>]]|<ins class="diffchange diffchange-inline">KUW</ins>|2006 Asian Games}}</div></td>
 </tr>
 <tr>
@@ -108,19 +108,19 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td class="diff-addedline"><div><a name="movedpara_9_0_rhs"></a>*{{flagIOC2athlete|[[<ins class="diffchange diffchange-inline">Sarah</ins> <ins class="diffchange diffchange-inline">Behbehani</ins>]]|KUW|2006 Asian Games}}</div></td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>{{Col-1-of-3}}</div></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>*<del class="diffchange diffchange-inline"> </del>{{flagIOC2athlete|[[<del class="diffchange diffchange-inline">Angelique</del> <del class="diffchange diffchange-inline">Widjaja</del>]]|<del class="diffchange diffchange-inline">INA</del>|2006 Asian Games}}</div></td>
-  <td class="diff-marker">+</td>
+  <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div>*{{flagIOC2athlete|[[<ins class="diffchange diffchange-inline">Chan</ins> <ins class="diffchange diffchange-inline">Chin-wei</ins>]]|<ins class="diffchange diffchange-inline">TPE</ins>|2006 Asian Games}}</div></td>
 </tr>
 <tr>
   <td colspan="2" class="diff-empty">&#160;</td>
-  <td class="diff-marker">+</td>
+  <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div>}}</div></td>
 </tr>
 <tr>
@@ -134,7 +134,7 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>{{Col-1-of-3}}</div></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
@@ -144,7 +144,7 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>{{col-end}}</div></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>

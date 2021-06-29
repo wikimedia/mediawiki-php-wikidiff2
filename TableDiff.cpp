@@ -7,7 +7,7 @@ void TableDiff::printAdd(const String & line, int leftLine, int rightLine, int o
 {
 	result += "<tr>\n"
 		"  <td colspan=\"2\" class=\"diff-empty\">&#160;</td>\n"
-		"  <td class=\"diff-marker\">+</td>\n"
+		"  <td class=\"diff-marker\" data-marker=\"+\"></td>\n"
 		"  <td class=\"diff-addedline\">";
 	printTextWithDiv(line);
 	result += "</td>\n</tr>\n";
@@ -17,7 +17,7 @@ void TableDiff::printDelete(const String & line, int leftLine, int rightLine, in
 	int offsetTo)
 {
 	result += "<tr>\n"
-		"  <td class=\"diff-marker\">−</td>\n"
+		"  <td class=\"diff-marker\" data-marker=\"−\"></td>\n"
 		"  <td class=\"diff-deletedline\">";
 	printTextWithDiv(line);
 	result += "</td>\n"
@@ -41,12 +41,13 @@ void TableDiff::printWordDiff(const String & text1, const String & text2, int le
 
 	// print left side or blank placeholder.
 	if (printLeft) {
-		result += "  <td class=\"diff-marker\">";
 		if(dstAnchor != "")
-			result += "<a class=\"mw-diff-movedpara-left\" href=\"#" + dstAnchor + "\">&#x26AB;</a>";
+			result += "  <td class=\"diff-marker\">"
+			    "<a class=\"mw-diff-movedpara-left\" href=\"#" + dstAnchor + "\">&#x26AB;</a>"
+			    "</td>\n";
 		else
-			result += "−";
-		result += "</td>\n";
+			result += "  <td class=\"diff-marker\" data-marker=\"−\"></td>\n";
+
 		result += "  <td class=\"diff-deletedline\"><div>";
 		if(srcAnchor != "")
 			result += "<a name=\"" + srcAnchor + "\"></a>";
@@ -58,12 +59,13 @@ void TableDiff::printWordDiff(const String & text1, const String & text2, int le
 
 	// print right side or blank placeholder.
 	if (printRight) {
-		result += "  <td class=\"diff-marker\">";
 		if(dstAnchor != "")
-			result += "<a class=\"mw-diff-movedpara-right\" href=\"#" + dstAnchor + "\">&#x26AB;</a>";
+			result += "  <td class=\"diff-marker\">"
+			    "<a class=\"mw-diff-movedpara-right\" href=\"#" + dstAnchor + "\">&#x26AB;</a>"
+			    "</td>\n";
 		else
-			result += "+";
-		result += "</td>\n";
+			result += "  <td class=\"diff-marker\" data-marker=\"+\"></td>\n";
+
 		result += "  <td class=\"diff-addedline\"><div>";
 		if(srcAnchor != "")
 			result += "<a name=\"" + srcAnchor + "\"></a>";

@@ -52,37 +52,37 @@ print wikidiff2_do_diff( $before, $after, 2 );
 </tr>
 <tr>
   <td colspan="2" class="diff-empty">&#160;</td>
-  <td class="diff-marker">+</td>
+  <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div>{{Infobox NH Route</div></td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>{{Infobox_road</div></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
 <tr>
   <td colspan="2" class="diff-empty">&#160;</td>
-  <td class="diff-marker">+</td>
+  <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div>|previous_type=NH</div></td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>| system            = [[New Hampshire Highway System]]</div></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
 <tr>
   <td colspan="2" class="diff-empty">&#160;</td>
-  <td class="diff-marker">+</td>
+  <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div>|previous_route=142</div></td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>| browse            = {{nh browse|previous_type=NH|previous_route=142|next_type=NH|next_route=149}}</div></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
 <tr>
   <td colspan="2" class="diff-empty">&#160;</td>
-  <td class="diff-marker">+</td>
+  <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div>|next_type=NH</div></td>
 </tr>
 <tr>
@@ -92,12 +92,12 @@ print wikidiff2_do_diff( $before, $after, 2 );
 </tr>
 <tr>
   <td colspan="2" class="diff-empty">&#160;</td>
-  <td class="diff-marker">+</td>
+  <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div>|next_route=149</div></td>
 </tr>
 <tr>
   <td colspan="2" class="diff-empty">&#160;</td>
-  <td class="diff-marker">+</td>
+  <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div>}}</div></td>
 </tr>
 <tr>
@@ -112,9 +112,9 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td class="diff-context"></td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>The southern terminus of NH 145 is at<del class="diffchange diffchange-inline"> the junction with</del> [[U.S. <del class="diffchange diffchange-inline">Highway</del> 3|<del class="diffchange diffchange-inline">US</del> 3]] in Colebrook on the [[Vermont]] border. The highway passes through [[Clarksville, New Hampshire|Clarksville]] township and the village center. The northern terminus of NH 145 is in Pittsburg at<del class="diffchange diffchange-inline"> the junction with</del> US 3<del class="diffchange diffchange-inline">. Total length of the highway is approximately 13.2 miles (21.3 km)</del>.</div></td>
-  <td class="diff-marker">+</td>
+  <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div>The southern terminus of NH 145 is at [[U.S. <ins class="diffchange diffchange-inline">Route</ins> 3<ins class="diffchange diffchange-inline"> (New Hampshire)</ins>|<ins class="diffchange diffchange-inline">U.S. Route</ins> 3]] in Colebrook on the [[Vermont]] border. The highway passes through [[Clarksville, New Hampshire|Clarksville]] township and the village center. The northern terminus of NH 145 is in Pittsburg at US 3.</div></td>
 </tr>
 <tr>
@@ -124,14 +124,14 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td class="diff-context"></td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>==<del class="diffchange diffchange-inline"> See also </del>==</div></td>
-  <td class="diff-marker">+</td>
+  <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div>==<ins class="diffchange diffchange-inline">References</ins>==</div></td>
 </tr>
 <tr>
   <td colspan="2" class="diff-empty">&#160;</td>
-  <td class="diff-marker">+</td>
+  <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div>&lt;references/&gt;</div></td>
 </tr>
 <tr>

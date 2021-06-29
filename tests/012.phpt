@@ -43,9 +43,9 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td class="diff-context"><div>* [[MetaGer]]</div></td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>* [<del class="diffchange diffchange-inline">https://search.disconnect.me </del>Disconnect]<del class="diffchange diffchange-inline"> (externe Seite)</del></div></td>
-  <td class="diff-marker">+</td>
+  <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div>* [<ins class="diffchange diffchange-inline">[</ins>Disconnect]<ins class="diffchange diffchange-inline">]</ins></div></td>
 </tr>
 <tr>

@@ -40,9 +40,9 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td class="diff-context"><div>== Priser &amp; Utmärkelser ==</div></td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>3: 1</div></td>
-  <td class="diff-marker">+</td>
+  <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div><ins class="diffchange diffchange-inline">*</ins>3: 1</div></td>
 </tr>
 <tr>
@@ -51,14 +51,14 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td class="diff-addedline"><div><a name="movedpara_2_0_rhs"></a><ins class="diffchange diffchange-inline">*4</ins>: 1</div></td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div><del class="diffchange diffchange-inline">4</del>: 1</div></td>
-  <td class="diff-marker">+</td>
+  <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div><ins class="diffchange diffchange-inline">*5</ins>: 1</div></td>
 </tr>
 <tr>
@@ -67,7 +67,7 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td class="diff-addedline"><div><a name="movedpara_5_0_rhs"></a><ins class="diffchange diffchange-inline">*</ins>6: 1</div></td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
@@ -77,7 +77,7 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>

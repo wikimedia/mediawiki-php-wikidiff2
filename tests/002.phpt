@@ -56,7 +56,7 @@ print wikidiff2_do_diff( $x, $y, 2 );
 </tr>
 <tr>
   <td colspan="2" class="diff-empty">&#160;</td>
-  <td class="diff-marker">+</td>
+  <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div>x1</div></td>
 </tr>
 <tr>
@@ -85,17 +85,17 @@ print wikidiff2_do_diff( $x, $y, 2 );
 </tr>
 <tr>
   <td colspan="2" class="diff-empty">&#160;</td>
-  <td class="diff-marker">+</td>
+  <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div>x2</div></td>
 </tr>
 <tr>
   <td colspan="2" class="diff-empty">&#160;</td>
-  <td class="diff-marker">+</td>
+  <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div>x1</div></td>
 </tr>
 <tr>
   <td colspan="2" class="diff-empty">&#160;</td>
-  <td class="diff-marker">+</td>
+  <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div>x2</div></td>
 </tr>
 <tr>

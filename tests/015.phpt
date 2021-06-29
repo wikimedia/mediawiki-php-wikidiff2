@@ -51,12 +51,12 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td class="diff-addedline"><div><a name="movedpara_1_0_rhs"></a><ins class="diffchange diffchange-inline">{{</ins>Navigationsleiste Listen der National Historic Places der Vereinigten Staaten<ins class="diffchange diffchange-inline">}}</ins></div></td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>{{NaviBlock</div></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>|Navigationsleiste Einträge im National Register of Historic Places in Arizona</div></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
@@ -66,7 +66,7 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>}}</div></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>

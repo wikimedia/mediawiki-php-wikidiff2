@@ -47,7 +47,7 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td class="diff-addedline"><div><a name="movedpara_1_0_rhs"></a><ins class="diffchange diffchange-inline">[[Datei:Wappen Honhardt.png|links|30px|Honhardt]] </ins>Zur ehemaligen Gemeinde Honhardt gehören das Dorf Honhardt, die Weiler Altenfelden, Appensee, Bechhof, Eckarrot, Gauchshausen, Hirschhof, Ipshof, Mainkling, Neuhaus, Reifenhof, Reishof, Sandhof, Steinbach an der Jagst, Unterspeltach, Vorderuhlberg und Zum Wagner, das Gehöft Belzhof und die Wohnplätze Fleckenbacher Sägmühle, Grunbachsägmühle, Henkensägmühle und Tiefensägmühle.</div></td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>[[Datei:Wappen Honhardt.png|links|60px|Honhardt]]</div></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>

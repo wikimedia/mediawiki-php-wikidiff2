@@ -46,7 +46,7 @@ print wikidiff2_do_diff( $x, $y, 2 );
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
@@ -58,7 +58,7 @@ print wikidiff2_do_diff( $x, $y, 2 );
 </tr>
 <tr>
   <td colspan="2" class="diff-empty">&#160;</td>
-  <td class="diff-marker">+</td>
+  <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"></td>
 </tr>
 <tr>
@@ -79,7 +79,7 @@ print wikidiff2_do_diff( $x, $y, 2 );
   <td class="diff-context"><div>With regard, on the other hand, to those things which are present in a subject, it is generally the case that neither their name nor their definition is predicable of that in which they are present. Though, however, the definition is never predicable, there is nothing in certain cases to prevent the name being used. For instance, 'white' being present in a body is predicated of that in which it is present, for a body is called white: the definition, however, of the colour 'white' is never predicable of the body.</div></td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
@@ -102,7 +102,7 @@ print wikidiff2_do_diff( $x, $y, 2 );
 </tr>
 <tr>
   <td colspan="2" class="diff-empty">&#160;</td>
-  <td class="diff-marker">+</td>
+  <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"></td>
 </tr>
 <tr>

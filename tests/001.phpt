@@ -136,7 +136,7 @@ print wikidiff2_do_diff( $x, $y, 2 );
 </tr>
 <tr>
   <td colspan="2" class="diff-empty">&#160;</td>
-  <td class="diff-marker">+</td>
+  <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div>sjgfkdjfgb</div></td>
 </tr>
 <tr>
@@ -152,7 +152,7 @@ print wikidiff2_do_diff( $x, $y, 2 );
   <td class="diff-context"></td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>kjahegwnygw</div></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
@@ -311,7 +311,7 @@ print wikidiff2_do_diff( $x, $y, 2 );
   <td class="diff-context"><div>== Shortest sequence in Y ==</div></td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>x1</div></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
@@ -340,17 +340,17 @@ print wikidiff2_do_diff( $x, $y, 2 );
   <td class="diff-context"><div>x1</div></td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>x2</div></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>x1</div></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>x2</div></td>
   <td colspan="2" class="diff-empty">&#160;</td>
 </tr>
@@ -383,9 +383,9 @@ print wikidiff2_do_diff( $x, $y, 2 );
   <td class="diff-context"><div>== Changed line ==</div></td>
 </tr>
 <tr>
-  <td class="diff-marker">−</td>
+  <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>blah blah blah <del class="diffchange diffchange-inline">1</del></div></td>
-  <td class="diff-marker">+</td>
+  <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div>blah blah blah <ins class="diffchange diffchange-inline">2</ins></div></td>
 </tr>
 <tr>
