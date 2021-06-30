@@ -45,44 +45,44 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td colspan="2" class="diff-lineno"><!--LINE 1--></td>
 </tr>
 <tr>
-  <td colspan="2" class="diff-empty">&#160;</td>
+  <td colspan="2" class="diff-empty"></td>
   <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div>==Non-participating athletes==</div></td>
 </tr>
 <tr>
   <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>==Squads==</div></td>
-  <td colspan="2" class="diff-empty">&#160;</td>
+  <td colspan="2" class="diff-empty"></td>
 </tr>
 <tr>
-  <td colspan="2" class="diff-empty">&#160;</td>
+  <td colspan="2" class="diff-empty"></td>
   <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div>{{columns-list|2|</div></td>
 </tr>
 <tr>
   <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>Athletes who did not participate in any matches</div></td>
-  <td colspan="2" class="diff-empty">&#160;</td>
+  <td colspan="2" class="diff-empty"></td>
 </tr>
 <tr>
-  <td colspan="2" class="diff-empty">&#160;</td>
+  <td colspan="2" class="diff-empty"></td>
   <td class="diff-marker"><a class="mw-diff-movedpara-right" href="#movedpara_14_0_lhs">&#x26AB;</a></td>
   <td class="diff-addedline"><div><a name="movedpara_4_0_rhs"></a>*{{flagIOC2athlete|[[Sarah <ins class="diffchange diffchange-inline">Al-Zayani</ins>]]|<ins class="diffchange diffchange-inline">BRN</ins>|2006 Asian Games}}</div></td>
 </tr>
 <tr>
   <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>{{col-begin}}</div></td>
-  <td colspan="2" class="diff-empty">&#160;</td>
+  <td colspan="2" class="diff-empty"></td>
 </tr>
 <tr>
-  <td colspan="2" class="diff-empty">&#160;</td>
+  <td colspan="2" class="diff-empty"></td>
   <td class="diff-marker"><a class="mw-diff-movedpara-right" href="#movedpara_14_2_lhs">&#x26AB;</a></td>
   <td class="diff-addedline"><div><a name="movedpara_6_0_rhs"></a>*{{flagIOC2athlete|[[<ins class="diffchange diffchange-inline">Peng</ins> <ins class="diffchange diffchange-inline">Shuai</ins>]]|<ins class="diffchange diffchange-inline">CHN</ins>|2006 Asian Games}}</div></td>
 </tr>
 <tr>
   <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>{{Col-1-of-3}}</div></td>
-  <td colspan="2" class="diff-empty">&#160;</td>
+  <td colspan="2" class="diff-empty"></td>
 </tr>
 <tr>
   <td class="diff-marker" data-marker="−"></td>
@@ -103,14 +103,14 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td class="diff-addedline"><div>*{{flagIOC2athlete|[[<ins class="diffchange diffchange-inline">Asrar</ins> <ins class="diffchange diffchange-inline">Abdulmajid</ins>]]|<ins class="diffchange diffchange-inline">KUW</ins>|2006 Asian Games}}</div></td>
 </tr>
 <tr>
-  <td colspan="2" class="diff-empty">&#160;</td>
+  <td colspan="2" class="diff-empty"></td>
   <td class="diff-marker"><a class="mw-diff-movedpara-right" href="#movedpara_13_0_lhs">&#x26AB;</a></td>
   <td class="diff-addedline"><div><a name="movedpara_9_0_rhs"></a>*{{flagIOC2athlete|[[<ins class="diffchange diffchange-inline">Sarah</ins> <ins class="diffchange diffchange-inline">Behbehani</ins>]]|KUW|2006 Asian Games}}</div></td>
 </tr>
 <tr>
   <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>{{Col-1-of-3}}</div></td>
-  <td colspan="2" class="diff-empty">&#160;</td>
+  <td colspan="2" class="diff-empty"></td>
 </tr>
 <tr>
   <td class="diff-marker" data-marker="−"></td>
@@ -119,32 +119,32 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td class="diff-addedline"><div>*{{flagIOC2athlete|[[<ins class="diffchange diffchange-inline">Chan</ins> <ins class="diffchange diffchange-inline">Chin-wei</ins>]]|<ins class="diffchange diffchange-inline">TPE</ins>|2006 Asian Games}}</div></td>
 </tr>
 <tr>
-  <td colspan="2" class="diff-empty">&#160;</td>
+  <td colspan="2" class="diff-empty"></td>
   <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline"><div>}}</div></td>
 </tr>
 <tr>
   <td class="diff-marker"><a class="mw-diff-movedpara-left" href="#movedpara_9_0_rhs">&#x26AB;</a></td>
   <td class="diff-deletedline"><div><a name="movedpara_13_0_lhs"></a>*<del class="diffchange diffchange-inline"> </del>{{flagIOC2athlete|[[<del class="diffchange diffchange-inline">Asrar</del> <del class="diffchange diffchange-inline">Abdulmajid</del>]]|KUW|2006 Asian Games}}</div></td>
-  <td colspan="2" class="diff-empty">&#160;</td>
+  <td colspan="2" class="diff-empty"></td>
 </tr>
 <tr>
   <td class="diff-marker"><a class="mw-diff-movedpara-left" href="#movedpara_4_0_rhs">&#x26AB;</a></td>
   <td class="diff-deletedline"><div><a name="movedpara_14_0_lhs"></a>*<del class="diffchange diffchange-inline"> </del>{{flagIOC2athlete|[[Sarah <del class="diffchange diffchange-inline">Behbehani</del>]]|<del class="diffchange diffchange-inline">KUW</del>|2006 Asian Games}}</div></td>
-  <td colspan="2" class="diff-empty">&#160;</td>
+  <td colspan="2" class="diff-empty"></td>
 </tr>
 <tr>
   <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>{{Col-1-of-3}}</div></td>
-  <td colspan="2" class="diff-empty">&#160;</td>
+  <td colspan="2" class="diff-empty"></td>
 </tr>
 <tr>
   <td class="diff-marker"><a class="mw-diff-movedpara-left" href="#movedpara_6_0_rhs">&#x26AB;</a></td>
   <td class="diff-deletedline"><div><a name="movedpara_14_2_lhs"></a>*<del class="diffchange diffchange-inline"> </del>{{flagIOC2athlete|[[<del class="diffchange diffchange-inline">Chan</del> <del class="diffchange diffchange-inline">Chin-wei</del>]]|<del class="diffchange diffchange-inline">TPE</del>|2006 Asian Games}}</div></td>
-  <td colspan="2" class="diff-empty">&#160;</td>
+  <td colspan="2" class="diff-empty"></td>
 </tr>
 <tr>
   <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline"><div>{{col-end}}</div></td>
-  <td colspan="2" class="diff-empty">&#160;</td>
+  <td colspan="2" class="diff-empty"></td>
 </tr>

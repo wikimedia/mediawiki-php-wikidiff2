@@ -31,15 +31,15 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td colspan="2" class="diff-lineno"><!--LINE 1--></td>
 </tr>
 <tr>
-  <td class="diff-marker">&#160;</td>
+  <td class="diff-marker"></td>
   <td class="diff-context"><div>* [[Startpage]]</div></td>
-  <td class="diff-marker">&#160;</td>
+  <td class="diff-marker"></td>
   <td class="diff-context"><div>* [[Startpage]]</div></td>
 </tr>
 <tr>
-  <td class="diff-marker">&#160;</td>
+  <td class="diff-marker"></td>
   <td class="diff-context"><div>* [[MetaGer]]</div></td>
-  <td class="diff-marker">&#160;</td>
+  <td class="diff-marker"></td>
   <td class="diff-context"><div>* [[MetaGer]]</div></td>
 </tr>
 <tr>
@@ -49,14 +49,14 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td class="diff-addedline"><div>* [<ins class="diffchange diffchange-inline">[</ins>Disconnect]<ins class="diffchange diffchange-inline">]</ins></div></td>
 </tr>
 <tr>
-  <td class="diff-marker">&#160;</td>
-  <td class="diff-context"></td>
-  <td class="diff-marker">&#160;</td>
-  <td class="diff-context"></td>
+  <td class="diff-marker"></td>
+  <td class="diff-context"><br /></td>
+  <td class="diff-marker"></td>
+  <td class="diff-context"><br /></td>
 </tr>
 <tr>
-  <td class="diff-marker">&#160;</td>
+  <td class="diff-marker"></td>
   <td class="diff-context"><div>== Weblinks ==</div></td>
-  <td class="diff-marker">&#160;</td>
+  <td class="diff-marker"></td>
   <td class="diff-context"><div>== Weblinks ==</div></td>
 </tr>

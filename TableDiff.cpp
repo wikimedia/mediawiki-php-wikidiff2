@@ -6,7 +6,7 @@ void TableDiff::printAdd(const String & line, int leftLine, int rightLine, int o
 	int offsetTo)
 {
 	result += "<tr>\n"
-		"  <td colspan=\"2\" class=\"diff-empty\">&#160;</td>\n"
+		"  <td colspan=\"2\" class=\"diff-empty\"></td>\n"
 		"  <td class=\"diff-marker\" data-marker=\"+\"></td>\n"
 		"  <td class=\"diff-addedline\">";
 	printTextWithDiv(line);
@@ -21,7 +21,7 @@ void TableDiff::printDelete(const String & line, int leftLine, int rightLine, in
 		"  <td class=\"diff-deletedline\">";
 	printTextWithDiv(line);
 	result += "</td>\n"
-		"  <td colspan=\"2\" class=\"diff-empty\">&#160;</td>\n"
+		"  <td colspan=\"2\" class=\"diff-empty\"></td>\n"
 		"</tr>\n";
 }
 
@@ -54,7 +54,7 @@ void TableDiff::printWordDiff(const String & text1, const String & text2, int le
 		printWordDiffSide(worddiff, false);
 		result += "</div></td>\n";
 	} else {
-		result += "  <td colspan=\"2\" class=\"diff-empty\">&#160;</td>\n";
+		result += "  <td colspan=\"2\" class=\"diff-empty\"></td>\n";
 	}
 
 	// print right side or blank placeholder.
@@ -73,7 +73,7 @@ void TableDiff::printWordDiff(const String & text1, const String & text2, int le
 		result += "</div></td>\n"
 			"</tr>\n";
 	} else {
-		result += "  <td colspan=\"2\" class=\"diff-empty\">&#160;</td>\n"
+		result += "  <td colspan=\"2\" class=\"diff-empty\"></td>\n"
 			"</tr>\n";
 	}
 }
@@ -124,6 +124,9 @@ void TableDiff::printTextWithDiv(const String & input)
 		result.append("<div>");
 		printHtmlEncodedText(input);
 		result.append("</div>");
+	} else {
+		// Else add a <br> to preserve line breaks when copying
+		result += "<br />";
 	}
 }
 
@@ -144,12 +147,12 @@ void TableDiff::printContext(const String & input, int leftLine, int rightLine, 
 {
 	result +=
 		"<tr>\n"
-		"  <td class=\"diff-marker\">&#160;</td>\n"
+		"  <td class=\"diff-marker\"></td>\n"
 		"  <td class=\"diff-context\">";
 	printTextWithDiv(input);
 	result +=
 		"</td>\n"
-		"  <td class=\"diff-marker\">&#160;</td>\n"
+		"  <td class=\"diff-marker\"></td>\n"
 		"  <td class=\"diff-context\">";
 	printTextWithDiv(input);
 	result += "</td>\n</tr>\n";

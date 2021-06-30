@@ -35,10 +35,10 @@ print wikidiff2_do_diff( $x, $y, 2 );
   <td class="diff-addedline"><div>AAAAA AAAAA <ins class="diffchange diffchange-inline">BBBBB</ins> <ins class="diffchange diffchange-inline">BBBBB</ins> <ins class="diffchange diffchange-inline">BBBBB</ins> <ins class="diffchange diffchange-inline">BBBBB</ins> <ins class="diffchange diffchange-inline">BBBBB</ins> <ins class="diffchange diffchange-inline">BBBBB</ins> <ins class="diffchange diffchange-inline">BBBBB</ins> <ins class="diffchange diffchange-inline">BBBBB</ins></div></td>
 </tr>
 <tr>
-  <td class="diff-marker">&#160;</td>
-  <td class="diff-context"></td>
-  <td class="diff-marker">&#160;</td>
-  <td class="diff-context"></td>
+  <td class="diff-marker"></td>
+  <td class="diff-context"><br /></td>
+  <td class="diff-marker"></td>
+  <td class="diff-context"><br /></td>
 </tr>
 <tr>
   <td class="diff-marker" data-marker="−"></td>
