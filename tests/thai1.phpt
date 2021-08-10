@@ -10,7 +10,8 @@ print wikidiff2_do_diff( 'สุนัขจิ้งจอกกระโดด
 </tr>
 <tr>
   <td class="diff-marker" data-marker="−"></td>
-  <td class="diff-deletedline"><div>สุนัขจิ้งจอกกระโดดข้าม<del class="diffchange diffchange-inline">สุนัข</del></div></td>
+  <td class="diff-deletedline diff-left"><div>สุนัขจิ้งจอกกระโดดข้าม<del class="diffchange diffchange-inline">สุนัข</del></div></td>
   <td class="diff-marker" data-marker="+"></td>
-  <td class="diff-addedline"><div>สุนัขจิ้งจอกกระโดดข้าม<ins class="diffchange diffchange-inline">แมว</ins></div></td>
+  <td class="diff-addedline diff-right"><div>สุนัขจิ้งจอกกระโดดข้าม<ins class="diffchange diffchange-inline">แมว</ins></div></td>
 </tr>
+

@@ -26,7 +26,7 @@ print wikidiff2_do_diff( $x, $y, 2 );
 </tr>
 <tr>
   <td class="diff-marker" data-marker="−"></td>
-  <td class="diff-deletedline"><div><del class="diffchange diffchange-inline">!!FUZZY!!</del>Rajaa</div></td>
+  <td class="diff-deletedline diff-left"><div><del class="diffchange diffchange-inline">!!FUZZY!!</del>Rajaa</div></td>
   <td class="diff-marker" data-marker="+"></td>
-  <td class="diff-addedline"><div>Rajaa</div></td>
+  <td class="diff-addedline diff-right"><div>Rajaa</div></td>
 </tr>

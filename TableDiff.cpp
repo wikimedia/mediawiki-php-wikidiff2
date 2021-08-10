@@ -8,7 +8,7 @@ void TableDiff::printAdd(const String & line, int leftLine, int rightLine, int o
 	result += "<tr>\n"
 		"  <td colspan=\"2\" class=\"diff-empty\"></td>\n"
 		"  <td class=\"diff-marker\" data-marker=\"+\"></td>\n"
-		"  <td class=\"diff-addedline\">";
+		"  <td class=\"diff-addedline diff-right\">";
 	printTextWithDiv(line);
 	result += "</td>\n</tr>\n";
 }
@@ -18,7 +18,7 @@ void TableDiff::printDelete(const String & line, int leftLine, int rightLine, in
 {
 	result += "<tr>\n"
 		"  <td class=\"diff-marker\" data-marker=\"−\"></td>\n"
-		"  <td class=\"diff-deletedline\">";
+		"  <td class=\"diff-deletedline diff-left\">";
 	printTextWithDiv(line);
 	result += "</td>\n"
 		"  <td colspan=\"2\" class=\"diff-empty\"></td>\n"
@@ -48,7 +48,7 @@ void TableDiff::printWordDiff(const String & text1, const String & text2, int le
 		else
 			result += "  <td class=\"diff-marker\" data-marker=\"−\"></td>\n";
 
-		result += "  <td class=\"diff-deletedline\"><div>";
+		result += "  <td class=\"diff-deletedline diff-left\"><div>";
 		if(srcAnchor != "")
 			result += "<a name=\"" + srcAnchor + "\"></a>";
 		printWordDiffSide(worddiff, false);
@@ -66,7 +66,7 @@ void TableDiff::printWordDiff(const String & text1, const String & text2, int le
 		else
 			result += "  <td class=\"diff-marker\" data-marker=\"+\"></td>\n";
 
-		result += "  <td class=\"diff-addedline\"><div>";
+		result += "  <td class=\"diff-addedline diff-right\"><div>";
 		if(srcAnchor != "")
 			result += "<a name=\"" + srcAnchor + "\"></a>";
 		printWordDiffSide(worddiff, true);
@@ -148,12 +148,12 @@ void TableDiff::printContext(const String & input, int leftLine, int rightLine, 
 	result +=
 		"<tr>\n"
 		"  <td class=\"diff-marker\"></td>\n"
-		"  <td class=\"diff-context\">";
+		"  <td class=\"diff-context diff-left\">";
 	printTextWithDiv(input);
 	result +=
 		"</td>\n"
 		"  <td class=\"diff-marker\"></td>\n"
-		"  <td class=\"diff-context\">";
+		"  <td class=\"diff-context diff-right\">";
 	printTextWithDiv(input);
 	result += "</td>\n</tr>\n";
 }
