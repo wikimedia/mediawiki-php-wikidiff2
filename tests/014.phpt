@@ -42,19 +42,19 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td class="diff-context diff-right"><br /></td>
 </tr>
 <tr>
-  <td colspan="2" class="diff-empty"></td>
+  <td colspan="2" class="diff-empty diff-left"></td>
   <td class="diff-marker"><a class="mw-diff-movedpara-right" href="#movedpara_3_0_lhs">&#x26AB;</a></td>
   <td class="diff-addedline diff-right"><div><a name="movedpara_1_0_rhs"></a><ins class="diffchange diffchange-inline">[[Datei:Wappen Honhardt.png|links|30px|Honhardt]] </ins>Zur ehemaligen Gemeinde Honhardt gehören das Dorf Honhardt, die Weiler Altenfelden, Appensee, Bechhof, Eckarrot, Gauchshausen, Hirschhof, Ipshof, Mainkling, Neuhaus, Reifenhof, Reishof, Sandhof, Steinbach an der Jagst, Unterspeltach, Vorderuhlberg und Zum Wagner, das Gehöft Belzhof und die Wohnplätze Fleckenbacher Sägmühle, Grunbachsägmühle, Henkensägmühle und Tiefensägmühle.</div></td>
 </tr>
 <tr>
   <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline diff-left"><div>[[Datei:Wappen Honhardt.png|links|60px|Honhardt]]</div></td>
-  <td colspan="2" class="diff-empty"></td>
+  <td colspan="2" class="diff-empty diff-right"></td>
 </tr>
 <tr>
   <td class="diff-marker"><a class="mw-diff-movedpara-left" href="#movedpara_1_0_rhs">&#x26AB;</a></td>
   <td class="diff-deletedline diff-left"><div><a name="movedpara_3_0_lhs"></a>Zur ehemaligen Gemeinde Honhardt gehören das Dorf Honhardt, die Weiler Altenfelden, Appensee, Bechhof, Eckarrot, Gauchshausen, Hirschhof, Ipshof, Mainkling, Neuhaus, Reifenhof, Reishof, Sandhof, Steinbach an der Jagst, Unterspeltach, Vorderuhlberg und Zum Wagner, das Gehöft Belzhof und die Wohnplätze Fleckenbacher Sägmühle, Grunbachsägmühle, Henkensägmühle und Tiefensägmühle.</div></td>
-  <td colspan="2" class="diff-empty"></td>
+  <td colspan="2" class="diff-empty diff-right"></td>
 </tr>
 <tr>
   <td class="diff-marker"></td>

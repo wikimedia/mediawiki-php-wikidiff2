@@ -91,7 +91,7 @@ print wikidiff2_do_diff( $before, $after, 2 );
 <tr>
   <td class="diff-marker"><a class="mw-diff-movedpara-left" href="#movedpara_3_0_rhs">&#x26AB;</a></td>
   <td class="diff-deletedline diff-left"><div><a name="movedpara_1_0_lhs"></a>            "<del class="diffchange diffchange-inline">АлександрВв</del>",</div></td>
-  <td colspan="2" class="diff-empty"></td>
+  <td colspan="2" class="diff-empty diff-right"></td>
 </tr>
 <tr>
   <td class="diff-marker"></td>
@@ -122,7 +122,7 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td class="diff-context diff-right"><div>            "Postoronniy-13",</div></td>
 </tr>
 <tr>
-  <td colspan="2" class="diff-empty"></td>
+  <td colspan="2" class="diff-empty diff-left"></td>
   <td class="diff-marker"><a class="mw-diff-movedpara-right" href="#movedpara_1_0_lhs">&#x26AB;</a></td>
   <td class="diff-addedline diff-right"><div><a name="movedpara_3_0_rhs"></a>            "<ins class="diffchange diffchange-inline">Saint Johann</ins>",</div></td>
 </tr>
@@ -155,12 +155,12 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td class="diff-context diff-right"><div>            "Biathlon",</div></td>
 </tr>
 <tr>
-  <td colspan="2" class="diff-empty"></td>
+  <td colspan="2" class="diff-empty diff-left"></td>
   <td class="diff-marker"><a class="mw-diff-movedpara-right" href="#movedpara_7_1_lhs">&#x26AB;</a></td>
   <td class="diff-addedline diff-right"><div><a name="movedpara_5_0_rhs"></a>            "Michgrig",</div></td>
 </tr>
 <tr>
-  <td colspan="2" class="diff-empty"></td>
+  <td colspan="2" class="diff-empty diff-left"></td>
   <td class="diff-marker"><a class="mw-diff-movedpara-right" href="#movedpara_7_3_lhs">&#x26AB;</a></td>
   <td class="diff-addedline diff-right"><div><a name="movedpara_5_1_rhs"></a>            "TenBaseT",</div></td>
 </tr>
@@ -185,22 +185,22 @@ print wikidiff2_do_diff( $before, $after, 2 );
 <tr>
   <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline diff-left"><div>            "Drbug",</div></td>
-  <td colspan="2" class="diff-empty"></td>
+  <td colspan="2" class="diff-empty diff-right"></td>
 </tr>
 <tr>
   <td class="diff-marker"><a class="mw-diff-movedpara-left" href="#movedpara_5_0_rhs">&#x26AB;</a></td>
   <td class="diff-deletedline diff-left"><div><a name="movedpara_7_1_lhs"></a>            "Michgrig",</div></td>
-  <td colspan="2" class="diff-empty"></td>
+  <td colspan="2" class="diff-empty diff-right"></td>
 </tr>
 <tr>
   <td class="diff-marker" data-marker="−"></td>
   <td class="diff-deletedline diff-left"><div>            "Sir Shurf",</div></td>
-  <td colspan="2" class="diff-empty"></td>
+  <td colspan="2" class="diff-empty diff-right"></td>
 </tr>
 <tr>
   <td class="diff-marker"><a class="mw-diff-movedpara-left" href="#movedpara_5_1_rhs">&#x26AB;</a></td>
   <td class="diff-deletedline diff-left"><div><a name="movedpara_7_3_lhs"></a>            "TenBaseT",</div></td>
-  <td colspan="2" class="diff-empty"></td>
+  <td colspan="2" class="diff-empty diff-right"></td>
 </tr>
 <tr>
   <td class="diff-marker"></td>
