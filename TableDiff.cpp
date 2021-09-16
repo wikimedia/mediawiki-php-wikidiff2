@@ -6,9 +6,9 @@ void TableDiff::printAdd(const String & line, int leftLine, int rightLine, int o
 	int offsetTo)
 {
 	result += "<tr>\n"
-		"  <td colspan=\"2\" class=\"diff-empty diff-left\"></td>\n"
+		"  <td colspan=\"2\" class=\"diff-empty diff-side-deleted\"></td>\n"
 		"  <td class=\"diff-marker\" data-marker=\"+\"></td>\n"
-		"  <td class=\"diff-addedline diff-right\">";
+		"  <td class=\"diff-addedline diff-side-added\">";
 	printTextWithDiv(line);
 	result += "</td>\n</tr>\n";
 }
@@ -18,10 +18,10 @@ void TableDiff::printDelete(const String & line, int leftLine, int rightLine, in
 {
 	result += "<tr>\n"
 		"  <td class=\"diff-marker\" data-marker=\"−\"></td>\n"
-		"  <td class=\"diff-deletedline diff-left\">";
+		"  <td class=\"diff-deletedline diff-side-deleted\">";
 	printTextWithDiv(line);
 	result += "</td>\n"
-		"  <td colspan=\"2\" class=\"diff-empty diff-right\"></td>\n"
+		"  <td colspan=\"2\" class=\"diff-empty diff-side-added\"></td>\n"
 		"</tr>\n";
 }
 
@@ -48,13 +48,13 @@ void TableDiff::printWordDiff(const String & text1, const String & text2, int le
 		else
 			result += "  <td class=\"diff-marker\" data-marker=\"−\"></td>\n";
 
-		result += "  <td class=\"diff-deletedline diff-left\"><div>";
+		result += "  <td class=\"diff-deletedline diff-side-deleted\"><div>";
 		if(srcAnchor != "")
 			result += "<a name=\"" + srcAnchor + "\"></a>";
 		printWordDiffSide(worddiff, false);
 		result += "</div></td>\n";
 	} else {
-		result += "  <td colspan=\"2\" class=\"diff-empty diff-left\"></td>\n";
+		result += "  <td colspan=\"2\" class=\"diff-empty diff-side-deleted\"></td>\n";
 	}
 
 	// print right side or blank placeholder.
@@ -66,14 +66,14 @@ void TableDiff::printWordDiff(const String & text1, const String & text2, int le
 		else
 			result += "  <td class=\"diff-marker\" data-marker=\"+\"></td>\n";
 
-		result += "  <td class=\"diff-addedline diff-right\"><div>";
+		result += "  <td class=\"diff-addedline diff-side-added\"><div>";
 		if(srcAnchor != "")
 			result += "<a name=\"" + srcAnchor + "\"></a>";
 		printWordDiffSide(worddiff, true);
 		result += "</div></td>\n"
 			"</tr>\n";
 	} else {
-		result += "  <td colspan=\"2\" class=\"diff-empty diff-right\"></td>\n"
+		result += "  <td colspan=\"2\" class=\"diff-empty diff-side-added\"></td>\n"
 			"</tr>\n";
 	}
 }
@@ -148,12 +148,12 @@ void TableDiff::printContext(const String & input, int leftLine, int rightLine, 
 	result +=
 		"<tr>\n"
 		"  <td class=\"diff-marker\"></td>\n"
-		"  <td class=\"diff-context diff-left\">";
+		"  <td class=\"diff-context diff-side-deleted\">";
 	printTextWithDiv(input);
 	result +=
 		"</td>\n"
 		"  <td class=\"diff-marker\"></td>\n"
-		"  <td class=\"diff-context diff-right\">";
+		"  <td class=\"diff-context diff-side-added\">";
 	printTextWithDiv(input);
 	result += "</td>\n</tr>\n";
 }

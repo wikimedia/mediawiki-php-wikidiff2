@@ -50,63 +50,63 @@ print wikidiff2_do_diff( $x, $y, 2 );
 </tr>
 <tr>
   <td class="diff-marker"></td>
-  <td class="diff-context diff-left"><div>== Shortest sequence in X ==</div></td>
+  <td class="diff-context diff-side-deleted"><div>== Shortest sequence in X ==</div></td>
   <td class="diff-marker"></td>
-  <td class="diff-context diff-right"><div>== Shortest sequence in X ==</div></td>
+  <td class="diff-context diff-side-added"><div>== Shortest sequence in X ==</div></td>
 </tr>
 <tr>
-  <td colspan="2" class="diff-empty diff-left"></td>
+  <td colspan="2" class="diff-empty diff-side-deleted"></td>
   <td class="diff-marker" data-marker="+"></td>
-  <td class="diff-addedline diff-right"><div>x1</div></td>
+  <td class="diff-addedline diff-side-added"><div>x1</div></td>
 </tr>
 <tr>
   <td class="diff-marker"></td>
-  <td class="diff-context diff-left"><div>x2</div></td>
+  <td class="diff-context diff-side-deleted"><div>x2</div></td>
   <td class="diff-marker"></td>
-  <td class="diff-context diff-right"><div>x2</div></td>
+  <td class="diff-context diff-side-added"><div>x2</div></td>
 </tr>
 <tr>
   <td class="diff-marker"></td>
-  <td class="diff-context diff-left"><div>x1</div></td>
+  <td class="diff-context diff-side-deleted"><div>x1</div></td>
   <td class="diff-marker"></td>
-  <td class="diff-context diff-right"><div>x1</div></td>
+  <td class="diff-context diff-side-added"><div>x1</div></td>
 </tr>
 <tr>
   <td class="diff-marker"></td>
-  <td class="diff-context diff-left"><div>x2</div></td>
+  <td class="diff-context diff-side-deleted"><div>x2</div></td>
   <td class="diff-marker"></td>
-  <td class="diff-context diff-right"><div>x2</div></td>
+  <td class="diff-context diff-side-added"><div>x2</div></td>
 </tr>
 <tr>
   <td class="diff-marker"></td>
-  <td class="diff-context diff-left"><div>x1</div></td>
+  <td class="diff-context diff-side-deleted"><div>x1</div></td>
   <td class="diff-marker"></td>
-  <td class="diff-context diff-right"><div>x1</div></td>
+  <td class="diff-context diff-side-added"><div>x1</div></td>
 </tr>
 <tr>
-  <td colspan="2" class="diff-empty diff-left"></td>
+  <td colspan="2" class="diff-empty diff-side-deleted"></td>
   <td class="diff-marker" data-marker="+"></td>
-  <td class="diff-addedline diff-right"><div>x2</div></td>
+  <td class="diff-addedline diff-side-added"><div>x2</div></td>
 </tr>
 <tr>
-  <td colspan="2" class="diff-empty diff-left"></td>
+  <td colspan="2" class="diff-empty diff-side-deleted"></td>
   <td class="diff-marker" data-marker="+"></td>
-  <td class="diff-addedline diff-right"><div>x1</div></td>
+  <td class="diff-addedline diff-side-added"><div>x1</div></td>
 </tr>
 <tr>
-  <td colspan="2" class="diff-empty diff-left"></td>
+  <td colspan="2" class="diff-empty diff-side-deleted"></td>
   <td class="diff-marker" data-marker="+"></td>
-  <td class="diff-addedline diff-right"><div>x2</div></td>
+  <td class="diff-addedline diff-side-added"><div>x2</div></td>
 </tr>
 <tr>
   <td class="diff-marker"></td>
-  <td class="diff-context diff-left"><div>context</div></td>
+  <td class="diff-context diff-side-deleted"><div>context</div></td>
   <td class="diff-marker"></td>
-  <td class="diff-context diff-right"><div>context</div></td>
+  <td class="diff-context diff-side-added"><div>context</div></td>
 </tr>
 <tr>
   <td class="diff-marker"></td>
-  <td class="diff-context diff-left"><div>context</div></td>
+  <td class="diff-context diff-side-deleted"><div>context</div></td>
   <td class="diff-marker"></td>
-  <td class="diff-context diff-right"><div>context</div></td>
+  <td class="diff-context diff-side-added"><div>context</div></td>
 </tr>

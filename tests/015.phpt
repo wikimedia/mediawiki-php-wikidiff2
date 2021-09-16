@@ -35,50 +35,50 @@ print wikidiff2_do_diff( $before, $after, 2 );
 </tr>
 <tr>
   <td class="diff-marker"></td>
-  <td class="diff-context diff-left"><div>* [http://www.nationalregisterofhistoricplaces.com/az/state.html National Register of Historic Places – Arizona]</div></td>
+  <td class="diff-context diff-side-deleted"><div>* [http://www.nationalregisterofhistoricplaces.com/az/state.html National Register of Historic Places – Arizona]</div></td>
   <td class="diff-marker"></td>
-  <td class="diff-context diff-right"><div>* [http://www.nationalregisterofhistoricplaces.com/az/state.html National Register of Historic Places – Arizona]</div></td>
+  <td class="diff-context diff-side-added"><div>* [http://www.nationalregisterofhistoricplaces.com/az/state.html National Register of Historic Places – Arizona]</div></td>
 </tr>
 <tr>
   <td class="diff-marker"></td>
-  <td class="diff-context diff-left"><br /></td>
+  <td class="diff-context diff-side-deleted"><br /></td>
   <td class="diff-marker"></td>
-  <td class="diff-context diff-right"><br /></td>
+  <td class="diff-context diff-side-added"><br /></td>
 </tr>
 <tr>
-  <td colspan="2" class="diff-empty diff-left"></td>
+  <td colspan="2" class="diff-empty diff-side-deleted"></td>
   <td class="diff-marker"><a class="mw-diff-movedpara-right" href="#movedpara_3_1_lhs">&#x26AB;</a></td>
-  <td class="diff-addedline diff-right"><div><a name="movedpara_1_0_rhs"></a><ins class="diffchange diffchange-inline">{{</ins>Navigationsleiste Listen der National Historic Places der Vereinigten Staaten<ins class="diffchange diffchange-inline">}}</ins></div></td>
+  <td class="diff-addedline diff-side-added"><div><a name="movedpara_1_0_rhs"></a><ins class="diffchange diffchange-inline">{{</ins>Navigationsleiste Listen der National Historic Places der Vereinigten Staaten<ins class="diffchange diffchange-inline">}}</ins></div></td>
 </tr>
 <tr>
   <td class="diff-marker" data-marker="−"></td>
-  <td class="diff-deletedline diff-left"><div>{{NaviBlock</div></td>
-  <td colspan="2" class="diff-empty diff-right"></td>
+  <td class="diff-deletedline diff-side-deleted"><div>{{NaviBlock</div></td>
+  <td colspan="2" class="diff-empty diff-side-added"></td>
 </tr>
 <tr>
   <td class="diff-marker" data-marker="−"></td>
-  <td class="diff-deletedline diff-left"><div>|Navigationsleiste Einträge im National Register of Historic Places in Arizona</div></td>
-  <td colspan="2" class="diff-empty diff-right"></td>
+  <td class="diff-deletedline diff-side-deleted"><div>|Navigationsleiste Einträge im National Register of Historic Places in Arizona</div></td>
+  <td colspan="2" class="diff-empty diff-side-added"></td>
 </tr>
 <tr>
   <td class="diff-marker"><a class="mw-diff-movedpara-left" href="#movedpara_1_0_rhs">&#x26AB;</a></td>
-  <td class="diff-deletedline diff-left"><div><a name="movedpara_3_1_lhs"></a><del class="diffchange diffchange-inline">|</del>Navigationsleiste Listen der National Historic Places der Vereinigten Staaten</div></td>
-  <td colspan="2" class="diff-empty diff-right"></td>
+  <td class="diff-deletedline diff-side-deleted"><div><a name="movedpara_3_1_lhs"></a><del class="diffchange diffchange-inline">|</del>Navigationsleiste Listen der National Historic Places der Vereinigten Staaten</div></td>
+  <td colspan="2" class="diff-empty diff-side-added"></td>
 </tr>
 <tr>
   <td class="diff-marker" data-marker="−"></td>
-  <td class="diff-deletedline diff-left"><div>}}</div></td>
-  <td colspan="2" class="diff-empty diff-right"></td>
+  <td class="diff-deletedline diff-side-deleted"><div>}}</div></td>
+  <td colspan="2" class="diff-empty diff-side-added"></td>
 </tr>
 <tr>
   <td class="diff-marker"></td>
-  <td class="diff-context diff-left"><br /></td>
+  <td class="diff-context diff-side-deleted"><br /></td>
   <td class="diff-marker"></td>
-  <td class="diff-context diff-right"><br /></td>
+  <td class="diff-context diff-side-added"><br /></td>
 </tr>
 <tr>
   <td class="diff-marker"></td>
-  <td class="diff-context diff-left"><div>[[Kategorie:Denkmal im National Register of Historic Places (Arizona)| ]]</div></td>
+  <td class="diff-context diff-side-deleted"><div>[[Kategorie:Denkmal im National Register of Historic Places (Arizona)| ]]</div></td>
   <td class="diff-marker"></td>
-  <td class="diff-context diff-right"><div>[[Kategorie:Denkmal im National Register of Historic Places (Arizona)| ]]</div></td>
+  <td class="diff-context diff-side-added"><div>[[Kategorie:Denkmal im National Register of Historic Places (Arizona)| ]]</div></td>
 </tr>
