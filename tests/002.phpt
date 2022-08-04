@@ -41,6 +41,8 @@ EOT;
 #---------------------------------------------------
 
 print wikidiff2_do_diff( $x, $y, 2 );
+print "\n----INLINE:----\n";
+print wikidiff2_inline_diff( $x, $y, 2 );
 
 ?>
 --EXPECT--
@@ -110,3 +112,17 @@ print wikidiff2_do_diff( $x, $y, 2 );
   <td class="diff-marker"></td>
   <td class="diff-context diff-side-added"><div>context</div></td>
 </tr>
+
+----INLINE:----
+<div class="mw-diff-inline-header"><!-- LINES 1,1 --></div>
+<div class="mw-diff-inline-context">== Shortest sequence in X ==</div>
+<div class="mw-diff-inline-added"><ins>x1</ins></div>
+<div class="mw-diff-inline-context">x2</div>
+<div class="mw-diff-inline-context">x1</div>
+<div class="mw-diff-inline-context">x2</div>
+<div class="mw-diff-inline-context">x1</div>
+<div class="mw-diff-inline-added"><ins>x2</ins></div>
+<div class="mw-diff-inline-added"><ins>x1</ins></div>
+<div class="mw-diff-inline-added"><ins>x2</ins></div>
+<div class="mw-diff-inline-context">context</div>
+<div class="mw-diff-inline-context">context</div>

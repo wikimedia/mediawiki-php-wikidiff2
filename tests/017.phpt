@@ -43,6 +43,8 @@ EOT;
 #---------------------------------------------------
 
 print wikidiff2_do_diff( $before, $after, 2 );
+print "\n----INLINE:----\n";
+print wikidiff2_inline_diff( $before, $after, 2 );
 
 ?>
 --EXPECT--
@@ -172,3 +174,29 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td class="diff-deletedline diff-side-deleted"><div><a name="movedpara_18_0_lhs"></a>[[Category:<del class="diffchange diffchange-inline">New</del> <del class="diffchange diffchange-inline">Hampshire</del> <del class="diffchange diffchange-inline">state</del> <del class="diffchange diffchange-inline">highways|145</del>]]</div></td>
   <td colspan="2" class="diff-empty diff-side-added"></td>
 </tr>
+
+----INLINE:----
+<div class="mw-diff-inline-header"><!-- LINES 1,1 --></div>
+<div class="mw-diff-inline-added"><ins>{{Infobox NH Route</ins></div>
+<div class="mw-diff-inline-deleted"><del>{{Infobox_road</del></div>
+<div class="mw-diff-inline-added"><ins>|previous_type=NH</ins></div>
+<div class="mw-diff-inline-deleted"><del>| system            = [[New Hampshire Highway System]]</del></div>
+<div class="mw-diff-inline-added"><ins>|previous_route=142</ins></div>
+<div class="mw-diff-inline-deleted"><del>| browse            = {{nh browse|previous_type=NH|previous_route=142|next_type=NH|next_route=149}}</del></div>
+<div class="mw-diff-inline-added"><ins>|next_type=NH</ins></div>
+<div class="mw-diff-inline-moved mw-diff-inline-moved-source mw-diff-inline-moved-downwards"><a name="movedpara_7_0_lhs"></a>}}'''New Hampshire Route 145''' ('''NH 145''') is a north–south highway in [[Coos County, New Hampshire|Coos County]] in northern [[New Hampshire]]. The highway runs between [[Colebrook, New Hampshire|Colebrook]] and [[Pittsburg, New Hampshire|Pittsburg]].<a class="mw-diff-movedpara-left" data-title-tag="old" href="#movedpara_8_2_rhs">&#9660;</a></div>
+<div class="mw-diff-inline-added"><ins>|next_route=149</ins></div>
+<div class="mw-diff-inline-added"><ins>}}</ins></div>
+<div class="mw-diff-inline-moved mw-diff-inline-moved-destination mw-diff-inline-moved-upwards"><a name="movedpara_8_2_rhs"></a><a class="mw-diff-movedpara-right" data-title-tag="new" href="#movedpara_7_0_lhs">&#9650;</a><del>}}</del>'''New Hampshire Route 145''' (<ins>abbreviated </ins>'''NH 145''') is a<ins> 13.12&amp;#160;mile long</ins> north–south<ins> [[state</ins> highway<ins>]]</ins> in [[Coos County, New Hampshire|Coos County]] in northern [[New Hampshire]]. The highway runs between [[Colebrook, New Hampshire|Colebrook]] and [[Pittsburg, New Hampshire|Pittsburg]].</div>
+<div class="mw-diff-inline-context">&#160;</div>
+<div class="mw-diff-inline-changed">The southern terminus of NH 145 is at<del> the junction with</del> [[U.S. <del>Highway</del><ins>Route</ins> 3<ins> (New Hampshire)</ins>|<del>US</del><ins>U.S. Route</ins> 3]] in Colebrook on the [[Vermont]] border. The highway passes through [[Clarksville, New Hampshire|Clarksville]] township and the village center. The northern terminus of NH 145 is in Pittsburg at<del> the junction with</del> US 3<del>. Total length of the highway is approximately 13.2 miles (21.3 km)</del>.</div>
+<div class="mw-diff-inline-context">&#160;</div>
+<div class="mw-diff-inline-changed">==<del> See also </del><ins>References</ins>==</div>
+<div class="mw-diff-inline-added"><ins>&lt;references/&gt;</ins></div>
+<div class="mw-diff-inline-moved mw-diff-inline-moved-source mw-diff-inline-moved-downwards"><a name="movedpara_14_0_lhs"></a>*[[List of New Hampshire numbered highways]]<a class="mw-diff-movedpara-left" data-title-tag="old" href="#movedpara_16_0_rhs">&#9660;</a></div>
+<div class="mw-diff-inline-context">&#160;</div>
+<div class="mw-diff-inline-moved mw-diff-inline-moved-destination mw-diff-inline-moved-upwards"><a name="movedpara_16_0_rhs"></a><a class="mw-diff-movedpara-right" data-title-tag="new" href="#movedpara_14_0_lhs">&#9650;</a><del>*</del>[[<del>List of </del><ins>Category:</ins>New Hampshire <del>numbered</del><ins>state</ins> highways<ins>|145</ins>]]</div>
+<div class="mw-diff-inline-moved mw-diff-inline-moved-destination mw-diff-inline-moved-downwards"><a name="movedpara_16_1_rhs"></a>[[Category:<del>New</del><ins>Coos</ins> <del>Hampshire</del><ins>County,</ins> <del>state</del><ins>New</ins> <del>highways|145</del><ins>Hampshire</ins>]]<a class="mw-diff-movedpara-right" data-title-tag="new" href="#movedpara_18_0_lhs">&#9660;</a></div>
+<div class="mw-diff-inline-context">&#160;</div>
+<div class="mw-diff-inline-context">{{NewHampshire-State-Highway-stub}}</div>
+<div class="mw-diff-inline-moved mw-diff-inline-moved-source mw-diff-inline-moved-upwards"><a name="movedpara_18_0_lhs"></a><a class="mw-diff-movedpara-left" data-title-tag="old" href="#movedpara_16_1_rhs">&#9650;</a>[[Category:New Hampshire state highways|145]]</div>

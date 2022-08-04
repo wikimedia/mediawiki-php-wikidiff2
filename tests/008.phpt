@@ -21,6 +21,8 @@ EOT;
 #---------------------------------------------------
 
 print wikidiff2_do_diff( $x, $y, 2 );
+print "\n----INLINE:----\n";
+print wikidiff2_inline_diff( $x, $y, 2 );
 
 ?>
 --EXPECT--
@@ -46,3 +48,9 @@ print wikidiff2_do_diff( $x, $y, 2 );
   <td class="diff-marker" data-marker="+"></td>
   <td class="diff-addedline diff-side-added"><div>AAAAA <ins class="diffchange diffchange-inline">BBBBB</ins> <ins class="diffchange diffchange-inline">BBBBB</ins> <ins class="diffchange diffchange-inline">BBBBB</ins> <ins class="diffchange diffchange-inline">BBBBB</ins> <ins class="diffchange diffchange-inline">BBBBB</ins> <ins class="diffchange diffchange-inline">BBBBB</ins> <ins class="diffchange diffchange-inline">BBBBB</ins> <ins class="diffchange diffchange-inline">BBBBB</ins> <ins class="diffchange diffchange-inline">BBBBB</ins></div></td>
 </tr>
+
+----INLINE:----
+<div class="mw-diff-inline-header"><!-- LINES 1,1 --></div>
+<div class="mw-diff-inline-changed">AAAAA AAAAA <del>AAAAA</del><ins>BBBBB</ins> <del>AAAAA</del><ins>BBBBB</ins> <del>AAAAA</del><ins>BBBBB</ins> <del>AAAAA</del><ins>BBBBB</ins> <del>AAAAA</del><ins>BBBBB</ins> <del>AAAAA</del><ins>BBBBB</ins> <del>AAAAA</del><ins>BBBBB</ins> <del>AAAAA</del><ins>BBBBB</ins></div>
+<div class="mw-diff-inline-context">&#160;</div>
+<div class="mw-diff-inline-changed">AAAAA <del>AAAAA</del><ins>BBBBB</ins> <del>AAAAA</del><ins>BBBBB</ins> <del>AAAAA</del><ins>BBBBB</ins> <del>AAAAA</del><ins>BBBBB</ins> <del>AAAAA</del><ins>BBBBB</ins> <del>AAAAA</del><ins>BBBBB</ins> <del>AAAAA</del><ins>BBBBB</ins> <del>AAAAA</del><ins>BBBBB</ins> <del>AAAAA</del><ins>BBBBB</ins></div>

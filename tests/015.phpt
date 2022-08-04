@@ -26,6 +26,8 @@ EOT;
 #---------------------------------------------------
 
 print wikidiff2_do_diff( $before, $after, 2 );
+print "\n----INLINE:----\n";
+print wikidiff2_inline_diff( $before, $after, 2 );
 
 ?>
 --EXPECT--
@@ -82,3 +84,15 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td class="diff-marker"></td>
   <td class="diff-context diff-side-added"><div>[[Kategorie:Denkmal im National Register of Historic Places (Arizona)| ]]</div></td>
 </tr>
+
+----INLINE:----
+<div class="mw-diff-inline-header"><!-- LINES 1,1 --></div>
+<div class="mw-diff-inline-context">* [http://www.nationalregisterofhistoricplaces.com/az/state.html National Register of Historic Places – Arizona]</div>
+<div class="mw-diff-inline-context">&#160;</div>
+<div class="mw-diff-inline-moved mw-diff-inline-moved-destination mw-diff-inline-moved-downwards"><a name="movedpara_1_0_rhs"></a><del>|</del><ins>{{</ins>Navigationsleiste Listen der National Historic Places der Vereinigten Staaten<ins>}}</ins><a class="mw-diff-movedpara-right" data-title-tag="new" href="#movedpara_3_1_lhs">&#9660;</a></div>
+<div class="mw-diff-inline-deleted"><del>{{NaviBlock</del></div>
+<div class="mw-diff-inline-deleted"><del>|Navigationsleiste Einträge im National Register of Historic Places in Arizona</del></div>
+<div class="mw-diff-inline-moved mw-diff-inline-moved-source mw-diff-inline-moved-upwards"><a name="movedpara_3_1_lhs"></a><a class="mw-diff-movedpara-left" data-title-tag="old" href="#movedpara_1_0_rhs">&#9650;</a>|Navigationsleiste Listen der National Historic Places der Vereinigten Staaten</div>
+<div class="mw-diff-inline-deleted"><del>}}</del></div>
+<div class="mw-diff-inline-context">&#160;</div>
+<div class="mw-diff-inline-context">[[Kategorie:Denkmal im National Register of Historic Places (Arizona)| ]]</div>

@@ -69,6 +69,8 @@ EOT;
 #---------------------------------------------------
 
 print wikidiff2_do_diff( $before, $after, 2 );
+print "\n----INLINE:----\n";
+print wikidiff2_inline_diff( $before, $after, 2 );
 
 ?>
 --EXPECT--
@@ -214,3 +216,31 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td class="diff-marker"></td>
   <td class="diff-context diff-side-added"><div>            "Deltahead"</div></td>
 </tr>
+
+----INLINE:----
+<div class="mw-diff-inline-header"><!-- LINES 4,4 --></div>
+<div class="mw-diff-inline-context">            "Wulfson",</div>
+<div class="mw-diff-inline-context">            "Zanka",</div>
+<div class="mw-diff-inline-moved mw-diff-inline-moved-source mw-diff-inline-moved-downwards"><a name="movedpara_1_0_lhs"></a>            "АлександрВв",<a class="mw-diff-movedpara-left" data-title-tag="old" href="#movedpara_3_0_rhs">&#9660;</a></div>
+<div class="mw-diff-inline-context">            "Андрей Романенко",</div>
+<div class="mw-diff-inline-context">            "Всеслав Чародей"</div>
+<div class="mw-diff-inline-header"><!-- LINES 11,10 --></div>
+<div class="mw-diff-inline-context">            "Oleksiy.golubov",</div>
+<div class="mw-diff-inline-context">            "Postoronniy-13",</div>
+<div class="mw-diff-inline-moved mw-diff-inline-moved-destination mw-diff-inline-moved-upwards"><a name="movedpara_3_0_rhs"></a><a class="mw-diff-movedpara-right" data-title-tag="new" href="#movedpara_1_0_lhs">&#9650;</a>            "<del>АлександрВв</del><ins>Saint Johann</ins>",</div>
+<div class="mw-diff-inline-context">            "Saramag",</div>
+<div class="mw-diff-inline-context">            "Stormare.henk",</div>
+<div class="mw-diff-inline-header"><!-- LINES 16,16 --></div>
+<div class="mw-diff-inline-context">        "K": [</div>
+<div class="mw-diff-inline-context">            "Biathlon",</div>
+<div class="mw-diff-inline-moved mw-diff-inline-moved-destination mw-diff-inline-moved-downwards"><a name="movedpara_5_0_rhs"></a>            "Michgrig",<a class="mw-diff-movedpara-right" data-title-tag="new" href="#movedpara_7_1_lhs">&#9660;</a></div>
+<div class="mw-diff-inline-moved mw-diff-inline-moved-destination mw-diff-inline-moved-downwards"><a name="movedpara_5_1_rhs"></a>            "TenBaseT",<a class="mw-diff-movedpara-right" data-title-tag="new" href="#movedpara_7_3_lhs">&#9660;</a></div>
+<div class="mw-diff-inline-context">            "Q-bit array"</div>
+<div class="mw-diff-inline-context">        ],</div>
+<div class="mw-diff-inline-context">        "Ar": [</div>
+<div class="mw-diff-inline-deleted"><del>            "Drbug",</del></div>
+<div class="mw-diff-inline-moved mw-diff-inline-moved-source mw-diff-inline-moved-upwards"><a name="movedpara_7_1_lhs"></a><a class="mw-diff-movedpara-left" data-title-tag="old" href="#movedpara_5_0_rhs">&#9650;</a>            "Michgrig",</div>
+<div class="mw-diff-inline-deleted"><del>            "Sir Shurf",</del></div>
+<div class="mw-diff-inline-moved mw-diff-inline-moved-source mw-diff-inline-moved-upwards"><a name="movedpara_7_3_lhs"></a><a class="mw-diff-movedpara-left" data-title-tag="old" href="#movedpara_5_1_rhs">&#9650;</a>            "TenBaseT",</div>
+<div class="mw-diff-inline-context">            "Alexander Roumega",</div>
+<div class="mw-diff-inline-context">            "Deltahead"</div>

@@ -115,6 +115,8 @@ EOT;
 #---------------------------------------------------
 
 print wikidiff2_do_diff( $x, $y, 2 );
+print "\n----INLINE:----\n";
+print wikidiff2_inline_diff( $x, $y, 2 );
 
 ?>
 --EXPECT--
@@ -394,3 +396,55 @@ print wikidiff2_do_diff( $x, $y, 2 );
   <td class="diff-marker"></td>
   <td class="diff-context diff-side-added"><br /></td>
 </tr>
+
+----INLINE:----
+<div class="mw-diff-inline-header"><!-- LINES 1,1 --></div>
+<div class="mw-diff-inline-context">== Added line ==</div>
+<div class="mw-diff-inline-context">&#160;</div>
+<div class="mw-diff-inline-added"><ins>sjgfkdjfgb</ins></div>
+<div class="mw-diff-inline-context">== Removed line ==</div>
+<div class="mw-diff-inline-context">&#160;</div>
+<div class="mw-diff-inline-deleted"><del>kjahegwnygw</del></div>
+<div class="mw-diff-inline-context">== Moved text ==</div>
+<div class="mw-diff-inline-context">a</div>
+<div class="mw-diff-inline-moved mw-diff-inline-moved-source mw-diff-inline-moved-downwards"><a name="movedpara_5_0_lhs"></a>---line---<a class="mw-diff-movedpara-left" data-title-tag="old" href="#movedpara_7_0_rhs">&#9660;</a></div>
+<div class="mw-diff-inline-context">a</div>
+<div class="mw-diff-inline-context">a</div>
+<div class="mw-diff-inline-header"><!-- LINES 13,12 --></div>
+<div class="mw-diff-inline-context">a</div>
+<div class="mw-diff-inline-context">a</div>
+<div class="mw-diff-inline-moved mw-diff-inline-moved-destination mw-diff-inline-moved-upwards"><a name="movedpara_7_0_rhs"></a><a class="mw-diff-movedpara-right" data-title-tag="new" href="#movedpara_5_0_lhs">&#9650;</a>---line---</div>
+<div class="mw-diff-inline-context">a</div>
+<div class="mw-diff-inline-context">a</div>
+<div class="mw-diff-inline-header"><!-- LINES 19,19 --></div>
+<div class="mw-diff-inline-context">a</div>
+<div class="mw-diff-inline-context">a</div>
+<div class="mw-diff-inline-moved mw-diff-inline-moved-source mw-diff-inline-moved-downwards"><a name="movedpara_9_0_lhs"></a>--line1--<a class="mw-diff-movedpara-left" data-title-tag="old" href="#movedpara_11_0_rhs">&#9660;</a></div>
+<div class="mw-diff-inline-moved mw-diff-inline-moved-source mw-diff-inline-moved-downwards"><a name="movedpara_9_1_lhs"></a>--line2--<a class="mw-diff-movedpara-left" data-title-tag="old" href="#movedpara_11_1_rhs">&#9660;</a></div>
+<div class="mw-diff-inline-context">a</div>
+<div class="mw-diff-inline-context">a</div>
+<div class="mw-diff-inline-header"><!-- LINES 29,27 --></div>
+<div class="mw-diff-inline-context">a</div>
+<div class="mw-diff-inline-context">a</div>
+<div class="mw-diff-inline-moved mw-diff-inline-moved-destination mw-diff-inline-moved-upwards"><a name="movedpara_11_0_rhs"></a><a class="mw-diff-movedpara-right" data-title-tag="new" href="#movedpara_9_0_lhs">&#9650;</a>--line1--</div>
+<div class="mw-diff-inline-moved mw-diff-inline-moved-destination mw-diff-inline-moved-upwards"><a name="movedpara_11_1_rhs"></a><a class="mw-diff-movedpara-right" data-title-tag="new" href="#movedpara_9_1_lhs">&#9650;</a>--line2--</div>
+<div class="mw-diff-inline-context">a</div>
+<div class="mw-diff-inline-context">a</div>
+<div class="mw-diff-inline-header"><!-- LINES 35,35 --></div>
+<div class="mw-diff-inline-context">a</div>
+<div class="mw-diff-inline-context">== Shortest sequence in Y ==</div>
+<div class="mw-diff-inline-deleted"><del>x1</del></div>
+<div class="mw-diff-inline-context">x2</div>
+<div class="mw-diff-inline-context">x1</div>
+<div class="mw-diff-inline-context">x2</div>
+<div class="mw-diff-inline-context">x1</div>
+<div class="mw-diff-inline-deleted"><del>x2</del></div>
+<div class="mw-diff-inline-deleted"><del>x1</del></div>
+<div class="mw-diff-inline-deleted"><del>x2</del></div>
+<div class="mw-diff-inline-context">context</div>
+<div class="mw-diff-inline-context">context</div>
+<div class="mw-diff-inline-header"><!-- LINES 49,45 --></div>
+<div class="mw-diff-inline-context">context</div>
+<div class="mw-diff-inline-context">== Changed line ==</div>
+<div class="mw-diff-inline-changed">blah blah blah <del>1</del><ins>2</ins></div>
+<div class="mw-diff-inline-context">&#160;</div>

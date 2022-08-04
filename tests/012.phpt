@@ -23,6 +23,8 @@ EOT;
 #---------------------------------------------------
 
 print wikidiff2_do_diff( $before, $after, 2 );
+print "\n----INLINE:----\n";
+print wikidiff2_inline_diff( $before, $after, 2 );
 
 ?>
 --EXPECT--
@@ -60,3 +62,11 @@ print wikidiff2_do_diff( $before, $after, 2 );
   <td class="diff-marker"></td>
   <td class="diff-context diff-side-added"><div>== Weblinks ==</div></td>
 </tr>
+
+----INLINE:----
+<div class="mw-diff-inline-header"><!-- LINES 1,1 --></div>
+<div class="mw-diff-inline-context">* [[Startpage]]</div>
+<div class="mw-diff-inline-context">* [[MetaGer]]</div>
+<div class="mw-diff-inline-changed">* [<del>https://search.disconnect.me </del><ins>[</ins>Disconnect]<del> (externe Seite)</del><ins>]</ins></div>
+<div class="mw-diff-inline-context">&#160;</div>
+<div class="mw-diff-inline-context">== Weblinks ==</div>
