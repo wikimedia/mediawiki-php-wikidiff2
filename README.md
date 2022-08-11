@@ -67,4 +67,4 @@ ini_set("wikidiff2.moved_paragraph_detection_cutoff", <int>);
 
 When the number of added and deleted lines in a table diff is greater than this limit, no attempt to detect moved lines will be made.
 
-Default 30.
+Default 100.
