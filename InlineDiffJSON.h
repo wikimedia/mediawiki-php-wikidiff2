@@ -14,6 +14,8 @@ class InlineDiffJSON: public Wikidiff2 {
 public:
 	bool hasResults = false;
 protected:
+	void printFileHeader();
+	void printFileFooter();
 	void printAdd(const String& line, int leftLine, int rightLine, int offsetFrom,
 		int offsetTo);
 	void printDelete(const String& line, int leftLine, int rightLine, int offsetFrom,

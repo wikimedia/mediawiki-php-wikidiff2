@@ -9,6 +9,7 @@
 #include <vector>
 #include <set>
 #include <list>
+#include <sstream>
 
 #define WIKIDIFF2_VERSION_STRING "1.13.0"
 // uncomment this for inline HTML debug output related to moved lines
@@ -29,11 +30,12 @@ class Wikidiff2 {
 		const String & execute(const String & text1, const String & text2,
 			int numContextLines, int maxMovedLines);
 
-		inline const String & getResult() const;
+		inline const String & getResult();
 
 	protected:
 		enum { MAX_WORD_LEVEL_DIFF_COMPLEXITY = 40000000 };
-		String result;
+		StringStream result;
+		String resultStr;
 		TextUtil & textUtil;
 
 		struct DiffMapEntry
@@ -56,10 +58,9 @@ class Wikidiff2 {
 		} allowPrintMovedLineDiff;
 
 		Wikidiff2()
-			: textUtil(TextUtil::getInstance())
+			: result(std::ios_base::out), textUtil(TextUtil::getInstance())
 		{}
 
-		virtual bool needsJSONFormat();
 		virtual void diffLines(const StringVector & lines1, const StringVector & lines2,
 				int numContextLines, int maxMovedLines);
 		virtual void printAdd(const String & line, int leftLine, int rightLine, int offsetFrom, int offsetTo) = 0;
@@ -68,6 +69,8 @@ class Wikidiff2 {
 			int rightLine, int offsetFrom, int offsetTo, bool printLeft = true, bool printRight = true,
 			const String & srcAnchor = "", const String & dstAnchor = "",
 			bool moveDirectionDownwards = false) = 0;
+		virtual void printFileHeader();
+		virtual void printFileFooter();
 		virtual void printBlockHeader(int leftLine, int rightLine) = 0;
 		virtual void printContext(const String & input, int leftLine, int rightLine, int offsetFrom, int offsetTo) = 0;
 
@@ -81,9 +84,10 @@ class Wikidiff2 {
 			int leftLine, int rightLine, int offsetFrom, int offsetTo);
 };
 
-inline const Wikidiff2::String & Wikidiff2::getResult() const
+inline const Wikidiff2::String & Wikidiff2::getResult()
 {
-	return result;
+	resultStr = result.str();
+	return resultStr;
 }
 
 inline Wikidiff2::DiffMapEntry::DiffMapEntry(Wikidiff2::WordVector& words1, Wikidiff2::WordVector& words2, int opIndexFrom_, int opLineFrom_, int opIndexTo_, int opLineTo_):

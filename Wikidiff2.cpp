@@ -25,9 +25,7 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 	// Set to true initially so we get a line number on line 1
 	bool showLineNumber = true;
 
-	if (needsJSONFormat()) {
-		result += "{\"diff\": [";
-	}
+	printFileHeader();
 
 	int currentOffsetFrom = 0;
 	int currentOffsetTo = 0;
@@ -114,8 +112,8 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 					printWordDiff(fromLine, toLine, from_index+j, to_index+j,
 						currentOffsetFrom, currentOffsetTo);
 
-						currentOffsetTo += toLine.length() + newLineLength;
-						currentOffsetFrom += fromLine.length() + newLineLength;
+					currentOffsetTo += toLine.length() + newLineLength;
+					currentOffsetFrom += fromLine.length() + newLineLength;
 				}
 				from_index += n;
 				to_index += n;
@@ -125,10 +123,15 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 		showLineNumber = false;
 	}
 
-	if (needsJSONFormat()) {
-		result.append("]");
-		result.append("}");
-	}
+	printFileFooter();
+}
+
+void Wikidiff2::printFileHeader()
+{
+}
+
+void Wikidiff2::printFileFooter()
+{
 }
 
 bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLine, int maxMovedLines,
@@ -168,9 +171,9 @@ bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLin
 		vsnprintf(ch, sizeof(ch), fmt, ap);
 		va_end(ap);
 
-		result += "<tr><td /><td class=\"diff-context\" colspan=3>";
-		result += ch;
-		result += "</td></tr>";
+		result << "<tr><td /><td class=\"diff-context\" colspan=3>";
+		result << ch;
+		result << "</td></tr>";
 	};
 #else
 	auto debugPrintf = [](...) { };
@@ -368,42 +371,42 @@ void Wikidiff2::debugPrintWordDiff(WordDiff & worddiff)
 		DiffOp<Word> & op = worddiff[i];
 		switch (op.op) {
 			case DiffOp<Word>::copy:
-				result += "Copy\n";
+				result << "Copy\n";
 				break;
 			case DiffOp<Word>::del:
-				result += "Delete\n";
+				result << "Delete\n";
 				break;
 			case DiffOp<Word>::add:
-				result += "Add\n";
+				result << "Add\n";
 				break;
 			case DiffOp<Word>::change:
-				result += "Change\n";
+				result << "Change\n";
 				break;
 		}
-		result += "From: ";
+		result << "From: ";
 		bool first = true;
 		for (int j=0; j<op.from.size(); j++) {
 			if (first) {
 				first = false;
 			} else {
-				result += ", ";
+				result << ", ";
 			}
-			result += "(";
-			result += op.from[j]->whole() + ")";
+			result << "(";
+			result << op.from[j]->whole() << ")";
 		}
-		result += "\n";
-		result += "To: ";
+		result << "\n";
+		result << "To: ";
 		first = true;
 		for (int j=0; j<op.to.size(); j++) {
 			if (first) {
 				first = false;
 			} else {
-				result += ", ";
+				result << ", ";
 			}
-			result += "(";
-			result += op.to[j]->whole() + ")";
+			result << "(";
+			result << op.to[j]->whole() + ")";
 		}
-		result += "\n\n";
+		result << "\n\n";
 	}
 }
 
@@ -413,24 +416,24 @@ void Wikidiff2::printHtmlEncodedText(const String & input)
 	size_t end = input.find_first_of("<>&");
 	while (end != String::npos) {
 		if (end > start) {
-			result.append(input, start, end - start);
+			result.write(input.data() + start, end - start);
 		}
 		switch (input[end]) {
 			case '<':
-				result.append("&lt;");
+				result << "&lt;";
 				break;
 			case '>':
-				result.append("&gt;");
+				result << "&gt;";
 				break;
 			default /*case '&'*/:
-				result.append("&amp;");
+				result << "&amp;";
 		}
 		start = end + 1;
 		end = input.find_first_of("<>&", start);
 	}
 	// Append the rest of the string after the last special character
 	if (start < input.size()) {
-		result.append(input, start, input.size() - start);
+		result.write(input.data() + start, input.size() - start);
 	}
 }
 
@@ -451,9 +454,7 @@ void Wikidiff2::explodeLines(const String & text, StringVector &lines)
 const Wikidiff2::String & Wikidiff2::execute(const String & text1, const String & text2,
 	int numContextLines, int maxMovedLines)
 {
-	// Allocate some result space to avoid excessive copying
-	result.clear();
-	result.reserve(text1.size() + text2.size() + 10000);
+	result.str(String());
 
 	// Split input strings into lines
 	StringVector lines1;
@@ -465,7 +466,7 @@ const Wikidiff2::String & Wikidiff2::execute(const String & text1, const String 
 	diffLines(lines1, lines2, numContextLines, maxMovedLines);
 
 	// Return a reference to the result buffer
-	return result;
+	return getResult();
 }
 
 const Wikidiff2::String Wikidiff2::toString(long input)
@@ -475,7 +476,3 @@ const Wikidiff2::String Wikidiff2::toString(long input)
 	return String(stream.str());
 }
 
-bool Wikidiff2::needsJSONFormat()
-{
-	return false;
-}

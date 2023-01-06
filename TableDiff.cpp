@@ -5,22 +5,22 @@
 void TableDiff::printAdd(const String & line, int leftLine, int rightLine, int offsetFrom,
 	int offsetTo)
 {
-	result += "<tr>\n"
+	result << "<tr>\n"
 		"  <td colspan=\"2\" class=\"diff-empty diff-side-deleted\"></td>\n"
 		"  <td class=\"diff-marker\" data-marker=\"+\"></td>\n"
 		"  <td class=\"diff-addedline diff-side-added\">";
 	printTextWithDiv(line);
-	result += "</td>\n</tr>\n";
+	result << "</td>\n</tr>\n";
 }
 
 void TableDiff::printDelete(const String & line, int leftLine, int rightLine, int offsetFrom,
 	int offsetTo)
 {
-	result += "<tr>\n"
+	result << "<tr>\n"
 		"  <td class=\"diff-marker\" data-marker=\"−\"></td>\n"
 		"  <td class=\"diff-deletedline diff-side-deleted\">";
 	printTextWithDiv(line);
-	result += "</td>\n"
+	result << "</td>\n"
 		"  <td colspan=\"2\" class=\"diff-empty diff-side-added\"></td>\n"
 		"</tr>\n";
 }
@@ -37,43 +37,43 @@ void TableDiff::printWordDiff(const String & text1, const String & text2, int le
 
 	//debugPrintWordDiff(worddiff);
 
-	result += "<tr>\n";
+	result << "<tr>\n";
 
 	// print left side or blank placeholder.
 	if (printLeft) {
 		if(dstAnchor != "")
-			result += "  <td class=\"diff-marker\">"
-			    "<a class=\"mw-diff-movedpara-left\" href=\"#" + dstAnchor + "\">&#x26AB;</a>"
+			result << "  <td class=\"diff-marker\">"
+			    "<a class=\"mw-diff-movedpara-left\" href=\"#" << dstAnchor << "\">&#x26AB;</a>"
 			    "</td>\n";
 		else
-			result += "  <td class=\"diff-marker\" data-marker=\"−\"></td>\n";
+			result << "  <td class=\"diff-marker\" data-marker=\"−\"></td>\n";
 
-		result += "  <td class=\"diff-deletedline diff-side-deleted\"><div>";
+		result << "  <td class=\"diff-deletedline diff-side-deleted\"><div>";
 		if(srcAnchor != "")
-			result += "<a name=\"" + srcAnchor + "\"></a>";
+			result << "<a name=\"" << srcAnchor << "\"></a>";
 		printWordDiffSide(worddiff, false);
-		result += "</div></td>\n";
+		result << "</div></td>\n";
 	} else {
-		result += "  <td colspan=\"2\" class=\"diff-empty diff-side-deleted\"></td>\n";
+		result << "  <td colspan=\"2\" class=\"diff-empty diff-side-deleted\"></td>\n";
 	}
 
 	// print right side or blank placeholder.
 	if (printRight) {
 		if(dstAnchor != "")
-			result += "  <td class=\"diff-marker\">"
-			    "<a class=\"mw-diff-movedpara-right\" href=\"#" + dstAnchor + "\">&#x26AB;</a>"
+			result << "  <td class=\"diff-marker\">"
+			    "<a class=\"mw-diff-movedpara-right\" href=\"#" << dstAnchor << "\">&#x26AB;</a>"
 			    "</td>\n";
 		else
-			result += "  <td class=\"diff-marker\" data-marker=\"+\"></td>\n";
+			result << "  <td class=\"diff-marker\" data-marker=\"+\"></td>\n";
 
-		result += "  <td class=\"diff-addedline diff-side-added\"><div>";
+		result << "  <td class=\"diff-addedline diff-side-added\"><div>";
 		if(srcAnchor != "")
-			result += "<a name=\"" + srcAnchor + "\"></a>";
+			result << "<a name=\"" << srcAnchor << "\"></a>";
 		printWordDiffSide(worddiff, true);
-		result += "</div></td>\n"
+		result << "</div></td>\n"
 			"</tr>\n";
 	} else {
-		result += "  <td colspan=\"2\" class=\"diff-empty diff-side-added\"></td>\n"
+		result << "  <td colspan=\"2\" class=\"diff-empty diff-side-added\"></td>\n"
 			"</tr>\n";
 	}
 }
@@ -99,20 +99,20 @@ void TableDiff::printWordDiffSide(WordDiff &worddiff, bool added)
 			}
 		} else if (!added && (op.op == DiffOp<Word>::del || op.op == DiffOp<Word>::change)) {
 			n = op.from.size();
-			result += "<del class=\"diffchange diffchange-inline\">";
+			result << "<del class=\"diffchange diffchange-inline\">";
 			for (j=0; j<n; j++) {
 				op.from[j]->get_whole(word);
 				printHtmlEncodedText(word);
 			}
-			result += "</del>";
+			result << "</del>";
 		} else if (added && (op.op == DiffOp<Word>::add || op.op == DiffOp<Word>::change)) {
 			n = op.to.size();
-			result += "<ins class=\"diffchange diffchange-inline\">";
+			result << "<ins class=\"diffchange diffchange-inline\">";
 			for (j=0; j<n; j++) {
 				op.to[j]->get_whole(word);
 				printHtmlEncodedText(word);
 			}
-			result += "</ins>";
+			result << "</ins>";
 		}
 	}
 }
@@ -121,39 +121,35 @@ void TableDiff::printTextWithDiv(const String & input)
 {
 	// Wrap string in a <div> if it's not empty
 	if (input.size() > 0) {
-		result.append("<div>");
+		result << "<div>";
 		printHtmlEncodedText(input);
-		result.append("</div>");
+		result << "</div>";
 	} else {
 		// Else add a <br> to preserve line breaks when copying
-		result += "<br />";
+		result << "<br />";
 	}
 }
 
 void TableDiff::printBlockHeader(int leftLine, int rightLine)
 {
-	char buf[256]; // should be plenty
-	snprintf(buf, sizeof(buf),
-		"<tr>\n"
-		"  <td colspan=\"2\" class=\"diff-lineno\"><!--LINE %u--></td>\n"
-		"  <td colspan=\"2\" class=\"diff-lineno\"><!--LINE %u--></td>\n"
-		"</tr>\n",
-		leftLine, rightLine);
-	result += buf;
+	result << "<tr>\n"
+		"  <td colspan=\"2\" class=\"diff-lineno\"><!--LINE " << leftLine << "--></td>\n"
+		"  <td colspan=\"2\" class=\"diff-lineno\"><!--LINE " << rightLine << "--></td>\n"
+		"</tr>\n";
 }
 
 void TableDiff::printContext(const String & input, int leftLine, int rightLine, int offsetFrom,
 	int offsetTo)
 {
-	result +=
+	result <<
 		"<tr>\n"
 		"  <td class=\"diff-marker\"></td>\n"
 		"  <td class=\"diff-context diff-side-deleted\">";
 	printTextWithDiv(input);
-	result +=
+	result <<
 		"</td>\n"
 		"  <td class=\"diff-marker\"></td>\n"
 		"  <td class=\"diff-context diff-side-added\">";
 	printTextWithDiv(input);
-	result += "</td>\n</tr>\n";
+	result << "</td>\n</tr>\n";
 }
