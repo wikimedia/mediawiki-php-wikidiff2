@@ -5,8 +5,6 @@
 #ifndef DIFFENGINE_H
 #define DIFFENGINE_H
 
-//#define USE_JUDY
-
 #include <vector>
 #include <map>
 #include <set>
@@ -15,10 +13,6 @@
 #include <cassert>
 #include <string>
 #include <numeric>
-
-#ifdef USE_JUDY
-#include "JudyHS.h"
-#endif
 
 #include "IntSet.h"
 #include "Wikidiff2.h"
@@ -144,18 +138,10 @@ class DiffEngine
 		typedef std::vector<std::pair<int, int>, WD2_ALLOCATOR<std::pair<int, int> > > IntPairVector;
 
 		// Maps
-#ifdef USE_JUDY
-		typedef JudyHS<IntVector> MatchesMap;
-#else
 		typedef std::map<T, IntVector, std::less<T>, WD2_ALLOCATOR<std::pair<const T, IntVector>>> MatchesMap;
-#endif
 
 		// Sets
-#ifdef USE_JUDY
-		typedef JudySet ValueSet;
-#else
 		typedef std::set<T, std::less<T>, WD2_ALLOCATOR<T> > ValueSet;
-#endif
 
 		DiffEngine()
 			: done(false), textUtil(TextUtil::getInstance())
@@ -483,16 +469,10 @@ int DiffEngine<T>::diag (int xoff, int xlim, int yoff, int ylim, int nchunks,
 		x1 = xoff + (int)((numer + (xlim-xoff)*chunk) / nchunks);
 		for ( ; x < x1; x++) {
 			const T & line = flip ? *yv[x] : *xv[x];
-#ifdef USE_JUDY
-			IntVector * pMatches = ymatches.Get(line);
-			if (!pMatches)
-				continue;
-#else
 			typename MatchesMap::iterator iter = ymatches.find(line);
 			if (iter == ymatches.end())
 				continue;
 			IntVector * pMatches = &(iter->second);
-#endif
 			IntVector::iterator y;
 			int k = 0;
 

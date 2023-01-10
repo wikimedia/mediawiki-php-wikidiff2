@@ -13,7 +13,7 @@ These pairs together give 85.9% coverage of DiffEngine.h. The remaining untested
 
 * chinese-reverse-1.txt and chinese-reverse-2.txt (in chinese-reverse.zip)
 
-These files are 2.3MB each, and give a worst-case performance test. Performance in the worst case is sensitive to the performance of the associative array class used to cross-reference the strings. I tried using an STL map and a Judy array. The Judy array gave an 11% improvement in execution time over the map, which could probably be increased to 15% with further optimisation work. I don't consider that to be a sufficient improvement to warrant adding a library dependency, but the code has been left in for the benefit of Judy fans and performance perfectionists. It can be enabled by compiling with -DUSE_JUDY. The C++ wrapper for JudyHS might be of use to someone.
+These files are 2.3MB each, and give a worst-case performance test. Performance in the worst case is sensitive to the performance of the associative array class used to cross-reference the strings. I tried using an STL map and a Judy array. The Judy array gave an 11% improvement in execution time over the map, which could probably be increased to 15% with further optimisation work. I didn't consider that to be a sufficient improvement to warrant adding a library dependency.
 
 Wikidiff2 is a PHP extension.
 
