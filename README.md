@@ -68,3 +68,13 @@ ini_set("wikidiff2.moved_paragraph_detection_cutoff", <int>);
 When the number of added and deleted lines in a table diff is greater than this limit, no attempt to detect moved lines will be made.
 
 Default 100.
+
+-------
+
+```
+ini_set("wikidiff2.max_word_level_diff_complexity", <int>);
+```
+
+When comparing two lines for changes within the line, a word-level diff will be
+done unless the product of the LHS word count and the RHS word count exceeds
+this limit.

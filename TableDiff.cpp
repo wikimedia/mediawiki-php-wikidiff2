@@ -35,7 +35,7 @@ void TableDiff::printWordDiff(const String & text1, const String & text2, int le
 
 	textUtil.explodeWords(text1, words1);
 	textUtil.explodeWords(text2, words2);
-	WordDiff worddiff(words1, words2, MAX_WORD_LEVEL_DIFF_COMPLEXITY);
+	WordDiff worddiff(wordDiffConfig, words1, words2);
 
 	//debugPrintWordDiff(worddiff);
 

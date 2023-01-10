@@ -19,13 +19,6 @@
 #include "Word.h"
 #include "TextUtil.h"
 
-// Default value for INI setting wikidiff2.change_threshold
-#define WIKIDIFF2_CHANGE_THRESHOLD_DEFAULT		"0.2"
-// Default value for INI setting wikidiff2.moved_line_threshold
-#define WIKIDIFF2_MOVED_LINE_THRESHOLD_DEFAULT	"0.4"
-// Default value for INI setting wikidiff2.moved_paragraph_detection_cutoff
-#define WIKIDIFF2_MOVED_PARAGRAPH_DETECTION_CUTOFF_DEFAULT "100"
-
 namespace wikidiff2 {
 
 #ifdef DEBUG_MOVED_LINES
@@ -45,6 +38,20 @@ inline void debugLog(const char *fmt, ...) {
 #define debugLog(...)
 #endif
 
+/**
+ * Options to be passed to the various constructors
+ */
+struct DiffConfig {
+	/**
+	 * Complexity is the product of input sizes, after identical leading and
+	 * trailing parts are removed. This is supposed to be proportional to
+	 * worst-case runtime. If the complexity is larger than this limit, trivial
+	 * output will be produced, and the bailout flag will be set in the Diff.
+	 */
+	long long bailoutComplexity;
+	double changeThreshold;
+};
+
 
 struct WordDiffStats
 {
@@ -52,7 +59,7 @@ struct WordDiffStats
 	int opCharCount[4] = { 0 };
 	double charSimilarity;
 
-	WordDiffStats(TextUtil::WordVector& words1, TextUtil::WordVector& words2, long long bailoutComplexity);
+	WordDiffStats(const DiffConfig & config, TextUtil::WordVector& words1, TextUtil::WordVector& words2);
 };
 
 /**
@@ -93,8 +100,7 @@ class Diff
 		typedef std::vector<T, WD2_ALLOCATOR<T> > ValueVector;
 		typedef std::vector<DiffOp<T>, WD2_ALLOCATOR<DiffOp<T>> > DiffOpVector;
 
-		Diff(const ValueVector & from_lines, const ValueVector & to_lines,
-			long long bailoutComplexity = 0);
+		Diff(const DiffConfig & config, const ValueVector & from_lines, const ValueVector & to_lines);
 
 		virtual void add_edit(const DiffOp<T> & edit) {
 			edits.push_back(edit);
@@ -142,15 +148,14 @@ class DiffEngine
 
 		// Sets
 		typedef std::set<T, std::less<T>, WD2_ALLOCATOR<T> > ValueSet;
-
-		DiffEngine()
-			: done(false), textUtil(TextUtil::getInstance())
+		
+		DiffEngine(const DiffConfig & config_)
+			: config(config_), done(false), textUtil(TextUtil::getInstance())
 		{}
 
 		void clear();
-		void diff (const ValueVector & from_lines,
-				const ValueVector & to_lines, Diff<T> & diff,
-				long long bailoutComplexity = 0);
+		void diff(const ValueVector & from_lines,
+				const ValueVector & to_lines, Diff<T> & diff);
 		int lcs_pos (int ypos);
 		void compareseq (int xoff, int xlim, int yoff, int ylim);
 		void shift_boundaries (const ValueVector & lines, BoolVector & changed,
@@ -159,6 +164,7 @@ class DiffEngine
 		int diag (int xoff, int xlim, int yoff, int ylim, int nchunks,
 				IntPairVector & seps);
 
+		DiffConfig config;
 		TextUtil & textUtil;
 		BoolVector xchanged, ychanged;
 		PointerVector xv, yv;
@@ -168,8 +174,8 @@ class DiffEngine
 		int lcs;
 		bool done;
 		enum {MAX_CHUNKS=8};
-		void detectDissimilarChanges(PointerVector& del, PointerVector& add, Diff<T>& diff, long long bailoutComplexity);
-		bool looksLikeChange(const T& del, const T& add, long long bailoutComplexity);
+		void detectDissimilarChanges(PointerVector& del, PointerVector& add, Diff<T>& diff);
+		bool looksLikeChange(const T& del, const T& add);
 		void writeChange(Diff<T>& diff, PointerVector& del, PointerVector& add, const PointerVector& empty);
 };
 
@@ -190,43 +196,25 @@ void DiffEngine<T>::clear()
 	done = false;
 }
 
-inline double characterSimilarityThreshold()
-{
-	double ret = INI_FLT("wikidiff2.change_threshold");
-	return ret;
-}
-
-inline double movedLineThreshold()
-{
-	double ret = INI_FLT("wikidiff2.moved_line_threshold");
-	return ret;
-}
-
-inline int movedParagraphDetectionCutoff()
-{
-	int ret = INI_INT("wikidiff2.moved_paragraph_detection_cutoff");
-	return ret;
-}
-
 // for a DiffOp::change, decide whether it should be treated as a successive add and delete based on similarity.
 template<typename T>
-inline bool DiffEngine<T>::looksLikeChange(const T& del, const T& add, long long bailoutComplexity)
+inline bool DiffEngine<T>::looksLikeChange(const T& del, const T& add)
 {
 	TextUtil::WordVector words1, words2;
 	textUtil.explodeWords(del, words1);
 	textUtil.explodeWords(add, words2);
-	WordDiffStats ds(words1, words2, bailoutComplexity);
-	return ds.charSimilarity > characterSimilarityThreshold();
+	WordDiffStats ds(config, words1, words2);
+	return ds.charSimilarity > config.changeThreshold;
 }
 
 // go through list of changed lines. if they are too dissimilar, convert to del+add.
 template<typename T>
-inline void DiffEngine<T>::detectDissimilarChanges(PointerVector& del, PointerVector& add, Diff<T>& diff, long long bailoutComplexity)
+inline void DiffEngine<T>::detectDissimilarChanges(PointerVector& del, PointerVector& add, Diff<T>& diff)
 {
 	int i;
 	static PointerVector empty;
 	for (i = 0; i < del.size() && i < add.size(); ++i) {
-		if (!looksLikeChange(*del[i], *add[i], bailoutComplexity)) {
+		if (!looksLikeChange(*del[i], *add[i])) {
 			if (i > 0) {
 				// Turn all "add" and "del" operations that have been detected as "looksLikeChange"
 				// so far into a single combined "change" operation in the resulting diff.
@@ -256,15 +244,14 @@ inline void DiffEngine<T>::detectDissimilarChanges(PointerVector& del, PointerVe
 }
 
 template<>
-inline void DiffEngine<Word>::detectDissimilarChanges(PointerVector& del, PointerVector& add, Diff<Word>& diff, long long bailoutComplexity)
+inline void DiffEngine<Word>::detectDissimilarChanges(PointerVector& del, PointerVector& add, Diff<Word>& diff)
 {
 	// compiles to no-op in Word specialization.
 }
 
 template<typename T>
 void DiffEngine<T>::diff (const ValueVector & from_lines,
-		const ValueVector & to_lines, Diff<T> & diff,
-		long long bailoutComplexity /* = 0 */)
+		const ValueVector & to_lines, Diff<T> & diff)
 {
 	int n_from = (int)from_lines.size();
 	int n_to = (int)to_lines.size();
@@ -296,7 +283,7 @@ void DiffEngine<T>::diff (const ValueVector & from_lines,
 		* (n_to - skip - endskip);
 
 	// If too complex, just output "whole left side replaced with right"
-	if (bailoutComplexity > 0 && complexity > bailoutComplexity) {
+	if (config.bailoutComplexity > 0 && complexity > config.bailoutComplexity) {
 		PointerVector del;
 		PointerVector add;
 
@@ -370,7 +357,7 @@ void DiffEngine<T>::diff (const ValueVector & from_lines,
 		while (yi < n_to && ychanged[yi])
 			add.push_back(&to_lines[yi++]);
 
-		detectDissimilarChanges(del, add, diff, bailoutComplexity);
+		detectDissimilarChanges(del, add, diff);
 
 		if (del.size() && add.size()) {
 			writeChange(diff, del, add, empty);
@@ -721,14 +708,14 @@ void DiffEngine<T>::shift_boundaries (const ValueVector & lines, BoolVector & ch
 //-----------------------------------------------------------------------------
 
 template<typename T>
-Diff<T>::Diff(const ValueVector & from_lines, const ValueVector & to_lines,
-	long long bailoutComplexity)
+Diff<T>::Diff(const DiffConfig& config, const ValueVector & from_lines, const ValueVector & to_lines)
 {
-	DiffEngine<T> engine;
-	engine.diff(from_lines, to_lines, *this, bailoutComplexity);
+	DiffEngine<T> engine(config);
+	engine.diff(from_lines, to_lines, *this);
 }
 
-inline WordDiffStats::WordDiffStats(TextUtil::WordVector& words1, TextUtil::WordVector& words2, long long bailoutComplexity)
+inline WordDiffStats::WordDiffStats(const DiffConfig& config, 
+		TextUtil::WordVector& words1, TextUtil::WordVector& words2)
 {
 	auto countOpChars = [] (DiffEngine<Word>::PointerVector& p) {
 		return std::accumulate(p.begin(), p.end(), 0, [] (int a, const Word *b) {
@@ -736,7 +723,7 @@ inline WordDiffStats::WordDiffStats(TextUtil::WordVector& words1, TextUtil::Word
 		});
 	};
 
-	Diff<Word> diff(words1, words2, bailoutComplexity);
+	Diff<Word> diff(config, words1, words2);
 	for (int i = 0; i < diff.size(); ++i) {
 		int op = diff[i].op;
 		int charCount;

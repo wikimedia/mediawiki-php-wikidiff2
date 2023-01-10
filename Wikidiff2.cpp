@@ -14,11 +14,10 @@
 
 namespace wikidiff2 {
 
-void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & lines2,
-		int numContextLines, int maxMovedLines)
+void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & lines2)
 {
 	// first do line-level diff
-	StringDiff linediff(lines1, lines2);
+	StringDiff linediff(lineDiffConfig, lines1, lines2);
 
 	int from_index = 1, to_index = 1;
 
@@ -46,7 +45,7 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 
 					String toLine = *linediff[i].to[j];
 
-					if (!printMovedLineDiff(linediff, i, j, maxMovedLines, from_index, to_index+j,
+					if (!printMovedLineDiff(linediff, i, j, from_index, to_index+j,
 						 -1, currentOffsetTo)) {
 
 						printAdd(toLine, from_index, to_index+j, -1, currentOffsetTo);
@@ -63,7 +62,7 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 
 					String fromLine = *linediff[i].from[j];
 
-					if (!printMovedLineDiff(linediff, i, j, maxMovedLines, from_index+j, to_index,
+					if (!printMovedLineDiff(linediff, i, j, from_index+j, to_index,
 						currentOffsetFrom, -1)) {
 
 						printDelete(fromLine, from_index+j, to_index, currentOffsetFrom, -1);
@@ -81,8 +80,8 @@ void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & line
 
 					String line = *linediff[i].from[j];
 
-					if ((i != 0 && j < numContextLines) /*trailing*/
-							|| (i != linediff.size() - 1 && j >= n - numContextLines)) /*leading*/ {
+					if ((i != 0 && j < config.numContextLines) /*trailing*/
+							|| (i != linediff.size() - 1 && j >= n - config.numContextLines)) /*leading*/ {
 						if (showLineNumber) {
 							printBlockHeader(from_index, to_index);
 							showLineNumber = false;
@@ -135,7 +134,7 @@ void Wikidiff2::printFileFooter()
 {
 }
 
-bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLine, int maxMovedLines,
+bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLine,
 	int leftLine, int rightLine, int offsetFrom, int offsetTo)
 {
 	// helper fn creates 64-bit lookup key from opIndex and opLine
@@ -180,8 +179,9 @@ bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLin
 	auto debugPrintf = [](...) { };
 #endif
 
-	if(!allowPrintMovedLineDiff(linediff, maxMovedLines)) {
-		debugPrintf("printMovedLineDiff: diff too large (maxMovedLines=%ld), not detecting moved lines", maxMovedLines);
+	if(!allowPrintMovedLineDiff(linediff, config.maxMovedLines)) {
+		debugPrintf("printMovedLineDiff: diff too large (maxMovedLines=%ld), not detecting moved lines",
+			config.maxMovedLines);
 		return false;
 	}
 
@@ -295,11 +295,11 @@ bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLin
 				bool potentialMatch = false;
 				if (otherOp == DiffOp<String>::del) {
 					textUtil.explodeWords(*linediff[opIndex].to[opLine], words2);
-					tmp = std::make_shared<DiffMapEntry>(words2, words1, i, k, opIndex, opLine);
+					tmp = std::make_shared<DiffMapEntry>(wordDiffConfig, words2, words1, i, k, opIndex, opLine);
 					potentialMatch = cmpDiffMapEntries(tmp->opIndexFrom, tmp->opLineFrom);
 				} else {
 					textUtil.explodeWords(*linediff[opIndex].from[opLine], words2);
-					tmp = std::make_shared<DiffMapEntry>(words1, words2, opIndex, opLine, i, k);
+					tmp = std::make_shared<DiffMapEntry>(wordDiffConfig, words1, words2, opIndex, opLine, i, k);
 					potentialMatch = cmpDiffMapEntries(tmp->opIndexTo, tmp->opLineTo);
 				}
 				if (!found || (tmp->ds.charSimilarity > found->ds.charSimilarity) && potentialMatch) {
@@ -315,7 +315,7 @@ bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLin
 	// if candidate exists:
 	//     add candidate to moved-line-map twice, for add/del case
 	//     print diff to the moved line, omitting the left/right side for added/deleted line
-	if (found && found->ds.charSimilarity > movedLineThreshold()) {
+	if (found && found->ds.charSimilarity > config.movedLineThreshold) {
 		// if we displayed a diff to the found block before, don't display this one as moved.
 		int otherIndex = linediff[opIndex].op == DiffOp<String>::add ? found->opIndexFrom : found->opIndexTo;
 		int otherLine = linediff[opIndex].op == DiffOp<String>::add ? found->opLineFrom : found->opLineTo;
@@ -452,8 +452,7 @@ void Wikidiff2::explodeLines(const String & text, StringVector &lines)
 	}
 }
 
-const Wikidiff2::String & Wikidiff2::execute(const String & text1, const String & text2,
-	int numContextLines, int maxMovedLines)
+const Wikidiff2::String & Wikidiff2::execute(const String & text1, const String & text2)
 {
 	result.str(String());
 
@@ -464,7 +463,7 @@ const Wikidiff2::String & Wikidiff2::execute(const String & text1, const String 
 	explodeLines(text2, lines2);
 
 	// Do the diff
-	diffLines(lines1, lines2, numContextLines, maxMovedLines);
+	diffLines(lines1, lines2);
 
 	// Return a reference to the result buffer
 	return getResult();

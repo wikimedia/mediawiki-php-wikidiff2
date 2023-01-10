@@ -14,6 +14,8 @@
 #include "InlineDiff.h"
 #include "InlineDiffJSON.h"
 
+#define WIKIDIFF2_VERSION_STRING "1.13.0"
+
 #if PHP_VERSION_ID >= 80000
 #	include "wikidiff2_arginfo.h"
 #else
@@ -33,7 +35,6 @@ using wikidiff2::Wikidiff2;
 using wikidiff2::TableDiff;
 using wikidiff2::InlineDiff;
 using wikidiff2::InlineDiffJSON;
-using wikidiff2::movedParagraphDetectionCutoff;
 
 static int le_wikidiff2;
 
@@ -61,9 +62,10 @@ zend_module_entry wikidiff2_module_entry = {
 
 /* {{{ INI Settings */
 PHP_INI_BEGIN()
-	PHP_INI_ENTRY("wikidiff2.change_threshold",  WIKIDIFF2_CHANGE_THRESHOLD_DEFAULT, PHP_INI_ALL, NULL)
-	PHP_INI_ENTRY("wikidiff2.moved_line_threshold",  WIKIDIFF2_MOVED_LINE_THRESHOLD_DEFAULT, PHP_INI_ALL, NULL)
-	PHP_INI_ENTRY("wikidiff2.moved_paragraph_detection_cutoff",  WIKIDIFF2_MOVED_PARAGRAPH_DETECTION_CUTOFF_DEFAULT, PHP_INI_ALL, NULL)
+	PHP_INI_ENTRY("wikidiff2.change_threshold",  "0.2", PHP_INI_ALL, NULL)
+	PHP_INI_ENTRY("wikidiff2.moved_line_threshold",  "0.4", PHP_INI_ALL, NULL)
+	PHP_INI_ENTRY("wikidiff2.moved_paragraph_detection_cutoff",  "100", PHP_INI_ALL, NULL)
+	PHP_INI_ENTRY("wikidiff2.max_word_level_diff_complexity", "40000000", PHP_INI_ALL, NULL)
 PHP_INI_END()
 /* }}} */
 
@@ -101,6 +103,19 @@ PHP_MINFO_FUNCTION(wikidiff2)
 	php_info_print_table_end();
 }
 
+/**
+ * Get Wikidiff2 config based on the php.ini settings and supplied context line value.
+ */
+static Wikidiff2::Config wikidiff2_get_config(int numContextLines) {
+	Wikidiff2::Config config;
+	config.numContextLines = numContextLines;
+	config.changeThreshold = INI_FLT("wikidiff2.change_threshold");
+	config.movedLineThreshold = INI_FLT("wikidiff2.moved_line_threshold");
+	config.maxMovedLines = INI_INT("wikidiff2.moved_paragraph_detection_cutoff");
+	config.maxWordLevelDiffComplexity = INI_INT("wikidiff2.max_word_level_diff_complexity");
+	return config;
+}
+
 /* {{{ proto string wikidiff2_do_diff(string text1, string text2, int numContextLines)
  *
  * Warning: the input text must be valid UTF-8! Do not pass user input directly
@@ -123,11 +138,10 @@ PHP_FUNCTION(wikidiff2_do_diff)
 
 
 	try {
-		TableDiff wikidiff2;
+		TableDiff wikidiff2(wikidiff2_get_config(numContextLines));
 		Wikidiff2::String text1String(text1, text1_len);
 		Wikidiff2::String text2String(text2, text2_len);
-		const Wikidiff2::String & ret = wikidiff2.execute(text1String, text2String, (int)numContextLines,
-		movedParagraphDetectionCutoff());
+		const Wikidiff2::String & ret = wikidiff2.execute(text1String, text2String);
 		COMPAT_RETURN_STRINGL( const_cast<char*>(ret.data()), ret.size());
 	} catch (std::bad_alloc &e) {
 		zend_error(E_WARNING, "Out of memory in wikidiff2_do_diff().");
@@ -158,11 +172,10 @@ PHP_FUNCTION(wikidiff2_inline_diff)
 
 
 	try {
-		InlineDiff wikidiff2;
+		InlineDiff wikidiff2(wikidiff2_get_config(numContextLines));
 		Wikidiff2::String text1String(text1, text1_len);
 		Wikidiff2::String text2String(text2, text2_len);
-		const Wikidiff2::String& ret = wikidiff2.execute(text1String, text2String, (int)numContextLines,
-		movedParagraphDetectionCutoff());
+		const Wikidiff2::String& ret = wikidiff2.execute(text1String, text2String);
 		COMPAT_RETURN_STRINGL( const_cast<char*>(ret.data()), ret.size());
 	} catch (std::bad_alloc &e) {
 		zend_error(E_WARNING, "Out of memory in wikidiff2_inline_diff().");
@@ -193,12 +206,11 @@ PHP_FUNCTION(wikidiff2_inline_json_diff)
 
 
 	try {
-		InlineDiffJSON wikidiff2;
+		InlineDiffJSON wikidiff2(wikidiff2_get_config(numContextLines));
 		Wikidiff2::String text1String(text1, text1_len);
 		Wikidiff2::String text2String(text2, text2_len);
 
-		const Wikidiff2::String& ret = wikidiff2.execute(text1String, text2String,
-			(int)numContextLines, movedParagraphDetectionCutoff());
+		const Wikidiff2::String& ret = wikidiff2.execute(text1String, text2String);
 		COMPAT_RETURN_STRINGL( const_cast<char*>(ret.data()), ret.size());
 	} catch (std::bad_alloc &e) {
 		zend_error(E_WARNING, "Out of memory in wikidiff2_inline_json_diff().");

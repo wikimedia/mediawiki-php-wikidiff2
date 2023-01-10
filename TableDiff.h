@@ -7,6 +7,10 @@ namespace wikidiff2 {
 
 class TableDiff: public Wikidiff2 {
 	public:
+		TableDiff(const Config& config_)
+			: Wikidiff2(config_)
+		{}
+
 	protected:
 		void printAdd(const String& line, int leftLine, int rightLine, int offsetFrom, int offsetTo);
 		void printDelete(const String& line, int leftLine, int rightLine, int offsetFrom, int offsetTo);

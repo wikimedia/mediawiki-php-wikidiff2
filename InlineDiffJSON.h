@@ -14,6 +14,10 @@ enum LinkDirection {Down, Up};
 
 class InlineDiffJSON: public Wikidiff2 {
 public:
+	InlineDiffJSON(const Config& config_)
+		: Wikidiff2(config_)
+	{}
+
 	bool hasResults = false;
 protected:
 	void printFileHeader();

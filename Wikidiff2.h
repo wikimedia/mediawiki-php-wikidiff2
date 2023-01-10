@@ -11,7 +11,6 @@
 #include <list>
 #include <sstream>
 
-#define WIKIDIFF2_VERSION_STRING "1.13.0"
 // uncomment this for inline HTML debug output related to moved lines
 //#define DEBUG_MOVED_LINES
 
@@ -29,16 +28,53 @@ class Wikidiff2 {
 		typedef Diff<String> StringDiff;
 		typedef Diff<Word> WordDiff;
 
-		const String & execute(const String & text1, const String & text2,
-			int numContextLines, int maxMovedLines);
+		/**
+		 * Options used to configure the class, passed to the constructor
+		 */
+		struct Config {
+			/**
+			 * The number of copied lines shown before and after each change
+			 */
+			int64_t numContextLines;
+
+			/**
+			 * If the similarity metric between lines exceeds this value the
+			 * line will be shown as a change with a word diff. If not, it will
+			 * be shown as a delete and add. Between 0 and 1.
+			 */
+			double changeThreshold;
+
+			/**
+			 * If the similarity metric between lines exceeds this value, the
+			 * pair may be considered as a move candidate. Between 0 and 1.
+			 */
+			double movedLineThreshold;
+
+			/**
+			 * When the number of added and deleted lines in a diff is greater
+			 * than this limit, no attempt to detect moved lines will be made.
+			 */
+			int64_t maxMovedLines;
+
+			/**
+			 * When comparing two lines for changes within the line, a word-level
+			 * diff will be done unless the product of the LHS word count and
+			 * the RHS word count exceeds this limit.
+			 */
+			int64_t maxWordLevelDiffComplexity;
+		};
+
+		const String & execute(const String & text1, const String & text2);
 
 		inline const String & getResult();
 
 	protected:
-		enum { MAX_WORD_LEVEL_DIFF_COMPLEXITY = 40000000 };
 		StringStream result;
 		String resultStr;
 		TextUtil & textUtil;
+		Config config;
+		DiffConfig lineDiffConfig;
+		DiffConfig wordDiffConfig;
 
 		struct DiffMapEntry
 		{
@@ -46,7 +82,7 @@ class Wikidiff2 {
 			int opIndexFrom, opLineFrom, opIndexTo, opLineTo;
 			bool lhsDisplayed = false, rhsDisplayed = false;
 
-			DiffMapEntry(WordVector& words1, WordVector& words2, int opIndexFrom_, int opLineFrom_, int opIndexTo_, int opLineTo_);
+			DiffMapEntry(const DiffConfig& diffConfig, WordVector& words1, WordVector& words2, int opIndexFrom_, int opLineFrom_, int opIndexTo_, int opLineTo_);
 		};
 		// PhpAllocator can't be specialized for std::pair, so we're using the standard allocator.
 		typedef std::map<uint64_t, std::shared_ptr<struct Wikidiff2::DiffMapEntry> > DiffMap;
@@ -59,12 +95,16 @@ class Wikidiff2 {
 				bool operator() (StringDiff & linediff, int maxMovedLines);	// calculates & caches comparison count
 		} allowPrintMovedLineDiff;
 
-		Wikidiff2()
-			: result(std::ios_base::out), textUtil(TextUtil::getInstance())
-		{}
+		Wikidiff2(const Config& config_)
+			: config(config_), result(std::ios_base::out), textUtil(TextUtil::getInstance())
+		{
+			lineDiffConfig.bailoutComplexity = 0;
+			lineDiffConfig.changeThreshold = config.changeThreshold;
+			wordDiffConfig.bailoutComplexity = config.maxWordLevelDiffComplexity;
+			wordDiffConfig.changeThreshold = config.changeThreshold;
+		}
 
-		virtual void diffLines(const StringVector & lines1, const StringVector & lines2,
-				int numContextLines, int maxMovedLines);
+		virtual void diffLines(const StringVector & lines1, const StringVector & lines2);
 		virtual void printAdd(const String & line, int leftLine, int rightLine, int offsetFrom, int offsetTo) = 0;
 		virtual void printDelete(const String & line, int leftLine, int rightLine, int offsetFrom, int offsetTo) = 0;
 		virtual void printWordDiff(const String & text1, const String & text2, int leftLine,
@@ -82,7 +122,7 @@ class Wikidiff2 {
 		void explodeLines(const String & text, StringVector &lines);
 		const String toString(long input);
 
-		bool printMovedLineDiff(StringDiff & linediff, int opIndex, int opLine, int maxMovedLines,
+		bool printMovedLineDiff(StringDiff & linediff, int opIndex, int opLine,
 			int leftLine, int rightLine, int offsetFrom, int offsetTo);
 };
 
@@ -92,8 +132,12 @@ inline const Wikidiff2::String & Wikidiff2::getResult()
 	return resultStr;
 }
 
-inline Wikidiff2::DiffMapEntry::DiffMapEntry(Wikidiff2::WordVector& words1, Wikidiff2::WordVector& words2, int opIndexFrom_, int opLineFrom_, int opIndexTo_, int opLineTo_):
-	ds(words1, words2, MAX_WORD_LEVEL_DIFF_COMPLEXITY),
+inline Wikidiff2::DiffMapEntry::DiffMapEntry(const DiffConfig& diffConfig,
+		Wikidiff2::WordVector& words1, Wikidiff2::WordVector& words2,
+		int opIndexFrom_, int opLineFrom_,
+		int opIndexTo_, int opLineTo_
+):
+	ds(diffConfig, words1, words2),
 	opIndexFrom(opIndexFrom_), opLineFrom(opLineFrom_), opIndexTo(opIndexTo_), opLineTo(opLineTo_)
 {
 }

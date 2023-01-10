@@ -7,6 +7,10 @@ namespace wikidiff2 {
 
 class InlineDiff: public Wikidiff2 {
 	public:
+		InlineDiff(const Config& config_)
+			: Wikidiff2(config_)
+		{}
+
 	protected:
 		void printAdd(const String& line, int leftLine, int rightLine, int offsetFrom,
 			int offsetTo);
