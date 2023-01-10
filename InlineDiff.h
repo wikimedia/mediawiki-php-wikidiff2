@@ -3,6 +3,8 @@
 
 #include "Wikidiff2.h"
 
+namespace wikidiff2 {
+
 class InlineDiff: public Wikidiff2 {
 	public:
 	protected:
@@ -20,5 +22,7 @@ class InlineDiff: public Wikidiff2 {
 
 		void printWrappedLine(const char* pre, const String& line, const char* post);
 };
+
+} // namespace wikidiff2
 
 #endif

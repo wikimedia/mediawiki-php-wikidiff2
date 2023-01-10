@@ -2,6 +2,8 @@
 #include "Wikidiff2.h"
 #include "TableDiff.h"
 
+namespace wikidiff2 {
+
 void TableDiff::printAdd(const String & line, int leftLine, int rightLine, int offsetFrom,
 	int offsetTo)
 {
@@ -153,3 +155,5 @@ void TableDiff::printContext(const String & input, int leftLine, int rightLine, 
 	printTextWithDiv(input);
 	result << "</td>\n</tr>\n";
 }
+
+} // namespace wikidiff2

@@ -12,6 +12,7 @@
 #include "Wikidiff2.h"
 #include <regex>
 
+namespace wikidiff2 {
 
 void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & lines2,
 		int numContextLines, int maxMovedLines)
@@ -476,3 +477,4 @@ const Wikidiff2::String Wikidiff2::toString(long input)
 	return String(stream.str());
 }
 
+} // namespace wikidiff2

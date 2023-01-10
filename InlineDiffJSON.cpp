@@ -4,6 +4,8 @@
 #include <sstream>
 #include <iomanip>
 
+namespace wikidiff2 {
+
 void InlineDiffJSON::printFileHeader()
 {
 	result << "{\"diff\": [";
@@ -245,3 +247,4 @@ void InlineDiffJSON::appendOffset(int offsetFrom, int offsetTo) {
 	result << "}";
 }
 
+} // namespace wikidiff2

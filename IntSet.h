@@ -9,6 +9,8 @@
 
 #include "Wikidiff2.h"
 
+namespace wikidiff2 {
+
 // The UnsignedSet template class represents a set of unsigned integers.
 // Internally, it uses a fixed-size bitset to store small values and falls
 // back to an std::unordered_set for values that exceed the bitset size.
@@ -56,5 +58,7 @@ class UnsignedSet {
 };
 
 using IntSet = UnsignedSet<>;
+
+} // namespace wikidiff2
 
 #endif  // INTSET_H

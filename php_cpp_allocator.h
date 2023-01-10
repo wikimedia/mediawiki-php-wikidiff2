@@ -4,6 +4,8 @@
 #include <memory>
 #include "php.h"
 
+namespace wikidiff2 {
+
 /**
  * Allocation class which allows various C++ standard library functions
  * to allocate and free memory using PHP's emalloc/efree facilities.
@@ -35,5 +37,7 @@ class PhpAllocator : public std::allocator<T>
 			return efree(p);
 		}
 };
+
+} // namespace wikidiff2
 
 #endif

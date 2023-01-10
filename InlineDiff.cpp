@@ -1,5 +1,7 @@
 #include "InlineDiff.h"
 
+namespace wikidiff2 {
+
 void InlineDiff::printAdd(const String& line, int leftLine, int rightLine, int offsetFrom,
 	int offsetTo)
 {
@@ -131,3 +133,5 @@ void InlineDiff::printWrappedLine(const char* pre, const String& line, const cha
 	}
 	result << post;
 }
+
+} // namespace wikidiff2

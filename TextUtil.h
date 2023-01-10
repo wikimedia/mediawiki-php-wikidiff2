@@ -7,6 +7,8 @@
 #include <string>
 #include <vector>
 
+namespace wikidiff2 {
+
 // helper functions used in both DiffEngine and Wikidiff2
 class TextUtil
 {
@@ -63,5 +65,7 @@ public:
 	// Split a string into words
 	void explodeWords(const String & text, WordVector &words);
 };
+
+} // namespace wikidiff2
 
 #endif // TEXTUTIL_H

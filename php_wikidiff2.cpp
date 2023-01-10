@@ -29,6 +29,12 @@
 #    error "PHP version 7 or later is required."
 #endif
 
+using wikidiff2::Wikidiff2;
+using wikidiff2::TableDiff;
+using wikidiff2::InlineDiff;
+using wikidiff2::InlineDiffJSON;
+using wikidiff2::movedParagraphDetectionCutoff;
+
 static int le_wikidiff2;
 
 zend_function_entry wikidiff2_functions[] = {

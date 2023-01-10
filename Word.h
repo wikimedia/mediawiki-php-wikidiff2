@@ -5,6 +5,8 @@
 #include <algorithm>
 #include "wd2_allocator.h"
 
+namespace wikidiff2 {
+
 // a small class to accomodate word-level diffs; basically, a body and an
 // optional suffix (the latter consisting of a single whitespace), where
 // only the bodies are compared on operator==.
@@ -60,5 +62,6 @@ public:
 	}
 };
 
+} // namespace wikidiff2
 
 #endif

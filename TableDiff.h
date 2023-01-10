@@ -3,6 +3,8 @@
 
 #include "Wikidiff2.h"
 
+namespace wikidiff2 {
+
 class TableDiff: public Wikidiff2 {
 	public:
 	protected:
@@ -17,5 +19,7 @@ class TableDiff: public Wikidiff2 {
 
 		void printWordDiffSide(WordDiff& worddiff, bool added);
 };
+
+} // namespace wikidiff2
 
 #endif

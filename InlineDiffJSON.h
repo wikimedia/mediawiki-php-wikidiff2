@@ -6,6 +6,8 @@
 
 #include "Wikidiff2.h"
 
+namespace wikidiff2 {
+
 enum DiffType {Context, AddLine, DeleteLine, Change, MoveSource, MoveDestination};
 enum HighlightType {Add, Delete};
 enum LinkDirection {Down, Up};
@@ -32,5 +34,7 @@ protected:
 	void printEscapedJSON(const String &s);
 	bool needsJSONFormat();
 };
+
+} // namespace wikidiff2
 
 #endif /* InlineDiffJSON_h */

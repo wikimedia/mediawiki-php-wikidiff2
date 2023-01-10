@@ -32,6 +32,8 @@
 // Default value for INI setting wikidiff2.moved_paragraph_detection_cutoff
 #define WIKIDIFF2_MOVED_PARAGRAPH_DETECTION_CUTOFF_DEFAULT "100"
 
+namespace wikidiff2 {
+
 #ifdef DEBUG_MOVED_LINES
 inline void debugLog(const char *fmt, ...) {
 	static FILE *f = nullptr;
@@ -784,5 +786,6 @@ inline WordDiffStats::WordDiffStats(TextUtil::WordVector& words1, TextUtil::Word
 	}
 }
 
+} // namespace wikidiff2
 
 #endif

@@ -5,6 +5,8 @@
 
 #include <algorithm>
 
+namespace wikidiff2 {
+
 static thread_local TextUtil tl_textUtil;
 
 TextUtil::TextUtil()
@@ -164,3 +166,4 @@ void TextUtil::explodeWords(const String & text, WordVector &words)
 	}
 }
 
+} // namespace wikidiff2
