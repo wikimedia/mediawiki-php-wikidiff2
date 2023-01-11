@@ -2,6 +2,7 @@
 #define WIKIDIFF2_H
 
 #include "wd2_allocator.h"
+#include "Formatter.h"
 #include "DiffEngine.h"
 #include "Word.h"
 #include "TextUtil.h"
@@ -24,6 +25,7 @@ class Wikidiff2 {
 		typedef std::vector<Word, WD2_ALLOCATOR<Word> > WordVector;
 		typedef std::vector<int, WD2_ALLOCATOR<int> > IntVector;
 		typedef std::list<int, WD2_ALLOCATOR<int> > IntList;
+		typedef std::list<Formatter*, WD2_ALLOCATOR<Formatter*> > FormatterPtrList;
 
 		typedef Diff<String> StringDiff;
 		typedef Diff<Word> WordDiff;
@@ -64,17 +66,25 @@ class Wikidiff2 {
 			int64_t maxWordLevelDiffComplexity;
 		};
 
-		const String & execute(const String & text1, const String & text2);
+		Wikidiff2(const Config& config_)
+			: config(config_), textUtil(TextUtil::getInstance())
+		{
+			lineDiffConfig.bailoutComplexity = 0;
+			lineDiffConfig.changeThreshold = config.changeThreshold;
+			wordDiffConfig.bailoutComplexity = config.maxWordLevelDiffComplexity;
+			wordDiffConfig.changeThreshold = config.changeThreshold;
+		}
 
-		inline const String & getResult();
+		void execute(const String & text1, const String & text2);
 
-	protected:
-		StringStream result;
-		String resultStr;
+		void addFormatter(Formatter & formatter);
+
+	private:
 		TextUtil & textUtil;
 		Config config;
 		DiffConfig lineDiffConfig;
 		DiffConfig wordDiffConfig;
+		FormatterPtrList formatters;
 
 		struct DiffMapEntry
 		{
@@ -95,42 +105,37 @@ class Wikidiff2 {
 				bool operator() (StringDiff & linediff, int maxMovedLines);	// calculates & caches comparison count
 		} allowPrintMovedLineDiff;
 
-		Wikidiff2(const Config& config_)
-			: config(config_), result(std::ios_base::out), textUtil(TextUtil::getInstance())
-		{
-			lineDiffConfig.bailoutComplexity = 0;
-			lineDiffConfig.changeThreshold = config.changeThreshold;
-			wordDiffConfig.bailoutComplexity = config.maxWordLevelDiffComplexity;
-			wordDiffConfig.changeThreshold = config.changeThreshold;
-		}
-
-		virtual void diffLines(const StringVector & lines1, const StringVector & lines2);
-		virtual void printAdd(const String & line, int leftLine, int rightLine, int offsetFrom, int offsetTo) = 0;
-		virtual void printDelete(const String & line, int leftLine, int rightLine, int offsetFrom, int offsetTo) = 0;
-		virtual void printWordDiff(const String & text1, const String & text2, int leftLine,
-			int rightLine, int offsetFrom, int offsetTo, bool printLeft = true, bool printRight = true,
-			const String & srcAnchor = "", const String & dstAnchor = "",
-			bool moveDirectionDownwards = false) = 0;
-		virtual void printFileHeader();
-		virtual void printFileFooter();
-		virtual void printBlockHeader(int leftLine, int rightLine) = 0;
-		virtual void printContext(const String & input, int leftLine, int rightLine, int offsetFrom, int offsetTo) = 0;
-
-		void printHtmlEncodedText(const String & input);
-		void debugPrintWordDiff(WordDiff & worddiff);
+		void diffLines(const StringVector & lines1, const StringVector & lines2);
 
 		void explodeLines(const String & text, StringVector &lines);
-		const String toString(long input);
 
 		bool printMovedLineDiff(StringDiff & linediff, int opIndex, int opLine,
 			int leftLine, int rightLine, int offsetFrom, int offsetTo);
-};
 
-inline const Wikidiff2::String & Wikidiff2::getResult()
-{
-	resultStr = result.str();
-	return resultStr;
-}
+		void printAdd(const String & line, int leftLine, int rightLine, int offsetFrom, int offsetTo);
+		void printDelete(const String & line, int leftLine, int rightLine, int offsetFrom, int offsetTo);
+
+		void printWordDiff(
+			const WordDiff & diff,
+			int leftLine, int rightLine,
+			int offsetFrom, int offsetTo,
+			bool printLeft = true, bool printRight = true,
+			const String & srcAnchor = "", const String & dstAnchor = "",
+			bool moveDirectionDownwards = false);
+
+		void printWordDiffFromStrings(
+			const String & text1, const String & text2,
+			int leftLine, int rightLine,
+			int offsetFrom, int offsetTo,
+			bool printLeft = true, bool printRight = true,
+			const String & srcAnchor = "", const String & dstAnchor = "",
+			bool moveDirectionDownwards = false);
+
+		void printFileHeader();
+		void printFileFooter();
+		void printBlockHeader(int leftLine, int rightLine);
+		void printContext(const String & input, int leftLine, int rightLine, int offsetFrom, int offsetTo);
+};
 
 inline Wikidiff2::DiffMapEntry::DiffMapEntry(const DiffConfig& diffConfig,
 		Wikidiff2::WordVector& words1, Wikidiff2::WordVector& words2,

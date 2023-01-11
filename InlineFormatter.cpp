@@ -1,8 +1,8 @@
-#include "InlineDiff.h"
+#include "InlineFormatter.h"
 
 namespace wikidiff2 {
 
-void InlineDiff::printAdd(const String& line, int leftLine, int rightLine, int offsetFrom,
+void InlineFormatter::printAdd(const String& line, int leftLine, int rightLine, int offsetFrom,
 	int offsetTo)
 {
 	if(line.empty()) {
@@ -12,7 +12,7 @@ void InlineDiff::printAdd(const String& line, int leftLine, int rightLine, int o
 	}
 }
 
-void InlineDiff::printDelete(const String& line, int leftLine, int rightLine,
+void InlineFormatter::printDelete(const String& line, int leftLine, int rightLine,
 	int offsetFrom, int offsetTo)
 {
 	if(line.empty()) {
@@ -22,17 +22,11 @@ void InlineDiff::printDelete(const String& line, int leftLine, int rightLine,
 	}
 }
 
-void InlineDiff::printWordDiff(const String& text1, const String& text2, int leftLine, int rightLine,
+void InlineFormatter::printWordDiff(const WordDiff & worddiff, int leftLine, int rightLine,
 	int offsetFrom, int offsetTo, bool printLeft, bool printRight,
 	const String & srcAnchor, const String & dstAnchor, bool moveDirectionDownwards)
 {
-	WordVector words1, words2;
-
-	textUtil.explodeWords(text1, words1);
-	textUtil.explodeWords(text2, words2);
-	WordDiff worddiff(wordDiffConfig, words1, words2);
 	String word;
-
 	bool moved = printLeft != printRight,
 		 isMoveSrc = moved && printLeft,
 		 isMoveDest = moved && printRight;
@@ -55,7 +49,7 @@ void InlineDiff::printWordDiff(const String& text1, const String& text2, int lef
 	}
 
 	for (unsigned i = 0; i < worddiff.size(); ++i) {
-		DiffOp<Word> & op = worddiff[i];
+		const DiffOp<Word> & op = worddiff[i];
 		int n, j;
 		if (op.op == DiffOp<Word>::copy) {
 			n = op.from.size();
@@ -111,19 +105,22 @@ void InlineDiff::printWordDiff(const String& text1, const String& text2, int lef
 	result << "</div>\n";
 }
 
-void InlineDiff::printBlockHeader(int leftLine, int rightLine)
+void InlineFormatter::printBlockHeader(int leftLine, int rightLine)
 {
 	result << "<div class=\"mw-diff-inline-header\"><!-- LINES "
 		<< leftLine << "," << rightLine << " --></div>\n";
 }
 
-void InlineDiff::printContext(const String & input, int leftLine, int rightLine,
+void InlineFormatter::printContext(const String & input, int leftLine, int rightLine,
 	int offsetFrom, int offsetTo)
 {
 	printWrappedLine("<div class=\"mw-diff-inline-context\">", input, "</div>\n");
 }
 
-void InlineDiff::printWrappedLine(const char* pre, const String& line, const char* post)
+/**
+ * HTML-encode and output a line with some text before and after it
+ */
+void InlineFormatter::printWrappedLine(const char* pre, const String& line, const char* post)
 {
 	result << pre;
 	if (line.empty()) {

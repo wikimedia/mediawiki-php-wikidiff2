@@ -1,10 +1,8 @@
-#include <stdio.h>
-#include "Wikidiff2.h"
-#include "TableDiff.h"
+#include "TableFormatter.h"
 
 namespace wikidiff2 {
 
-void TableDiff::printAdd(const String & line, int leftLine, int rightLine, int offsetFrom,
+void TableFormatter::printAdd(const String & line, int leftLine, int rightLine, int offsetFrom,
 	int offsetTo)
 {
 	result << "<tr>\n"
@@ -15,7 +13,7 @@ void TableDiff::printAdd(const String & line, int leftLine, int rightLine, int o
 	result << "</td>\n</tr>\n";
 }
 
-void TableDiff::printDelete(const String & line, int leftLine, int rightLine, int offsetFrom,
+void TableFormatter::printDelete(const String & line, int leftLine, int rightLine, int offsetFrom,
 	int offsetTo)
 {
 	result << "<tr>\n"
@@ -27,18 +25,10 @@ void TableDiff::printDelete(const String & line, int leftLine, int rightLine, in
 		"</tr>\n";
 }
 
-void TableDiff::printWordDiff(const String & text1, const String & text2, int leftLine,
+void TableFormatter::printWordDiff(const WordDiff & worddiff, int leftLine,
 	int rightLine, int offsetFrom, int offsetTo, bool printLeft, bool printRight,
 	const String & srcAnchor, const String & dstAnchor, bool moveDirectionDownwards)
 {
-	WordVector words1, words2;
-
-	textUtil.explodeWords(text1, words1);
-	textUtil.explodeWords(text2, words2);
-	WordDiff worddiff(wordDiffConfig, words1, words2);
-
-	//debugPrintWordDiff(worddiff);
-
 	result << "<tr>\n";
 
 	// print left side or blank placeholder.
@@ -80,11 +70,11 @@ void TableDiff::printWordDiff(const String & text1, const String & text2, int le
 	}
 }
 
-void TableDiff::printWordDiffSide(WordDiff &worddiff, bool added)
+void TableFormatter::printWordDiffSide(const WordDiff &worddiff, bool added)
 {
 	String word;
 	for (unsigned i = 0; i < worddiff.size(); ++i) {
-		DiffOp<Word> & op = worddiff[i];
+		const DiffOp<Word> & op = worddiff[i];
 		int n, j;
 		if (op.op == DiffOp<Word>::copy) {
 			n = op.from.size();
@@ -119,7 +109,7 @@ void TableDiff::printWordDiffSide(WordDiff &worddiff, bool added)
 	}
 }
 
-void TableDiff::printTextWithDiv(const String & input)
+void TableFormatter::printTextWithDiv(const String & input)
 {
 	// Wrap string in a <div> if it's not empty
 	if (input.size() > 0) {
@@ -132,7 +122,7 @@ void TableDiff::printTextWithDiv(const String & input)
 	}
 }
 
-void TableDiff::printBlockHeader(int leftLine, int rightLine)
+void TableFormatter::printBlockHeader(int leftLine, int rightLine)
 {
 	result << "<tr>\n"
 		"  <td colspan=\"2\" class=\"diff-lineno\"><!--LINE " << leftLine << "--></td>\n"
@@ -140,7 +130,7 @@ void TableDiff::printBlockHeader(int leftLine, int rightLine)
 		"</tr>\n";
 }
 
-void TableDiff::printContext(const String & input, int leftLine, int rightLine, int offsetFrom,
+void TableFormatter::printContext(const String & input, int leftLine, int rightLine, int offsetFrom,
 	int offsetTo)
 {
 	result <<

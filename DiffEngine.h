@@ -15,7 +15,6 @@
 #include <numeric>
 
 #include "IntSet.h"
-#include "Wikidiff2.h"
 #include "Word.h"
 #include "TextUtil.h"
 
@@ -51,7 +50,6 @@ struct DiffConfig {
 	long long bailoutComplexity;
 	double changeThreshold;
 };
-
 
 struct WordDiffStats
 {
@@ -105,11 +103,22 @@ class Diff
 		virtual void add_edit(const DiffOp<T> & edit) {
 			edits.push_back(edit);
 		}
-		unsigned size() { return edits.size(); }
-		DiffOp<T> & operator[](int i) {return edits[i];}
+
+		unsigned size() const {
+			return edits.size();
+		}
+
+		DiffOp<T> & operator[](int i) {
+			return edits[i];
+		}
+
+		const DiffOp<T> & operator[](int i) const {
+			return edits[i];
+		}
 
 		DiffOpVector edits;
 };
+
 /**
  * Class used internally by Diff to actually compute the diffs.
  *

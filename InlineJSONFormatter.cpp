@@ -1,34 +1,35 @@
 
-#include "InlineDiffJSON.h"
-#include <string>
-#include <sstream>
+#include "InlineJSONFormatter.h"
 #include <iomanip>
 
 namespace wikidiff2 {
 
-void InlineDiffJSON::printFileHeader()
+void InlineJSONFormatter::printFileHeader()
 {
 	result << "{\"diff\": [";
 }
 
-void InlineDiffJSON::printFileFooter()
+void InlineJSONFormatter::printFileFooter()
 {
 	result << "]}";
 }
 
-void InlineDiffJSON::printAdd(const String& line, int leftLine, int rightLine,
+void InlineJSONFormatter::printAdd(const String& line, int leftLine, int rightLine,
 	int offsetFrom, int offsetTo)
 {
 	printAddDelete(line, DiffType::AddLine, toString(rightLine), offsetFrom, offsetTo);
 }
 
-void InlineDiffJSON::printDelete(const String& line, int leftLine, int rightLine,
+void InlineJSONFormatter::printDelete(const String& line, int leftLine, int rightLine,
 	int offsetFrom, int offsetTo)
 {
 	printAddDelete(line, DiffType::DeleteLine, "", offsetFrom, offsetTo);
 }
 
-void InlineDiffJSON::printAddDelete(const String& line, DiffType diffType, const String& lineNumber,
+/**
+ * Shared code for printAdd and printDelete
+ */
+void InlineJSONFormatter::printAddDelete(const String& line, DiffType diffType, const String& lineNumber,
 	int offsetFrom, int offsetTo) {
 	if (hasResults)
 		result << ",";
@@ -47,17 +48,11 @@ void InlineDiffJSON::printAddDelete(const String& line, DiffType diffType, const
 	hasResults = true;
 }
 
-void InlineDiffJSON::printWordDiff(const String& text1, const String& text2, int leftLine,
+void InlineJSONFormatter::printWordDiff(const WordDiff & worddiff, int leftLine,
 	int rightLine, int offsetFrom, int offsetTo, bool printLeft, bool printRight,
 	const String & srcAnchor, const String & dstAnchor, bool moveDirectionDownwards)
 {
-	WordVector words1, words2;
-
-	textUtil.explodeWords(text1, words1);
-	textUtil.explodeWords(text2, words2);
-	WordDiff worddiff(wordDiffConfig, words1, words2);
 	String word;
-
 	bool moved = printLeft != printRight,
 	isMoveSrc = moved && printLeft;
 
@@ -89,7 +84,7 @@ void InlineDiffJSON::printWordDiff(const String& text1, const String& text2, int
 	unsigned int rangeCalcResult = 0;
 	String ranges;
 	for (unsigned i = 0; i < worddiff.size(); ++i) {
-		DiffOp<Word> & op = worddiff[i];
+		const DiffOp<Word> & op = worddiff[i];
 		unsigned long n;
 		int j;
 		if (op.op == DiffOp<Word>::copy) {
@@ -187,12 +182,12 @@ void InlineDiffJSON::printWordDiff(const String& text1, const String& text2, int
 	}
 }
 
-void InlineDiffJSON::printBlockHeader(int leftLine, int rightLine)
+void InlineJSONFormatter::printBlockHeader(int leftLine, int rightLine)
 {
 	//inline diff json not setup to print this
 }
 
-void InlineDiffJSON::printContext(const String & input, int leftLine, int rightLine,
+void InlineJSONFormatter::printContext(const String & input, int leftLine, int rightLine,
 	int offsetFrom, int offsetTo)
 {
 	if (hasResults)
@@ -207,7 +202,10 @@ void InlineDiffJSON::printContext(const String & input, int leftLine, int rightL
 	hasResults = true;
 }
 
-void InlineDiffJSON::printEscapedJSON(const String &s) {
+/**
+ * Append a String to the output, escaping it for JSON
+ */
+void InlineJSONFormatter::printEscapedJSON(const String &s) {
 	for (auto c = s.cbegin(); c != s.cend(); c++) {
 		switch (*c) {
 			case '"': result << "\\\""; break;
@@ -230,7 +228,10 @@ void InlineDiffJSON::printEscapedJSON(const String &s) {
 	}
 }
 
-void InlineDiffJSON::appendOffset(int offsetFrom, int offsetTo) {
+/**
+ * Append current offsets to the output
+ */
+void InlineJSONFormatter::appendOffset(int offsetFrom, int offsetTo) {
 	result << ", \"offset\": {"
 		<< "\"from\": ";
 	if (offsetFrom > -1) {
