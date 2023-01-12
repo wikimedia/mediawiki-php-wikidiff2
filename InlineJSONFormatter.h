@@ -41,9 +41,17 @@ private:
 	void printAddDelete(const String& line, DiffType diffType, const String& lineNumber,
 		int offsetFrom, int offsetTo);
 
-	void printEscapedJSON(const String &s);
-
 	void appendOffset(int offsetFrom, int offsetTo);
+
+	void printEscapedJSON(const String & s) {
+		printEscapedJSON(s.cbegin(), s.cend());
+	}
+	
+	void printEscapedJSON(const Word & word) {
+		printEscapedJSON(word.start, word.end);
+	}
+	
+	void printEscapedJSON(StringIterator start, StringIterator end);
 };
 
 } // namespace wikidiff2

@@ -728,7 +728,7 @@ inline WordDiffStats::WordDiffStats(const DiffConfig& config,
 {
 	auto countOpChars = [] (DiffEngine<Word>::PointerVector& p) {
 		return std::accumulate(p.begin(), p.end(), 0, [] (int a, const Word *b) {
-			return a + (b->suffixEnd - b->bodyStart);
+			return a + b->size();
 		});
 	};
 

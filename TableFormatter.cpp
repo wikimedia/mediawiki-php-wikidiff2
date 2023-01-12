@@ -72,7 +72,6 @@ void TableFormatter::printWordDiff(const WordDiff & worddiff, int leftLine,
 
 void TableFormatter::printWordDiffSide(const WordDiff &worddiff, bool added)
 {
-	String word;
 	for (unsigned i = 0; i < worddiff.size(); ++i) {
 		const DiffOp<Word> & op = worddiff[i];
 		int n, j;
@@ -80,29 +79,25 @@ void TableFormatter::printWordDiffSide(const WordDiff &worddiff, bool added)
 			n = op.from.size();
 			if (added) {
 				for (j=0; j<n; j++) {
-					op.to[j]->get_whole(word);
-					printHtmlEncodedText(word);
+					printHtmlEncodedText(*op.to[j]);
 				}
 			} else {
 				for (j=0; j<n; j++) {
-					op.from[j]->get_whole(word);
-					printHtmlEncodedText(word);
+					printHtmlEncodedText(*op.from[j]);
 				}
 			}
 		} else if (!added && (op.op == DiffOp<Word>::del || op.op == DiffOp<Word>::change)) {
 			n = op.from.size();
 			result << "<del class=\"diffchange diffchange-inline\">";
 			for (j=0; j<n; j++) {
-				op.from[j]->get_whole(word);
-				printHtmlEncodedText(word);
+				printHtmlEncodedText(*op.from[j]);
 			}
 			result << "</del>";
 		} else if (added && (op.op == DiffOp<Word>::add || op.op == DiffOp<Word>::change)) {
 			n = op.to.size();
 			result << "<ins class=\"diffchange diffchange-inline\">";
 			for (j=0; j<n; j++) {
-				op.to[j]->get_whole(word);
-				printHtmlEncodedText(word);
+				printHtmlEncodedText(*op.to[j]);
 			}
 			result << "</ins>";
 		}

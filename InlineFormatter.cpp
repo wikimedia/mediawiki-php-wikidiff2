@@ -26,7 +26,6 @@ void InlineFormatter::printWordDiff(const WordDiff & worddiff, int leftLine, int
 	int offsetFrom, int offsetTo, bool printLeft, bool printRight,
 	const String & srcAnchor, const String & dstAnchor, bool moveDirectionDownwards)
 {
-	String word;
 	bool moved = printLeft != printRight,
 		 isMoveSrc = moved && printLeft,
 		 isMoveDest = moved && printRight;
@@ -54,16 +53,14 @@ void InlineFormatter::printWordDiff(const WordDiff & worddiff, int leftLine, int
 		if (op.op == DiffOp<Word>::copy) {
 			n = op.from.size();
 			for (j=0; j<n; j++) {
-				op.from[j]->get_whole(word);
-				printHtmlEncodedText(word);
+				printHtmlEncodedText(*op.from[j]);
 			}
 		} else if (op.op == DiffOp<Word>::del) {
 			n = op.from.size();
 			if (!isMoveSrc)
 				result << "<del>";
 			for (j=0; j<n; j++) {
-				op.from[j]->get_whole(word);
-				printHtmlEncodedText(word);
+				printHtmlEncodedText(*op.from[j]);
 			}
 			if (!isMoveSrc)
 				result << "</del>";
@@ -73,8 +70,7 @@ void InlineFormatter::printWordDiff(const WordDiff & worddiff, int leftLine, int
 			n = op.to.size();
 			result << "<ins>";
 			for (j=0; j<n; j++) {
-				op.to[j]->get_whole(word);
-				printHtmlEncodedText(word);
+				printHtmlEncodedText(*op.to[j]);
 			}
 			result << "</ins>";
 		} else if (op.op == DiffOp<Word>::change) {
@@ -82,8 +78,7 @@ void InlineFormatter::printWordDiff(const WordDiff & worddiff, int leftLine, int
 			if (!isMoveSrc)
 				result << "<del>";
 			for (j=0; j<n; j++) {
-				op.from[j]->get_whole(word);
-				printHtmlEncodedText(word);
+				printHtmlEncodedText(*op.from[j]);
 			}
 			if (isMoveSrc)
 				continue;
@@ -91,8 +86,7 @@ void InlineFormatter::printWordDiff(const WordDiff & worddiff, int leftLine, int
 			n = op.to.size();
 			result << "<ins>";
 			for (j=0; j<n; j++) {
-				op.to[j]->get_whole(word);
-				printHtmlEncodedText(word);
+				printHtmlEncodedText(*op.to[j]);
 			}
 			result << "</ins>";
 		}

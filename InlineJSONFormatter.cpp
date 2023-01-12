@@ -52,7 +52,6 @@ void InlineJSONFormatter::printWordDiff(const WordDiff & worddiff, int leftLine,
 	int rightLine, int offsetFrom, int offsetTo, bool printLeft, bool printRight,
 	const String & srcAnchor, const String & dstAnchor, bool moveDirectionDownwards)
 {
-	String word;
 	bool moved = printLeft != printRight,
 	isMoveSrc = moved && printLeft;
 
@@ -90,8 +89,8 @@ void InlineJSONFormatter::printWordDiff(const WordDiff & worddiff, int leftLine,
 		if (op.op == DiffOp<Word>::copy) {
 			n = op.from.size();
 			for (j=0; j<n; j++) {
-				op.from[j]->get_whole(word);
-				rangeCalcResult += word.length();
+				const Word & word = *op.from[j];
+				rangeCalcResult += word.size();
 				printEscapedJSON(word);
 			}
 		} else if (op.op == DiffOp<Word>::del) {
@@ -99,10 +98,10 @@ void InlineJSONFormatter::printWordDiff(const WordDiff & worddiff, int leftLine,
 			unsigned int start = rangeCalcResult;
 			unsigned int length = 0;
 			for (j=0; j<n; j++) {
-				op.from[j]->get_whole(word);
+				const Word & word = *op.from[j];
 
-				length += word.length();
-				rangeCalcResult += word.length();
+				length += word.size();
+				rangeCalcResult += word.size();
 				printEscapedJSON(word);
 			}
 
@@ -120,10 +119,10 @@ void InlineJSONFormatter::printWordDiff(const WordDiff & worddiff, int leftLine,
 			unsigned int start = rangeCalcResult;
 			unsigned int length = 0;
 			for (j=0; j<n; j++) {
-				op.to[j]->get_whole(word);
+				const Word & word = *op.to[j];
 
-				length += word.length();
-				rangeCalcResult += word.length();
+				length += word.size();
+				rangeCalcResult += word.size();
 				printEscapedJSON(word);
 			}
 
@@ -137,10 +136,10 @@ void InlineJSONFormatter::printWordDiff(const WordDiff & worddiff, int leftLine,
 			unsigned int start = rangeCalcResult;
 			unsigned int length = 0;
 			for (j=0; j<n; j++) {
-				op.from[j]->get_whole(word);
+				const Word & word = *op.from[j];
 
-				length += word.length();
-				rangeCalcResult += word.length();
+				length += word.size();
+				rangeCalcResult += word.size();
 				printEscapedJSON(word);
 			}
 
@@ -158,10 +157,10 @@ void InlineJSONFormatter::printWordDiff(const WordDiff & worddiff, int leftLine,
 			start = rangeCalcResult;
 			length = 0;
 			for (j=0; j<n; j++) {
-				op.to[j]->get_whole(word);
+				const Word & word = *op.to[j];
 
-				length += word.length();
-				rangeCalcResult += word.length();
+				length += word.size();
+				rangeCalcResult += word.size();
 
 				printEscapedJSON(word);
 			}
@@ -203,10 +202,10 @@ void InlineJSONFormatter::printContext(const String & input, int leftLine, int r
 }
 
 /**
- * Append a String to the output, escaping it for JSON
+ * Append a String range to the output, escaping it for JSON
  */
-void InlineJSONFormatter::printEscapedJSON(const String &s) {
-	for (auto c = s.cbegin(); c != s.cend(); c++) {
+void InlineJSONFormatter::printEscapedJSON(StringIterator start, StringIterator end) {
+	for (auto c = start; c != end; c++) {
 		switch (*c) {
 			case '"': result << "\\\""; break;
 			case '\\': result << "\\\\"; break;
@@ -222,7 +221,7 @@ void InlineJSONFormatter::printEscapedJSON(const String &s) {
 					<< std::hex << std::setw(4) << std::setfill('0') << (int)*c
 					<< std::setfill(origFill) << std::dec;
 			} else {
-				result << *c;
+				result.put(*c);
 			}
 		}
 	}

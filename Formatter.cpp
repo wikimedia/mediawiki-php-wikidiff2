@@ -35,7 +35,7 @@ void Formatter::debugPrintWordDiff(const WordDiff & worddiff)
 				result << ", ";
 			}
 			result << "(";
-			result << op.from[j]->whole() << ")";
+			result << *op.from[j] << ")";
 		}
 		result << "\n";
 		result << "To: ";
@@ -47,21 +47,26 @@ void Formatter::debugPrintWordDiff(const WordDiff & worddiff)
 				result << ", ";
 			}
 			result << "(";
-			result << op.to[j]->whole() + ")";
+			result << *op.to[j] << ")";
 		}
 		result << "\n\n";
 	}
 }
 
-void Formatter::printHtmlEncodedText(const String & input)
+void Formatter::printHtmlEncodedText(StringIterator inputStart, StringIterator inputEnd)
 {
-	size_t start = 0;
-	size_t end = input.find_first_of("<>&");
-	while (end != String::npos) {
-		if (end > start) {
-			result.write(input.data() + start, end - start);
+	StringIterator p = inputStart;
+	char *needleStart = "<>&", *needleEnd = needleStart + 3;
+
+	while (true) {
+		StringIterator next = std::find_first_of(p, inputEnd, needleStart, needleEnd);
+		if (next > p) {
+			result.write(&*p, next - p);
 		}
-		switch (input[end]) {
+		if (next == inputEnd) {
+			break;
+		}
+		switch (*next) {
 			case '<':
 				result << "&lt;";
 				break;
@@ -71,12 +76,7 @@ void Formatter::printHtmlEncodedText(const String & input)
 			default /*case '&'*/:
 				result << "&amp;";
 		}
-		start = end + 1;
-		end = input.find_first_of("<>&", start);
-	}
-	// Append the rest of the string after the last special character
-	if (start < input.size()) {
-		result.write(input.data() + start, input.size() - start);
+		p = next + 1;
 	}
 }
 

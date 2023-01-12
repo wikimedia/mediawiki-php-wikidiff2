@@ -86,8 +86,9 @@ void TextUtil::explodeWords(const String & text, WordVector &words)
 	String::const_iterator suffixEnd, charStart, p;
 	IntVector breaks;
 
-	tisText.reserve(text.size());
-	charSizes.reserve(text.size());
+	tisText.reserve(text.size() + 1);
+	charSizes.reserve(text.size() + 1);
+	breaks.reserve(text.size() + 1);
 	wchar_t ch, lastChar;
 	thchar_t thaiChar;
 	bool hasThaiChars = false;

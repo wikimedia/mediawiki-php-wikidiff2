@@ -12,6 +12,7 @@ namespace wikidiff2 {
 class Formatter {
 	public:
 		typedef std::basic_string<char, std::char_traits<char>, WD2_ALLOCATOR<char> > String;
+		typedef String::const_iterator StringIterator;
 		typedef std::basic_stringstream<char, std::char_traits<char>, WD2_ALLOCATOR<char> > StringStream;
 		typedef Diff<Word> WordDiff;
 
@@ -110,9 +111,25 @@ class Formatter {
 		void debugPrintWordDiff(const WordDiff & worddiff);
 
 		/**
-		 * Encode a string for HTML and add it to the output
+		 * Encode a Word for HTML and add it to the output
 		 */
-		void printHtmlEncodedText(const String & input);
+		void printHtmlEncodedText(const Word & input)
+		{
+			printHtmlEncodedText(input.start, input.end);
+		}
+
+		/**
+		 * Encode a String for HTML and add it to the output
+		 */
+		void printHtmlEncodedText(const String & input)
+		{
+			printHtmlEncodedText(input.cbegin(), input.cend());
+		}
+
+		/**
+		 * Encode a string range for HTML and add it to the output
+		 */
+		void printHtmlEncodedText(StringIterator inputStart, StringIterator inputEnd);
 
 		/**
 		 * Convert an integer to a string.
