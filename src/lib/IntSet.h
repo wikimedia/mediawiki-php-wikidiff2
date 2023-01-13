@@ -7,6 +7,8 @@
 #include <type_traits>
 #include <unordered_set>
 
+#include "wd2_allocator.h"
+
 namespace wikidiff2 {
 
 // The UnsignedSet template class represents a set of unsigned integers.

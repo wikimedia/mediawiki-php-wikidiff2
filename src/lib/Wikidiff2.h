@@ -5,7 +5,7 @@
 #include "Formatter.h"
 #include "DiffEngine.h"
 #include "Word.h"
-#include "TextUtil.h"
+#include "LineDiffProcessor.h"
 #include <string>
 #include <vector>
 #include <set>
@@ -20,11 +20,7 @@ namespace wikidiff2 {
 class Wikidiff2 {
 	public:
 		typedef std::basic_string<char, std::char_traits<char>, WD2_ALLOCATOR<char> > String;
-		typedef std::basic_stringstream<char, std::char_traits<char>, WD2_ALLOCATOR<char> > StringStream;
 		typedef std::vector<String, WD2_ALLOCATOR<String> > StringVector;
-		typedef std::vector<Word, WD2_ALLOCATOR<Word> > WordVector;
-		typedef std::vector<int, WD2_ALLOCATOR<int> > IntVector;
-		typedef std::list<int, WD2_ALLOCATOR<int> > IntList;
 		typedef std::list<Formatter*, WD2_ALLOCATOR<Formatter*> > FormatterPtrList;
 
 		typedef Diff<String> StringDiff;
@@ -66,25 +62,20 @@ class Wikidiff2 {
 			int64_t maxWordLevelDiffComplexity;
 		};
 
-		Wikidiff2(const Config& config_)
-			: config(config_), textUtil(TextUtil::getInstance())
-		{
-			lineDiffConfig.bailoutComplexity = 0;
-			lineDiffConfig.changeThreshold = config.changeThreshold;
-			wordDiffConfig.bailoutComplexity = config.maxWordLevelDiffComplexity;
-			wordDiffConfig.changeThreshold = config.changeThreshold;
-		}
+		Wikidiff2(const Config& config_);
 
 		void execute(const String & text1, const String & text2);
 
 		void addFormatter(Formatter & formatter);
 
 	private:
-		TextUtil & textUtil;
 		Config config;
 		DiffConfig lineDiffConfig;
 		DiffConfig wordDiffConfig;
+		WordDiffCache wordDiffCache;
+		LineDiffProcessor::Config ldpConfig;
 		FormatterPtrList formatters;
+		LineDiffProcessor lineDiffProcessor;
 
 		struct DiffMapEntry
 		{
@@ -92,7 +83,8 @@ class Wikidiff2 {
 			int opIndexFrom, opLineFrom, opIndexTo, opLineTo;
 			bool lhsDisplayed = false, rhsDisplayed = false;
 
-			DiffMapEntry(const DiffConfig& diffConfig, WordVector& words1, WordVector& words2, int opIndexFrom_, int opLineFrom_, int opIndexTo_, int opLineTo_);
+			DiffMapEntry(const WordDiffStats & diffStats,
+					int opIndexFrom_, int opLineFrom_, int opIndexTo_, int opLineTo_);
 		};
 		// PhpAllocator can't be specialized for std::pair, so we're using the standard allocator.
 		typedef std::map<uint64_t, std::shared_ptr<struct Wikidiff2::DiffMapEntry> > DiffMap;
@@ -109,6 +101,11 @@ class Wikidiff2 {
 
 		void explodeLines(const String & text, StringVector &lines);
 
+		std::shared_ptr<DiffMapEntry> getDiffMapEntry(
+				const String * text1, const String * text2,
+				int opIndexFrom, int opLineFrom,
+				int opIndexTo, int opLineTo);
+
 		bool printMovedLineDiff(const StringDiff & linediff, int opIndex, int opLine,
 			int leftLine, int rightLine, int offsetFrom, int offsetTo);
 
@@ -124,7 +121,7 @@ class Wikidiff2 {
 			bool moveDirectionDownwards = false);
 
 		void printWordDiffFromStrings(
-			const String & text1, const String & text2,
+			const String * text1, const String * text2,
 			int leftLine, int rightLine,
 			int offsetFrom, int offsetTo,
 			bool printLeft = true, bool printRight = true,
@@ -137,12 +134,11 @@ class Wikidiff2 {
 		void printContext(const String & input, int leftLine, int rightLine, int offsetFrom, int offsetTo);
 };
 
-inline Wikidiff2::DiffMapEntry::DiffMapEntry(const DiffConfig& diffConfig,
-		Wikidiff2::WordVector& words1, Wikidiff2::WordVector& words2,
+inline Wikidiff2::DiffMapEntry::DiffMapEntry(const WordDiffStats & diffStats,
 		int opIndexFrom_, int opLineFrom_,
 		int opIndexTo_, int opLineTo_
 ):
-	ds(diffConfig, words1, words2),
+	ds(diffStats),
 	opIndexFrom(opIndexFrom_), opLineFrom(opLineFrom_), opIndexTo(opIndexTo_), opLineTo(opLineTo_)
 {
 }

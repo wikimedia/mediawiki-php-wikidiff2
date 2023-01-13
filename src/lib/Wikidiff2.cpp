@@ -6,14 +6,20 @@
  */
 
 #include <stdio.h>
-#include <string.h>
-#include <sstream>
-#include <stdarg.h>
 #include "Wikidiff2.h"
-#include <regex>
 #include <iostream>
 
 namespace wikidiff2 {
+
+Wikidiff2::Wikidiff2(const Config & config_)
+		: config(config_),
+		lineDiffConfig{0},
+		wordDiffConfig{config.maxWordLevelDiffComplexity},
+		wordDiffCache(wordDiffConfig),
+		ldpConfig{config.changeThreshold},
+		lineDiffProcessor(ldpConfig, wordDiffCache)
+{
+}
 
 void Wikidiff2::printDiff(const StringDiff & linediff)
 {
@@ -58,7 +64,7 @@ void Wikidiff2::printDiff(const StringDiff & linediff)
 				n = linediff[i].from.size();
 				for (j=0; j<n; j++) {
 
-					String fromLine = *linediff[i].from[j];
+					const String & fromLine = *linediff[i].from[j];
 
 					if (!printMovedLineDiff(linediff, i, j, from_index+j, to_index,
 						currentOffsetFrom, -1)) {
@@ -103,15 +109,14 @@ void Wikidiff2::printDiff(const StringDiff & linediff)
 				n2 = linediff[i].to.size();
 				n = std::min(n1, n2);
 				for (j=0; j<n; j++) {
-
-					String toLine = *linediff[i].to[j];
-					String fromLine = *linediff[i].from[j];
+					const String * toLine = linediff[i].to[j];
+					const String * fromLine = linediff[i].from[j];
 
 					printWordDiffFromStrings(fromLine, toLine, from_index+j, to_index+j,
 						currentOffsetFrom, currentOffsetTo);
 
-					currentOffsetTo += toLine.length() + newLineLength;
-					currentOffsetFrom += fromLine.length() + newLineLength;
+					currentOffsetTo += toLine->length() + newLineLength;
+					currentOffsetFrom += fromLine->length() + newLineLength;
 				}
 				from_index += n;
 				to_index += n;
@@ -133,7 +138,7 @@ void Wikidiff2::printAdd(const String & line, int leftLine, int rightLine, int o
 {
 	for (auto f = formatters.begin(); f != formatters.end(); f++) {
 		(*f)->printAdd(line, leftLine, rightLine, offsetFrom, offsetTo);
-	}	
+	}
 }
 
 /**
@@ -155,8 +160,8 @@ void Wikidiff2::printDelete(const String & line, int leftLine, int rightLine, in
  */
 void Wikidiff2::printWordDiff(
 	const WordDiff & wordDiff,
-	int leftLine, int rightLine, 
-	int offsetFrom, int offsetTo, 
+	int leftLine, int rightLine,
+	int offsetFrom, int offsetTo,
 	bool printLeft, bool printRight,
 	const String & srcAnchor, const String & dstAnchor,
 	bool moveDirectionDownwards)
@@ -176,21 +181,15 @@ void Wikidiff2::printWordDiff(
  * Do a word diff and then tell formatters to print it
  */
 void Wikidiff2::printWordDiffFromStrings(
-	const String & text1, const String & text2,
-	int leftLine, int rightLine, 
-	int offsetFrom, int offsetTo, 
+	const String * text1, const String * text2,
+	int leftLine, int rightLine,
+	int offsetFrom, int offsetTo,
 	bool printLeft, bool printRight,
 	const String & srcAnchor, const String & dstAnchor,
 	bool moveDirectionDownwards)
 {
-	WordVector words1, words2;
-
-	textUtil.explodeWords(text1, words1);
-	textUtil.explodeWords(text2, words2);
-	WordDiff worddiff(wordDiffConfig, words1, words2);
-
 	printWordDiff(
-			worddiff,
+			*wordDiffCache.getDiff(text1, text2),
 			leftLine, rightLine,
 			offsetFrom, offsetTo,
 			printLeft, printRight,
@@ -245,6 +244,17 @@ void Wikidiff2::printContext(const String & input, int leftLine, int rightLine, 
 	for (auto f = formatters.begin(); f != formatters.end(); f++) {
 		(*f)->printContext(input, leftLine, rightLine, offsetFrom, offsetTo);
 	}
+}
+
+std::shared_ptr<Wikidiff2::DiffMapEntry> Wikidiff2::getDiffMapEntry(
+		const String * text1, const String * text2,
+		int opIndexFrom, int opLineFrom,
+		int opIndexTo, int opLineTo)
+{
+	return std::make_shared<DiffMapEntry>(
+			wordDiffCache.getDiffStats(text1, text2),
+			opIndexFrom, opLineFrom,
+			opIndexTo, opLineTo);
 }
 
 /**
@@ -371,8 +381,9 @@ bool Wikidiff2::printMovedLineDiff(const StringDiff & linediff, int opIndex, int
 			return true;
 		} else {
 			// XXXX todo: we already have the diff, don't have to do it again, just have to print it
-			printWordDiffFromStrings(*linediff[best->opIndexFrom].from[best->opLineFrom],
-				*linediff[best->opIndexTo].to[best->opLineTo],
+			printWordDiffFromStrings(
+				linediff[best->opIndexFrom].from[best->opLineFrom],
+				linediff[best->opIndexTo].to[best->opLineTo],
 				leftLine, rightLine, offsetFrom, offsetTo, printLeft, printRight,
 				makeAnchorName(opIndex, opLine, printLeft),
 				makeAnchorName(otherIndex, otherLine, !printLeft),
@@ -413,17 +424,13 @@ bool Wikidiff2::printMovedLineDiff(const StringDiff & linediff, int opIndex, int
 						continue;
 					}
 				}
-				WordVector words1, words2;
 				std::shared_ptr<DiffMapEntry> tmp;
-				textUtil.explodeWords(*lines[k], words1);
 				bool potentialMatch = false;
 				if (otherOp == DiffOp<String>::del) {
-					textUtil.explodeWords(*linediff[opIndex].to[opLine], words2);
-					tmp = std::make_shared<DiffMapEntry>(wordDiffConfig, words2, words1, i, k, opIndex, opLine);
+					tmp = getDiffMapEntry(linediff[opIndex].to[opLine], lines[k], i, k, opIndex, opLine);
 					potentialMatch = cmpDiffMapEntries(tmp->opIndexFrom, tmp->opLineFrom);
 				} else {
-					textUtil.explodeWords(*linediff[opIndex].from[opLine], words2);
-					tmp = std::make_shared<DiffMapEntry>(wordDiffConfig, words1, words2, opIndex, opLine, i, k);
+					tmp = getDiffMapEntry(lines[k], linediff[opIndex].from[opLine], opIndex, opLine, i, k);
 					potentialMatch = cmpDiffMapEntries(tmp->opIndexTo, tmp->opLineTo);
 				}
 				if (!found || (tmp->ds.charSimilarity > found->ds.charSimilarity) && potentialMatch) {
@@ -464,16 +471,17 @@ bool Wikidiff2::printMovedLineDiff(const StringDiff & linediff, int opIndex, int
 		if(isNext(opIndex, opLine, otherIndex, otherLine)) {
 			debugPrintf("This one immediately follows, displaying as change...");
 			printWordDiffFromStrings(
-				*linediff[found->opIndexFrom].from[found->opLineFrom],
-				*linediff[found->opIndexTo].to[found->opLineTo],
+				linediff[found->opIndexFrom].from[found->opLineFrom],
+				linediff[found->opIndexTo].to[found->opLineTo],
 				leftLine, rightLine, offsetFrom, offsetTo);
 			found->lhsDisplayed = true;
 			found->rhsDisplayed = true;
 		}
 		else {
 			// XXXX todo: we already have the diff, don't have to do it again, just have to print it
-			printWordDiffFromStrings(*linediff[found->opIndexFrom].from[found->opLineFrom],
-				*linediff[found->opIndexTo].to[found->opLineTo],
+			printWordDiffFromStrings(
+				linediff[found->opIndexFrom].from[found->opLineFrom],
+				linediff[found->opIndexTo].to[found->opLineTo],
 				leftLine, rightLine, offsetFrom, offsetTo, printLeft, printRight,
 				makeAnchorName(opIndex, opLine, printLeft),
 				makeAnchorName(otherIndex, otherLine, !printLeft),
@@ -513,9 +521,14 @@ void Wikidiff2::execute(const String & text1, const String & text2)
 	explodeLines(text1, lines1);
 	explodeLines(text2, lines2);
 
+	wordDiffCache.setLines(&lines1, &lines2);
+
 	// Do the diff
 	StringDiff lineDiff(lineDiffConfig, lines1, lines2);
+	lineDiffProcessor.process(lineDiff);
 	printDiff(lineDiff);
+
+	wordDiffCache.setLines(nullptr, nullptr);
 }
 
 void Wikidiff2::addFormatter(Formatter & formatter)

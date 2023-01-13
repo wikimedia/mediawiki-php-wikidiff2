@@ -16,7 +16,6 @@
 
 #include "IntSet.h"
 #include "Word.h"
-#include "TextUtil.h"
 
 namespace wikidiff2 {
 
@@ -48,16 +47,6 @@ struct DiffConfig {
 	 * output will be produced, and the bailout flag will be set in the Diff.
 	 */
 	long long bailoutComplexity;
-	double changeThreshold;
-};
-
-struct WordDiffStats
-{
-	int charsTotal = 0;
-	int opCharCount[4] = { 0 };
-	double charSimilarity;
-
-	WordDiffStats(const DiffConfig & config, TextUtil::WordVector& words1, TextUtil::WordVector& words2);
 };
 
 /**
@@ -98,13 +87,15 @@ class Diff
 		typedef std::vector<T, WD2_ALLOCATOR<T> > ValueVector;
 		typedef std::vector<DiffOp<T>, WD2_ALLOCATOR<DiffOp<T>> > DiffOpVector;
 
+		Diff() {}
+
 		Diff(const DiffConfig & config, const ValueVector & from_lines, const ValueVector & to_lines);
 
-		virtual void add_edit(const DiffOp<T> & edit) {
+		void add_edit(const DiffOp<T> & edit) {
 			edits.push_back(edit);
 		}
 
-		unsigned size() const {
+		size_t size() const {
 			return edits.size();
 		}
 
@@ -116,7 +107,12 @@ class Diff
 			return edits[i];
 		}
 
+		void swap(Diff<T> & other) {
+			edits.swap(other.edits);
+		}
+
 		DiffOpVector edits;
+		bool bailout = false;
 };
 
 /**
@@ -159,7 +155,7 @@ class DiffEngine
 		typedef std::set<T, std::less<T>, WD2_ALLOCATOR<T> > ValueSet;
 		
 		DiffEngine(const DiffConfig & config_)
-			: config(config_), done(false), textUtil(TextUtil::getInstance())
+			: config(config_), done(false)
 		{}
 
 		void clear();
@@ -174,7 +170,6 @@ class DiffEngine
 				IntPairVector & seps);
 
 		DiffConfig config;
-		TextUtil & textUtil;
 		BoolVector xchanged, ychanged;
 		PointerVector xv, yv;
 		IntVector xind, yind;
@@ -183,9 +178,6 @@ class DiffEngine
 		int lcs;
 		bool done;
 		enum {MAX_CHUNKS=8};
-		void detectDissimilarChanges(PointerVector& del, PointerVector& add, Diff<T>& diff);
-		bool looksLikeChange(const T& del, const T& add);
-		void writeChange(Diff<T>& diff, PointerVector& del, PointerVector& add, const PointerVector& empty);
 };
 
 //-----------------------------------------------------------------------------
@@ -203,59 +195,6 @@ void DiffEngine<T>::clear()
 	seq.clear();
 	in_seq.clear();
 	done = false;
-}
-
-// for a DiffOp::change, decide whether it should be treated as a successive add and delete based on similarity.
-template<typename T>
-inline bool DiffEngine<T>::looksLikeChange(const T& del, const T& add)
-{
-	TextUtil::WordVector words1, words2;
-	textUtil.explodeWords(del, words1);
-	textUtil.explodeWords(add, words2);
-	WordDiffStats ds(config, words1, words2);
-	return ds.charSimilarity > config.changeThreshold;
-}
-
-// go through list of changed lines. if they are too dissimilar, convert to del+add.
-template<typename T>
-inline void DiffEngine<T>::detectDissimilarChanges(PointerVector& del, PointerVector& add, Diff<T>& diff)
-{
-	int i;
-	static PointerVector empty;
-	for (i = 0; i < del.size() && i < add.size(); ++i) {
-		if (!looksLikeChange(*del[i], *add[i])) {
-			if (i > 0) {
-				// Turn all "add" and "del" operations that have been detected as "looksLikeChange"
-				// so far into a single combined "change" operation in the resulting diff.
-				PointerVector d, a;
-				for (int k = 0; k < i; ++k) {
-					d.push_back(del[k]);
-					a.push_back(add[k]);
-				}
-				diff.add_edit(DiffOp<T>(DiffOp<T>::change, d, a));
-				add.erase(add.begin(), add.begin() + i);
-				del.erase(del.begin(), del.begin() + i);
-				// All elements [0..i - 1] got removed, which moves element i to position 0.
-				i = 0;
-			}
-
-			// convert dissimilar piece to delete + add
-			PointerVector d, a;
-			d.push_back(del[i]);
-			a.push_back(add[i]);
-			diff.add_edit(DiffOp<T>(DiffOp<T>::add, empty, a));
-			diff.add_edit(DiffOp<T>(DiffOp<T>::del, d, empty));
-			add.erase(add.begin() + i);
-			del.erase(del.begin() + i);
-			--i;
-		}
-	}
-}
-
-template<>
-inline void DiffEngine<Word>::detectDissimilarChanges(PointerVector& del, PointerVector& add, Diff<Word>& diff)
-{
-	// compiles to no-op in Word specialization.
 }
 
 template<typename T>
@@ -303,6 +242,7 @@ void DiffEngine<T>::diff (const ValueVector & from_lines,
 			add.push_back(&to_lines[yi]);
 		}
 		diff.add_edit(DiffOp<T>(DiffOp<T>::change, del, add));
+		diff.bailout = true;
 
 		done = true;
 		return;
@@ -366,10 +306,8 @@ void DiffEngine<T>::diff (const ValueVector & from_lines,
 		while (yi < n_to && ychanged[yi])
 			add.push_back(&to_lines[yi++]);
 
-		detectDissimilarChanges(del, add, diff);
-
 		if (del.size() && add.size()) {
-			writeChange(diff, del, add, empty);
+			diff.add_edit(DiffOp<T>(DiffOp<T>::change, del, add));
 		} else if (del.size())
 			diff.add_edit(DiffOp<T>(DiffOp<T>::del, del, empty));
 		else if (add.size())
@@ -378,33 +316,6 @@ void DiffEngine<T>::diff (const ValueVector & from_lines,
 
 	done = true;
 }
-
-template<class T>
-inline void DiffEngine<T>::writeChange(Diff<T>& diff, PointerVector& del, PointerVector& add, const PointerVector& empty)
-{
-	if ( del.size() == add.size() ) {
-		diff.add_edit(DiffOp<T>(DiffOp<T>::change, del, add));
-	} else {
-		// this is a change containing added and deleted lines; convert them to the right DiffOps so the
-		// moved paragraph detection code gets a chance to see them
-		size_t commonSize = std::min(del.size(), add.size());
-		PointerVector changeDel(del.begin(), del.begin() + commonSize);
-		PointerVector changeAdd(add.begin(), add.begin() + commonSize);
-		diff.add_edit(DiffOp<T>(DiffOp<T>::change, changeDel, changeAdd));
-		if (del.size() > commonSize)
-			diff.add_edit(DiffOp<T>(DiffOp<T>::del, PointerVector(del.begin() + commonSize, del.end()), empty));
-		if (add.size() > commonSize)
-			diff.add_edit(DiffOp<T>(DiffOp<T>::add, empty, PointerVector(add.begin() + commonSize, add.end())));
-	}
-}
-
-template<>
-inline void DiffEngine<Word>::writeChange(Diff<Word>& diff, PointerVector& del, PointerVector& add, const PointerVector& empty)
-{
-	diff.add_edit(DiffOp<Word>(DiffOp<Word>::change, del, add));
-}
-
-
 
 /* Divide the Largest Common Subsequence (LCS) of the sequences
  * [XOFF, XLIM) and [YOFF, YLIM) into NCHUNKS approximately equally
@@ -721,45 +632,6 @@ Diff<T>::Diff(const DiffConfig& config, const ValueVector & from_lines, const Va
 {
 	DiffEngine<T> engine(config);
 	engine.diff(from_lines, to_lines, *this);
-}
-
-inline WordDiffStats::WordDiffStats(const DiffConfig& config, 
-		TextUtil::WordVector& words1, TextUtil::WordVector& words2)
-{
-	auto countOpChars = [] (DiffEngine<Word>::PointerVector& p) {
-		return std::accumulate(p.begin(), p.end(), 0, [] (int a, const Word *b) {
-			return a + b->size();
-		});
-	};
-
-	Diff<Word> diff(config, words1, words2);
-	for (int i = 0; i < diff.size(); ++i) {
-		int op = diff[i].op;
-		int charCount;
-		switch (op) {
-			case DiffOp<Word>::del:
-			case DiffOp<Word>::copy:
-				charCount = countOpChars(diff[i].from);
-				break;
-			case DiffOp<Word>::add:
-				charCount = countOpChars(diff[i].to);
-				break;
-			case DiffOp<Word>::change:
-				charCount = std::max(countOpChars(diff[i].from), countOpChars(diff[i].to));
-				break;
-		}
-		opCharCount[op] += charCount;
-		charsTotal += charCount;
-	}
-	if (opCharCount[DiffOp<Word>::copy] == 0) {
-		charSimilarity = 0.0;
-	} else {
-		if (charsTotal) {
-			charSimilarity = double(opCharCount[DiffOp<Word>::copy]) / charsTotal;
-		} else {
-			charSimilarity = 0.0;
-		}
-	}
 }
 
 } // namespace wikidiff2

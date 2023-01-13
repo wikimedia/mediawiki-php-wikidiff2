@@ -38,5 +38,8 @@ if test "$PHP_WIKIDIFF2" != "no"; then
 	src/lib/TableFormatter.cpp \
 	src/lib/InlineFormatter.cpp \
 	src/lib/InlineJSONFormatter.cpp \
-	src/lib/TextUtil.cpp, $ext_shared)
+	src/lib/TextUtil.cpp \
+	src/lib/LineDiffProcessor.cpp \
+	src/lib/WordDiffCache.cpp \
+	src/lib/WordDiffStats.cpp, $ext_shared)
 fi
