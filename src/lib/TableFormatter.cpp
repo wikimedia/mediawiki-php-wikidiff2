@@ -70,11 +70,24 @@ void TableFormatter::printWordDiff(const WordDiff & worddiff, int leftLine,
 	}
 }
 
-void TableFormatter::printWordDiffSide(const WordDiff &worddiff, bool added)
+bool TableFormatter::isNewlineMarker(const DiffOp<Word> & op)
 {
-	for (unsigned i = 0; i < worddiff.size(); ++i) {
+	return op.op == DiffOp<Word>::add
+		&& op.to.size() == 1
+		&& op.to[0]->isNewline();
+}
+
+size_t TableFormatter::printWordDiffSegment(const WordDiff &worddiff, size_t offset, bool added)
+{
+	for (size_t i = offset; i < worddiff.size(); ++i) {
 		const DiffOp<Word> & op = worddiff[i];
 		int n, j;
+		if (added && isNewlineMarker(op)) {
+			// If the line break is at the end of the word diff, we need to add
+			// a blank line to the output. However if we are at the start of the
+			// segment, we've already done the blank output.
+			return (i > offset && i == worddiff.size() - 1) ? i : i + 1;
+		}
 		if (op.op == DiffOp<Word>::copy) {
 			n = op.from.size();
 			if (added) {
@@ -102,6 +115,34 @@ void TableFormatter::printWordDiffSide(const WordDiff &worddiff, bool added)
 			result << "</ins>";
 		}
 	}
+	return worddiff.size();
+}
+
+void TableFormatter::printConcatDiff(const WordDiff & wordDiff, 
+	int leftLine, int rightLine, 
+	int offsetFrom, int offsetTo)
+{
+	size_t segmentStart = 0;
+	do {
+		result << "<tr>\n";
+
+		// print left side or blank placeholder.
+		if (segmentStart == 0) {
+			result << "  <td class=\"diff-marker\" data-marker=\"−\"></td>\n"
+				<< "  <td class=\"diff-deletedline diff-side-deleted\"><div>";
+			printWordDiffSegment(wordDiff, 0, false);
+			result << "</div></td>\n";
+		} else {
+			result << "  <td colspan=\"2\" class=\"diff-empty diff-side-deleted\"></td>\n";
+		}
+
+		// print right side
+		result << "  <td class=\"diff-marker\" data-marker=\"+\"></td>\n"
+			<< "  <td class=\"diff-addedline diff-side-added\"><div>";
+		segmentStart = printWordDiffSegment(wordDiff, segmentStart, true);
+		result << "</div></td>\n"
+			"</tr>\n";
+	} while (segmentStart < wordDiff.size());
 }
 
 void TableFormatter::printTextWithDiv(const String & input)

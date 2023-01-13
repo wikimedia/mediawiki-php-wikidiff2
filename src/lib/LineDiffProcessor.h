@@ -15,6 +15,7 @@ class LineDiffProcessor {
 		typedef Diff<Word> WordDiff;
 		typedef DiffOp<String> StringDiffOp;
 		typedef DiffOp<String>::PointerVector PointerVector;
+		typedef PointerVector::iterator PointerVectorIterator;
 
 		/**
 		 * Options to be passed to the constructor
@@ -26,6 +27,26 @@ class LineDiffProcessor {
 			 * up moved lines in some cases.
 			 */
 			double changeThreshold;
+
+			/**
+			 * The minimum similarity which must be maintained during a split
+			 * detection search. The split size increases until either the
+			 * similarity between the LHS and the multiple RHS lines becomes
+			 * less than initialSplitThreshold, or maxSplitSize is reached.
+			 */
+			double initialSplitThreshold;
+
+			/**
+			 * The minimum similarity between one LHS line and multiple RHS
+			 * lines which must be achieved to format the block as a split.
+			 */
+			double finalSplitThreshold;
+
+			/**
+			 * The maximum number of RHS lines which can be compared with
+			 * one LHS line.
+			 */
+			int maxSplitSize;
 		};
 
 		LineDiffProcessor(const Config & config_, WordDiffCache & wordDiffCache_)
@@ -57,9 +78,26 @@ class LineDiffProcessor {
 		 */
 		Config config;
 
-		bool looksLikeChange(const String * del, const String * add);
-		void detectDissimilarChanges(StringDiff & result, StringDiffOp & diffOp);
-		void writeChange(StringDiff& diff, StringDiffOp& diffOp);
+		/**
+		 * The return value of getSplit
+		 */
+		struct SplitInfo {
+			/** The number of lines in the RHS that correspond to the single LHS line */
+			int size;
+			/** The similarity metric */
+			double similarity;
+		};
+
+		void detectChanges(StringDiff & result, StringDiffOp & diffOp);
+	
+		SplitInfo getSplit(
+			PointerVectorIterator pDel, PointerVectorIterator pDelEnd, 
+			PointerVectorIterator pAdd, PointerVectorIterator pAddEnd);
+
+		const WordDiffStats & getConcatDiffStats(
+			PointerVectorIterator from, PointerVectorIterator fromEnd,
+			PointerVectorIterator to, PointerVectorIterator toEnd);
+		
 };
 
 } // namespace wikidiff2

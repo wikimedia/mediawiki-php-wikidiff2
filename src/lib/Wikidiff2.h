@@ -60,6 +60,26 @@ class Wikidiff2 {
 			 * the RHS word count exceeds this limit.
 			 */
 			int64_t maxWordLevelDiffComplexity;
+
+			/**
+			 * The maximum number of RHS lines which can be compared with
+			 * one LHS line.
+			 */
+			int maxSplitSize;
+
+			/**
+			 * The minimum similarity which must be maintained during a split
+			 * detection search. The split size increases until either the
+			 * similarity between the LHS and the multiple RHS lines becomes
+			 * less than initialSplitThreshold, or maxSplitSize is reached.
+			 */
+			double initialSplitThreshold;
+
+			/**
+			 * The minimum similarity between one LHS line and multiple RHS
+			 * lines which must be achieved to format the block as a split.
+			 */
+			double finalSplitThreshold;
 		};
 
 		Wikidiff2(const Config& config_);
@@ -127,6 +147,12 @@ class Wikidiff2 {
 			bool printLeft = true, bool printRight = true,
 			const String & srcAnchor = "", const String & dstAnchor = "",
 			bool moveDirectionDownwards = false);
+
+		void printConcatDiff(
+			const String * lines1, int numLines1,
+			const String * lines2, int numLines2, 
+			int leftLine, int rightLine,
+			int offsetFrom, int offsetTo);
 
 		void printFileHeader();
 		void printFileFooter();

@@ -115,6 +115,9 @@ static Wikidiff2::Config wikidiff2_get_config(int numContextLines)
 	config.movedLineThreshold = INI_FLT("wikidiff2.moved_line_threshold");
 	config.maxMovedLines = INI_INT("wikidiff2.moved_paragraph_detection_cutoff");
 	config.maxWordLevelDiffComplexity = INI_INT("wikidiff2.max_word_level_diff_complexity");
+	config.maxSplitSize = 1;
+	config.initialSplitThreshold = 0.1;
+	config.finalSplitThreshold = 0.6;
 	return config;
 }
 
@@ -130,6 +133,11 @@ static void wikidiff2_do_diff_impl(zval *return_value,
 	wikidiff2.execute(text1String, text2String);
 	Wikidiff2::String ret = formatter.getResult().str();
 	ZVAL_STRINGL(return_value, const_cast<char*>(ret.data()), ret.size());	
+}
+
+static void wikidiff2_handle_exception(std::exception & e)
+{
+	zend_error(E_WARNING, "Error in wikidiff2: %s", e.what());
 }
 
 /* {{{ proto string wikidiff2_do_diff(string text1, string text2, int numContextLines)
@@ -155,15 +163,18 @@ PHP_FUNCTION(wikidiff2_do_diff)
 
 	try {
 		TableFormatter formatter;
+		auto config = wikidiff2_get_config(numContextLines);
 		wikidiff2_do_diff_impl(
 				return_value, 
-				wikidiff2_get_config(numContextLines), 
+				config,
 				formatter,
 				text1, text1_len,
 				text2, text2_len
 		);
 	} catch (std::bad_alloc &e) {
 		zend_error(E_WARNING, "Out of memory in wikidiff2_do_diff().");
+	} catch (std::exception &e) {
+		wikidiff2_handle_exception(e);
 	} catch (...) {
 		zend_error(E_WARNING, "Unknown exception in wikidiff2_do_diff().");
 	}
@@ -201,6 +212,8 @@ PHP_FUNCTION(wikidiff2_inline_diff)
 		);
 	} catch (std::bad_alloc &e) {
 		zend_error(E_WARNING, "Out of memory in wikidiff2_inline_diff().");
+	} catch (std::exception &e) {
+		wikidiff2_handle_exception(e);
 	} catch (...) {
 		zend_error(E_WARNING, "Unknown exception in wikidiff2_inline_diff().");
 	}
@@ -238,6 +251,8 @@ PHP_FUNCTION(wikidiff2_inline_json_diff)
 		);
 	} catch (std::bad_alloc &e) {
 		zend_error(E_WARNING, "Out of memory in wikidiff2_inline_json_diff().");
+	} catch (std::exception &e) {
+		wikidiff2_handle_exception(e);
 	} catch (...) {
 		zend_error(E_WARNING, "Unknown exception in wikidiff2_inline_json_diff().");
 	}

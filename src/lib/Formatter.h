@@ -66,6 +66,21 @@ class Formatter {
 			bool moveDirectionDownwards = false) = 0;
 
 		/**
+		 * Append a word diff to the output which compares one line on the LHS
+		 * with multiple lines on the RHS.
+		 *
+		 * @param wordDiff The word diff
+		 * @param leftLine The 1-based line number on the LHS
+		 * @param rightLine The 1-based line number of the first line on the RHS
+		 * @param offsetFrom The 0-based byte offset in the LHS input string
+		 * @param offsetTo The 0-based byte offset in the RHS input string
+		 */
+		virtual void printConcatDiff(
+			const WordDiff & wordDiff, 
+			int leftLine, int rightLine, 
+			int offsetFrom, int offsetTo);
+
+		/**
 		 * This is called once before any other output to give the subclass a
 		 * chance to add a header. No-op by default.
 		 */

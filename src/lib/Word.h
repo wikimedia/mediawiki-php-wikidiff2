@@ -46,6 +46,10 @@ public:
 	size_t size() const {
 		return end - start;
 	}
+
+	bool isNewline() const {
+		return size() == 1 && *start == '\n';
+	}
 };
 
 } // namespace wikidiff2

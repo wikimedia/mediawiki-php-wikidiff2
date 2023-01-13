@@ -41,5 +41,6 @@ if test "$PHP_WIKIDIFF2" != "no"; then
 	src/lib/TextUtil.cpp \
 	src/lib/LineDiffProcessor.cpp \
 	src/lib/WordDiffCache.cpp \
+	src/lib/WordDiffSegmenter.cpp \
 	src/lib/WordDiffStats.cpp, $ext_shared)
 fi

@@ -16,7 +16,12 @@ Wikidiff2::Wikidiff2(const Config & config_)
 		lineDiffConfig{0},
 		wordDiffConfig{config.maxWordLevelDiffComplexity},
 		wordDiffCache(wordDiffConfig),
-		ldpConfig{config.changeThreshold},
+		ldpConfig{
+			config.changeThreshold,
+			config.initialSplitThreshold,
+			config.finalSplitThreshold,
+			config.maxSplitSize
+		},
 		lineDiffProcessor(ldpConfig, wordDiffCache)
 {
 }
@@ -35,17 +40,19 @@ void Wikidiff2::printDiff(const StringDiff & linediff)
 	int currentOffsetTo = 0;
 	int newLineLength = 1;
 	for (int i = 0; i < linediff.size(); ++i) {
-		int n, j, n1, n2;
+		int j;
 		// Line 1 changed, show heading with no leading context
 		if (linediff[i].op != DiffOp<String>::copy && i == 0) {
 			printBlockHeader(1, 1);
 		}
 
+		int n1 = linediff[i].from.size();
+		int n2 = linediff[i].to.size();
+
 		switch (linediff[i].op) {
 			case DiffOp<String>::add:
 				// inserted lines
-				n = linediff[i].to.size();
-				for (j=0; j<n; j++) {
+				for (j=0; j<n2; j++) {
 
 					String toLine = *linediff[i].to[j];
 
@@ -57,12 +64,11 @@ void Wikidiff2::printDiff(const StringDiff & linediff)
 
 					currentOffsetTo += toLine.length() + newLineLength;
 				}
-				to_index += n;
+				to_index += n2;
 				break;
 			case DiffOp<String>::del:
 				// deleted lines
-				n = linediff[i].from.size();
-				for (j=0; j<n; j++) {
+				for (j=0; j<n1; j++) {
 
 					const String & fromLine = *linediff[i].from[j];
 
@@ -74,18 +80,16 @@ void Wikidiff2::printDiff(const StringDiff & linediff)
 
 					currentOffsetFrom += fromLine.length() + newLineLength;
 				}
-				from_index += n;
+				from_index += n1;
 				break;
 			case DiffOp<String>::copy:
 				// copy/context
-				n = linediff[i].from.size();
-
-				for (j=0; j<n; j++) {
+				for (j=0; j<n1; j++) {
 
 					String line = *linediff[i].from[j];
 
 					if ((i != 0 && j < config.numContextLines) /*trailing*/
-							|| (i != linediff.size() - 1 && j >= n - config.numContextLines)) /*leading*/ {
+							|| (i != linediff.size() - 1 && j >= n1 - config.numContextLines)) /*leading*/ {
 						if (showLineNumber) {
 							printBlockHeader(from_index, to_index);
 							showLineNumber = false;
@@ -104,24 +108,39 @@ void Wikidiff2::printDiff(const StringDiff & linediff)
 				}
 				break;
 			case DiffOp<String>::change:
-				// replace, i.e. we do a word diff between the two sets of lines
-				n1 = linediff[i].from.size();
-				n2 = linediff[i].to.size();
-				n = std::min(n1, n2);
-				for (j=0; j<n; j++) {
-					const String * toLine = linediff[i].to[j];
-					const String * fromLine = linediff[i].from[j];
-
-					printWordDiffFromStrings(fromLine, toLine, from_index+j, to_index+j,
+				if (n1 != n2) {
+					// Line split
+					printConcatDiff(
+						linediff[i].from[0], n1,
+						linediff[i].to[0], n2,
+						from_index, to_index,
 						currentOffsetFrom, currentOffsetTo);
+					for (j = 0; j < n1; j++) {
+						currentOffsetFrom += linediff[i].from[j]->length() + newLineLength;
+					}
+					for (j = 0; j < n2; j++) {
+						currentOffsetTo += linediff[i].to[j]->length() + newLineLength;
+					}
+					from_index += n1;
+					to_index += n2;
+				} else {
+					// Replace, i.e. we do a word diff between the two sets of lines
+					for (j=0; j<n1; j++) {
+						const String * toLine = linediff[i].to[j];
+						const String * fromLine = linediff[i].from[j];
 
-					currentOffsetTo += toLine->length() + newLineLength;
-					currentOffsetFrom += fromLine->length() + newLineLength;
+						printWordDiffFromStrings(fromLine, toLine, from_index+j, to_index+j,
+							currentOffsetFrom, currentOffsetTo);
+
+						currentOffsetTo += toLine->length() + newLineLength;
+						currentOffsetFrom += fromLine->length() + newLineLength;
+					}
+					from_index += n1;
+					to_index += n1;
 				}
-				from_index += n;
-				to_index += n;
 				break;
 		}
+
 		// Not first line anymore, don't show line number by default
 		showLineNumber = false;
 	}
@@ -196,6 +215,18 @@ void Wikidiff2::printWordDiffFromStrings(
 			srcAnchor, dstAnchor,
 			moveDirectionDownwards
 	);
+}
+
+void Wikidiff2::printConcatDiff(
+	const String * lines1, int numLines1,
+	const String * lines2, int numLines2, 
+	int leftLine, int rightLine,
+	int offsetFrom, int offsetTo)
+{
+	const WordDiff & wordDiff = *wordDiffCache.getConcatDiff(lines1, numLines1, lines2, numLines2);
+	for (auto f = formatters.begin(); f != formatters.end(); f++) {
+		(*f)->printConcatDiff(wordDiff, leftLine, rightLine, offsetFrom, offsetTo);
+	}
 }
 
 /**
