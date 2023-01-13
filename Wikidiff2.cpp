@@ -15,11 +15,8 @@
 
 namespace wikidiff2 {
 
-void Wikidiff2::diffLines(const StringVector & lines1, const StringVector & lines2)
+void Wikidiff2::printDiff(const StringDiff & linediff)
 {
-	// first do line-level diff
-	StringDiff linediff(lineDiffConfig, lines1, lines2);
-
 	int from_index = 1, to_index = 1;
 
 	// Should a line number be printed before the next context line?
@@ -263,7 +260,7 @@ void Wikidiff2::printContext(const String & input, int leftLine, int rightLine, 
  * @param offsetFrom The 0-based byte offset in the LHS input string
  * @param offsetTo The 0-based byte offset in the RHS input string
  */
-bool Wikidiff2::printMovedLineDiff(StringDiff & linediff, int opIndex, int opLine,
+bool Wikidiff2::printMovedLineDiff(const StringDiff & linediff, int opIndex, int opLine,
 	int leftLine, int rightLine, int offsetFrom, int offsetTo)
 {
 	// helper fn creates 64-bit lookup key from opIndex and opLine
@@ -517,7 +514,8 @@ void Wikidiff2::execute(const String & text1, const String & text2)
 	explodeLines(text2, lines2);
 
 	// Do the diff
-	diffLines(lines1, lines2);
+	StringDiff lineDiff(lineDiffConfig, lines1, lines2);
+	printDiff(lineDiff);
 }
 
 void Wikidiff2::addFormatter(Formatter & formatter)

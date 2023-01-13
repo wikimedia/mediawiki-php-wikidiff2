@@ -102,14 +102,14 @@ class Wikidiff2 {
 			bool detectMovedLines = true;       // will be set to false when too many 'add' or 'delete' ops appear in diff.
 			bool detectMovedLinesValid = false; // whether detectMovedLines is valid.
 			public:
-				bool operator() (StringDiff & linediff, int maxMovedLines);	// calculates & caches comparison count
+				bool operator() (const StringDiff & linediff, int maxMovedLines);	// calculates & caches comparison count
 		} allowPrintMovedLineDiff;
 
-		void diffLines(const StringVector & lines1, const StringVector & lines2);
+		void printDiff(const StringDiff & linediff);
 
 		void explodeLines(const String & text, StringVector &lines);
 
-		bool printMovedLineDiff(StringDiff & linediff, int opIndex, int opLine,
+		bool printMovedLineDiff(const StringDiff & linediff, int opIndex, int opLine,
 			int leftLine, int rightLine, int offsetFrom, int offsetTo);
 
 		void printAdd(const String & line, int leftLine, int rightLine, int offsetFrom, int offsetTo);
@@ -147,7 +147,7 @@ inline Wikidiff2::DiffMapEntry::DiffMapEntry(const DiffConfig& diffConfig,
 {
 }
 
-inline bool Wikidiff2::AllowPrintMovedLineDiff::operator () (StringDiff & linediff, int maxMovedLines)
+inline bool Wikidiff2::AllowPrintMovedLineDiff::operator () (const StringDiff & linediff, int maxMovedLines)
 {
 	if(!detectMovedLinesValid) {
 		// count the number of added or removed lines which could have been moved.
