@@ -9,10 +9,10 @@
 #include "ext/standard/info.h"
 #include "zend_API.h"
 #include "php_wikidiff2.h"
-#include "Wikidiff2.h"
-#include "TableFormatter.h"
-#include "InlineFormatter.h"
-#include "InlineJSONFormatter.h"
+#include "lib/Wikidiff2.h"
+#include "lib/TableFormatter.h"
+#include "lib/InlineFormatter.h"
+#include "lib/InlineJSONFormatter.h"
 
 #define WIKIDIFF2_VERSION_STRING "1.13.0"
 
