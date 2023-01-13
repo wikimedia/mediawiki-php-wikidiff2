@@ -1,12 +1,15 @@
 <?php
+
+$dataDir = __DIR__ . '/../data';
+
 foreach ( array(
 	'chinese-reverse-1.txt',
 	'chinese-reverse-2.txt',
 	'chinese-reverse.diff'
 ) as $fname ) {
-	$texts[] = file_get_contents( $fname );
+	$texts[] = file_get_contents( "$dataDir/$fname" );
 	if ( end( $texts ) === false ) {
-		die( "Missing data: {$fname}. Please unzip chinese-reverse.zip." );
+		die( "Missing data: {$fname}. Please unzip chinese-reverse.zip.\n" );
 	}
 }
 list( $a, $b, $refDiff ) = $texts;

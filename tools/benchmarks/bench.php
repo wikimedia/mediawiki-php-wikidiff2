@@ -2,7 +2,7 @@
 // Benchmark script for Wikidiff2. It times diffing of 50 changes sampled
 // from Special:RecentChanges of several Wikipedias (en, hi, ru, th, and zh).
 $num_loops = 50;
-$data = json_decode( gzdecode( file_get_contents( __DIR__ . '/revs.json.gz' ) ), true );
+$data = json_decode( gzdecode( file_get_contents( __DIR__ . '/../data/revs.json.gz' ) ), true );
 
 echo "loops: " . $num_loops . "\n";
 foreach ( $data as $lang => $revs ) {
