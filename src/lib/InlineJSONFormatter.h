@@ -18,6 +18,8 @@ private:
 	enum LinkDirection {Down, Up};
 
 public:
+	const char * getName();
+
 	void printFileHeader() override;
 	void printFileFooter() override;
 	void printAdd(const String& line, int leftLine, int rightLine, int offsetFrom,

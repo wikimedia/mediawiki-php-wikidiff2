@@ -7,6 +7,7 @@ namespace wikidiff2 {
 
 class InlineFormatter: public Formatter {
 	public:
+		const char * getName();
 		void printAdd(const String& line, int leftLine, int rightLine, int offsetFrom,
 			int offsetTo) override;
 		void printDelete(const String& line, int leftLine, int rightLine, int offsetFrom,

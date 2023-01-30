@@ -46,7 +46,7 @@ class LineDiffProcessor {
 			 * The maximum number of RHS lines which can be compared with
 			 * one LHS line.
 			 */
-			int maxSplitSize;
+			int64_t maxSplitSize;
 		};
 
 		LineDiffProcessor(const Config & config_, WordDiffCache & wordDiffCache_)

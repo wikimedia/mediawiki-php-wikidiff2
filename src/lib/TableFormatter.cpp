@@ -2,6 +2,11 @@
 
 namespace wikidiff2 {
 
+const char * TableFormatter::getName()
+{
+	return "table";
+}
+
 void TableFormatter::printAdd(const String & line, int leftLine, int rightLine, int offsetFrom,
 	int offsetTo)
 {

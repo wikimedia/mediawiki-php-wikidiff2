@@ -14,6 +14,9 @@
 #include "lib/InlineFormatter.h"
 #include "lib/InlineJSONFormatter.h"
 
+#include <memory>
+#include <list>
+
 #define WIKIDIFF2_VERSION_STRING "1.13.0"
 
 #if PHP_VERSION_ID >= 80000
@@ -23,6 +26,7 @@
 #	define arginfo_wikidiff2_inline_diff NULL
 #	define arginfo_wikidiff2_inline_json_diff NULL
 #	define arginfo_wikidiff2_version NULL
+#	define arginfo_wikidiff2_multi_format_diff NULL
 #endif
 
 #define COMPAT_RETURN_STRINGL(s, l) { RETURN_STRINGL(s, l); return; }
@@ -44,6 +48,7 @@ zend_function_entry wikidiff2_functions[] = {
 	PHP_FE(wikidiff2_inline_diff, arginfo_wikidiff2_inline_diff)
 	PHP_FE(wikidiff2_inline_json_diff, arginfo_wikidiff2_inline_json_diff)
 	PHP_FE(wikidiff2_version, arginfo_wikidiff2_version)
+	PHP_FE(wikidiff2_multi_format_diff, arginfo_wikidiff2_multi_format_diff)
 	{NULL, NULL, NULL}
 };
 
@@ -136,7 +141,7 @@ static void wikidiff2_do_diff_impl(zval *return_value,
 
 static void wikidiff2_handle_exception(std::exception & e)
 {
-	zend_error(E_WARNING, "Error in wikidiff2: %s", e.what());
+	php_error_docref(NULL, E_WARNING, "%s", e.what());
 }
 
 /* {{{ proto string wikidiff2_do_diff(string text1, string text2, int numContextLines)
@@ -169,11 +174,11 @@ PHP_FUNCTION(wikidiff2_do_diff)
 				text2, text2_len
 		);
 	} catch (std::bad_alloc &e) {
-		zend_error(E_WARNING, "Out of memory in wikidiff2_do_diff().");
+		php_error_docref(NULL, E_WARNING, "out of memory");
 	} catch (std::exception &e) {
 		wikidiff2_handle_exception(e);
 	} catch (...) {
-		zend_error(E_WARNING, "Unknown exception in wikidiff2_do_diff().");
+		php_error_docref(NULL, E_WARNING, "unknown exception");
 	}
 }
 
@@ -206,11 +211,11 @@ PHP_FUNCTION(wikidiff2_inline_diff)
 				text2, text2_len
 		);
 	} catch (std::bad_alloc &e) {
-		zend_error(E_WARNING, "Out of memory in wikidiff2_inline_diff().");
+		php_error_docref(NULL, E_WARNING, "out of memory");
 	} catch (std::exception &e) {
 		wikidiff2_handle_exception(e);
 	} catch (...) {
-		zend_error(E_WARNING, "Unknown exception in wikidiff2_inline_diff().");
+		php_error_docref(NULL, E_WARNING, "unknown exception");
 	}
 }
 
@@ -243,11 +248,11 @@ PHP_FUNCTION(wikidiff2_inline_json_diff)
 				text2, text2_len
 		);
 	} catch (std::bad_alloc &e) {
-		zend_error(E_WARNING, "Out of memory in wikidiff2_inline_json_diff().");
+		php_error_docref(NULL, E_WARNING, "out of memory");
 	} catch (std::exception &e) {
 		wikidiff2_handle_exception(e);
 	} catch (...) {
-		zend_error(E_WARNING, "Unknown exception in wikidiff2_inline_json_diff().");
+		php_error_docref(NULL, E_WARNING, "unknown exception");
 	}
 }
 
@@ -258,4 +263,121 @@ PHP_FUNCTION(wikidiff2_version)
 	COMPAT_RETURN_STRINGL( const_cast<char*>(WIKIDIFF2_VERSION_STRING), strlen(WIKIDIFF2_VERSION_STRING));
 }
 
+PHP_FUNCTION(wikidiff2_multi_format_diff)
+{
+	typedef std::shared_ptr<Formatter> FormatterPtr;
+	typedef std::list<FormatterPtr, WD2_ALLOCATOR<FormatterPtr>> FormatterList;
+
+	char *text1 = NULL;
+	char *text2 = NULL;
+	size_t text1_len;
+	size_t text2_len;
+	zend_array *ht_options = NULL;
+	zval *zp_option;
+
+	FormatterList formatters;
+
+	ZEND_PARSE_PARAMETERS_START(2, 3)
+		Z_PARAM_STRING(text1, text1_len)
+		Z_PARAM_STRING(text2, text2_len)
+		Z_PARAM_OPTIONAL
+		Z_PARAM_ARRAY_HT(ht_options)
+	ZEND_PARSE_PARAMETERS_END();
+
+	Wikidiff2::Config config = wikidiff2_get_config(2);
+
+	if (ht_options) {
+		zend_long l_tmp;
+
+		zp_option = zend_hash_str_find(ht_options, "numContextLines", sizeof("numContextLines")-1);
+		if (zp_option) config.numContextLines = zval_get_long(zp_option);
+		
+		zp_option = zend_hash_str_find(ht_options, "changeThreshold", sizeof("changeThreshold")-1);
+		if (zp_option) config.changeThreshold = zval_get_double(zp_option);
+
+		zp_option = zend_hash_str_find(ht_options, "movedLineThreshold", sizeof("movedLineThreshold")-1);
+		if (zp_option) config.movedLineThreshold = zval_get_double(zp_option);
+
+		zp_option = zend_hash_str_find(ht_options, "maxMovedLines", sizeof("maxMovedLines")-1);
+		if (zp_option) config.maxMovedLines = zval_get_long(zp_option);
+
+		zp_option = zend_hash_str_find(ht_options, "maxWordLevelDiffComplexity", sizeof("maxWordLevelDiffComplexity")-1);
+		if (zp_option) config.maxWordLevelDiffComplexity = zval_get_long(zp_option);
+
+		zp_option = zend_hash_str_find(ht_options, "maxSplitSize", sizeof("maxSplitSize")-1);
+		if (zp_option) config.maxSplitSize = zval_get_long(zp_option);
+
+		zp_option = zend_hash_str_find(ht_options, "initialSplitThreshold", sizeof("initialSplitThreshold")-1);
+		if (zp_option) config.initialSplitThreshold = zval_get_double(zp_option);
+
+		zp_option = zend_hash_str_find(ht_options, "finalSplitThreshold", sizeof("finalSplitThreshold")-1);
+		if (zp_option) config.finalSplitThreshold = zval_get_double(zp_option);
+	}
+
+	Wikidiff2 wikidiff2(config);
+
+	if (ht_options) {
+		zp_option = zend_hash_str_find(ht_options, "formats", sizeof("formats")-1);
+		if (zp_option) {
+			if (Z_TYPE_P(zp_option) == IS_ARRAY) {
+				zend_array *ht_tmp = Z_ARRVAL_P(zp_option);
+				zval *zp_formatter;
+				ZEND_HASH_FOREACH_VAL(ht_tmp, zp_formatter) {
+					if (Z_TYPE_P(zp_formatter) != IS_STRING) {
+						php_error_docref(NULL, E_WARNING, "invalid formatter, should be string");
+						continue;
+					}
+					zend_string *s = Z_STR_P(zp_formatter);
+					if (zend_string_equals_literal(s, "table")) {
+						formatters.push_back(std::allocate_shared<TableFormatter>(
+							WD2_ALLOCATOR<TableFormatter>()));
+					} else if (zend_string_equals_literal(s, "inline")) {
+						formatters.push_back(std::allocate_shared<InlineFormatter>(
+							WD2_ALLOCATOR<InlineFormatter>()));
+					} else if (zend_string_equals_literal(s, "inlineJSON")) {
+						formatters.push_back(std::allocate_shared<InlineJSONFormatter>(
+							WD2_ALLOCATOR<InlineJSONFormatter>()));
+					} else {
+						php_error_docref(NULL, E_WARNING, "unknown formatter \"%s\"", ZSTR_VAL(s));
+					}
+				}
+				ZEND_HASH_FOREACH_END();
+			} else {
+				php_error_docref(NULL, E_WARNING, "invalid formats option");
+			}
+		}
+	}
+	
+	if (formatters.empty()) {
+		formatters.push_back(std::allocate_shared<TableFormatter>(
+			WD2_ALLOCATOR<TableFormatter>()));
+	}
+
+	for (auto f = formatters.begin(); f != formatters.end(); f++) {
+		wikidiff2.addFormatter(**f);
+	}
+
+	try {
+		Wikidiff2::String text1String(text1, text1_len);
+		Wikidiff2::String text2String(text2, text2_len);
+		wikidiff2.execute(text1String, text2String);
+	} catch (std::bad_alloc &e) {
+		php_error_docref(NULL, E_WARNING, "out of memory");
+	} catch (std::exception &e) {
+		wikidiff2_handle_exception(e);
+	} catch (...) {
+		php_error_docref(NULL, E_WARNING, "unknown exception");
+	}
+
+	HashTable * ht_ret = zend_new_array(formatters.size());
+	for (auto f = formatters.begin(); f != formatters.end(); f++) {
+		const char * name = (*f)->getName();
+		zval z_result;
+		Wikidiff2::String result = (*f)->getResult().str();
+		ZVAL_STRINGL(&z_result, const_cast<char*>(result.data()), result.size());
+		zend_hash_str_update(ht_ret, name, strlen(name), &z_result);
+	}
+
+	RETVAL_ARR(ht_ret);
+}
 /* }}} */

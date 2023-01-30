@@ -13,6 +13,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST'):
 .half-height {
 	height: 50vh;
 }
+.params input {
+	width: 100%;
+}
 </style>
 <link rel="stylesheet" href="diff.css">
 </head>
@@ -26,6 +29,45 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST'):
 	</colgroup>
 
 	<tbody id="the-tbody">
+		<tr>
+			<td colspan="4">
+				<table width="100%">
+					<tr class="params">
+						<td>
+							<label>numContextLines<br>
+							<input type="text" value="2" id="numContextLines"></label>
+						</td>
+						<td>
+							<label>changeThreshold<br>
+							<input type="text" value="0.2" id="changeThreshold"></label>
+						</td>
+						<td>
+							<label>movedLineThreshold<br>
+							<input type="text" value="0.4" id="movedLineThreshold"></label>
+						</td>
+						<td>
+							<label>maxMovedLines<br>
+							<input type="text" value="100" id="maxMovedLines"></label>
+						</td>
+						<td>
+							<label>maxWordLevelDiffComplexity<br>
+							<input type="text" value="40000000" id="maxWordLevelDiffComplexity"></label>
+						</td>
+						<td>
+							<label>maxSplitSize<br>
+							<input type="text" value="3" id="maxSplitSize"></label>
+						</td>
+						<td>
+							<label>initialSplitThreshold<br>
+							<input type="text" value="0.1" id="initialSplitThreshold"></label>
+						</td>
+						<td>
+							<label>finalSplitThreshold<br>
+							<input type="text" value="0.6" id="finalSplitThreshold"></label>
+						</td>
+					<tr>
+				</table>
+			<td>
 		<tr>
 			<td class="diff-marker"></td>
 			<td>
@@ -48,6 +90,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST'):
 	const resultTbody = document.getElementById("the-tbody");
 	const hdrRow = document.getElementById('last-header-row');
 	const perfInfo = document.getElementById("perf-info");
+	let options = [];
+
+	const inputs = document.getElementsByTagName("input");
+	for (const input of inputs) {
+		options.push(input);
+	}
 
 	function updateDiff() {
 		const req = new XMLHttpRequest();
@@ -66,6 +114,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST'):
 		const data = new FormData();
 		data.append("lhs", lhs.value);
 		data.append("rhs", rhs.value);
+
+		for (const option of options) {
+			data.append("options[" + option.id + "]", option.value);
+		}
+
 		req.open("POST", "demo.php");
 		req.send(data);
 	}
@@ -75,6 +128,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST'):
 	lhs.addEventListener("keyup", updateDiff);
 	rhs.addEventListener("change", updateDiff);
 	rhs.addEventListener("keyup", updateDiff);
+
+	for (const option of options) {
+		option.addEventListener("change", updateDiff);
+	}
 })();
 </script>
 </body>
@@ -83,13 +140,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST'):
 	else:
 	{
 		$t = -microtime( true );
-		$diff = wikidiff2_do_diff(
-			$_POST['lhs'] ?? '',
-			$_POST['rhs'] ?? '',
-			2
+		$diffs = wikidiff2_multi_format_diff(
+			str_replace( "\r\n", "\n", $_POST['lhs'] ?? '' ),
+			str_replace( "\r\n", "\n", $_POST['rhs'] ?? '' ),
+			$_POST['options'] ?? []
 		);
-		$diff = preg_replace( '/<!--LINE ([0-9]+)-->/', 'Line \1', $diff );
 		$t += microtime( true );
+		$diff = reset( $diffs );
+		$diff = preg_replace( '/<!--LINE ([0-9]+)-->/', 'Line \1', $diff );
 		header( "Diff-Timing: " . round( $t * 1000, 3 ) . " ms" );
 		echo $diff;
 	}

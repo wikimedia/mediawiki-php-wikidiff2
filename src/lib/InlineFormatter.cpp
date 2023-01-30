@@ -2,6 +2,11 @@
 
 namespace wikidiff2 {
 
+const char * InlineFormatter::getName()
+{
+	return "inline";
+}
+
 void InlineFormatter::printAdd(const String& line, int leftLine, int rightLine, int offsetFrom,
 	int offsetTo)
 {

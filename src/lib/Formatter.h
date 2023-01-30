@@ -16,6 +16,8 @@ class Formatter {
 		typedef std::basic_stringstream<char, std::char_traits<char>, WD2_ALLOCATOR<char> > StringStream;
 		typedef Diff<Word> WordDiff;
 
+		virtual const char * getName() = 0;
+
 		/**
 		 * Append a whole added line to the output
 		 * 

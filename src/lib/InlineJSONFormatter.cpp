@@ -4,6 +4,11 @@
 
 namespace wikidiff2 {
 
+const char * InlineJSONFormatter::getName()
+{
+	return "inlineJSON";
+}
+
 void InlineJSONFormatter::printFileHeader()
 {
 	result << "{\"diff\": [";
