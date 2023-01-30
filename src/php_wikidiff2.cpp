@@ -47,7 +47,6 @@ zend_function_entry wikidiff2_functions[] = {
 	{NULL, NULL, NULL}
 };
 
-
 zend_module_entry wikidiff2_module_entry = {
 	STANDARD_MODULE_HEADER,
 	"wikidiff2",
@@ -149,17 +148,15 @@ PHP_FUNCTION(wikidiff2_do_diff)
 {
 	char *text1 = NULL;
 	char *text2 = NULL;
-	int argc = ZEND_NUM_ARGS();
 	size_t text1_len;
 	size_t text2_len;
 	zend_long numContextLines;
 
-	if (zend_parse_parameters(argc, "ssl|l", &text1, &text1_len, &text2,
-		&text2_len, &numContextLines) == FAILURE)
-	{
-		return;
-	}
-
+	ZEND_PARSE_PARAMETERS_START(3, 3)
+		Z_PARAM_STRING(text1, text1_len)
+		Z_PARAM_STRING(text2, text2_len)
+		Z_PARAM_LONG(numContextLines)
+	ZEND_PARSE_PARAMETERS_END();
 
 	try {
 		TableFormatter formatter;
@@ -189,17 +186,15 @@ PHP_FUNCTION(wikidiff2_inline_diff)
 {
 	char *text1 = NULL;
 	char *text2 = NULL;
-	int argc = ZEND_NUM_ARGS();
 	size_t text1_len;
 	size_t text2_len;
 	zend_long numContextLines;
 
-	if (zend_parse_parameters(argc, "ssl", &text1, &text1_len, &text2,
-		&text2_len, &numContextLines) == FAILURE)
-	{
-		return;
-	}
-
+	ZEND_PARSE_PARAMETERS_START(3, 3)
+		Z_PARAM_STRING(text1, text1_len)
+		Z_PARAM_STRING(text2, text2_len)
+		Z_PARAM_LONG(numContextLines)
+	ZEND_PARSE_PARAMETERS_END();
 
 	try {
 		InlineFormatter formatter;
@@ -228,17 +223,15 @@ PHP_FUNCTION(wikidiff2_inline_json_diff)
 {
 	char *text1 = NULL;
 	char *text2 = NULL;
-	int argc = ZEND_NUM_ARGS();
 	size_t text1_len;
 	size_t text2_len;
 	zend_long numContextLines;
 
-	if (zend_parse_parameters(argc, "ssl", &text1, &text1_len, &text2,
-		&text2_len, &numContextLines) == FAILURE)
-	{
-		return;
-	}
-
+	ZEND_PARSE_PARAMETERS_START(3, 3)
+		Z_PARAM_STRING(text1, text1_len)
+		Z_PARAM_STRING(text2, text2_len)
+		Z_PARAM_LONG(numContextLines)
+	ZEND_PARSE_PARAMETERS_END();
 
 	try {
 		InlineJSONFormatter formatter;
