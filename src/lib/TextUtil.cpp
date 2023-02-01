@@ -121,13 +121,16 @@ void TextUtil::explodeWords(const String & text, WordVector &words)
 	// the resulting break positions
 	if (hasThaiChars) {
 		tisText += '\0';
-		int numBreaks = breaks.size();
-		breaks.resize(numBreaks + tisText.size());
-		IntVector::iterator thaiBreaksBegin = breaks.begin() + numBreaks;
+		int numPlainBreaks = breaks.size();
+		breaks.resize(numPlainBreaks + tisText.size());
+		IntVector::iterator thaiBreaksBegin = breaks.begin() + numPlainBreaks;
 
-		numBreaks += th_brk_find_breaks(getBreaker(), (const thchar_t*)(tisText.data()),
+		int numBreaks = numPlainBreaks
+			+ th_brk_find_breaks(getBreaker(), (const thchar_t*)(tisText.data()),
 				&*thaiBreaksBegin, tisText.size());
 		breaks.resize(numBreaks);
+		// Update invalidated iterator
+		thaiBreaksBegin = breaks.begin() + numPlainBreaks;
 		// Merge break positions and de-dupe.
 		std::inplace_merge(breaks.begin(), thaiBreaksBegin, breaks.end());
 		breaks.erase(std::unique(breaks.begin(), breaks.end()), breaks.end());
