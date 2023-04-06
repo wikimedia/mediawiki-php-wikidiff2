@@ -13,21 +13,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST'):
 .half-height {
 	height: 50vh;
 }
-.params input {
+.params input[type="text"] {
 	width: 100%;
 }
 </style>
 <link rel="stylesheet" href="diff.css">
 </head>
 <body>
-<table width="100%" class="diff">
-	<colgroup>
-		<col class="diff-marker">
-		<col class="diff-content">
-		<col class="diff-marker">
-		<col class="diff-content">
-	</colgroup>
-
+<table width="100%">
 	<tbody id="the-tbody">
 		<tr>
 			<td colspan="4">
@@ -65,6 +58,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST'):
 							<label>finalSplitThreshold<br>
 							<input type="text" value="0.6" id="finalSplitThreshold"></label>
 						</td>
+						<td>
+							<div class="full-width">formats:</div>
+							<label><input type="checkbox" name="formats" value="table" checked> table</label>
+							<label><input type="checkbox" name="formats" value="inline"> inline</label>
+							<label><input type="checkbox" name="formats" value="inlineJSON"> inlineJSON</label>
+						</td>
 					<tr>
 				</table>
 			<td>
@@ -83,12 +82,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST'):
 		</tr>
 	</tbody>
 </table>
+
+<div id="results"></div>
+
 <script>
 (function () {
 	const lhs = document.getElementById("lhs");
 	const rhs = document.getElementById("rhs");
-	const resultTbody = document.getElementById("the-tbody");
-	const hdrRow = document.getElementById('last-header-row');
+	const resultsDiv = document.getElementById("results");
 	const perfInfo = document.getElementById("perf-info");
 	let options = [];
 
@@ -100,14 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST'):
 	function updateDiff() {
 		const req = new XMLHttpRequest();
 		req.onload = function () {
-			const tempTbody = document.createElement('tbody');
-			tempTbody.innerHTML = req.responseText;
-			while (hdrRow.nextSibling) {
-				resultTbody.removeChild(hdrRow.nextSibling);
-			}
-			while (tempTbody.firstChild) {
-				resultTbody.appendChild(tempTbody.firstChild);
-			}
+			resultsDiv.innerHTML = req.responseText;
 			perfInfo.replaceChildren(
 				document.createTextNode(req.getResponseHeader("Diff-Timing")));
 		};
@@ -116,7 +110,13 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST'):
 		data.append("rhs", rhs.value);
 
 		for (const option of options) {
-			data.append("options[" + option.id + "]", option.value);
+			if ( option.type === 'checkbox' ) {
+				if ( option.checked ) {
+					data.append("options[" + option.name + "][]", option.value);
+				}
+			} else {
+				data.append("options[" + option.id + "]", option.value);
+			}
 		}
 
 		req.open("POST", "demo.php");
@@ -146,10 +146,29 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST'):
 			$_POST['options'] ?? []
 		);
 		$t += microtime( true );
-		$diff = reset( $diffs );
-		$diff = preg_replace( '/<!--LINE ([0-9]+)-->/', 'Line \1', $diff );
-		header( "Diff-Timing: " . round( $t * 1000, 3 ) . " ms" );
-		echo $diff;
+		foreach ( $diffs as $format => $diff ) {
+			$diff = preg_replace( '/<!--LINE ([0-9]+)-->/', 'Line \1', $diff );
+			header( "Diff-Timing: " . round( $t * 1000, 3 ) . " ms" );
+			echo "<h2>Format: $format</h2>";
+			if ( $format === 'table' ) {
+				echo "<table class='diff'>
+				<colgroup>
+					<col class='diff-marker'>
+					<col class='diff-content'>
+					<col class='diff-marker'>
+					<col class='diff-content'>
+				</colgroup>
+				$diff
+				</table>";
+			} else if ( $format === 'inlineJSON' ) {
+				echo '<pre>';
+				print_r( json_decode( $diff, true ) );
+				echo '</pre>';
+			} else {
+				echo $diff;
+			}
+			echo "<hr />";
+		}
 	}
 endif
 ?>
