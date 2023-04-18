@@ -37,7 +37,7 @@ class WordDiffCache {
 		 *   be within the line vectors registered with setLines().
 		 * @param toSize The number of lines on the right-hand side.
 		 */
-		WordDiffPtr getConcatDiff(const String * from, size_t fromSize, 
+		WordDiffPtr getConcatDiff(const String * from, size_t fromSize,
 			const String * to, size_t toSize);
 
 		/**
@@ -113,7 +113,7 @@ class WordDiffCache {
 
 		typedef std::map<WordsCacheKey, WordVector, std::less<WordsCacheKey>,
 				WD2_ALLOCATOR<std::pair<const WordsCacheKey, WordVector> > > WordsCache;
-		
+
 		typedef std::map<DiffCacheKey, WordDiffPtr, std::less<DiffCacheKey>,
 				WD2_ALLOCATOR<std::pair<const DiffCacheKey, WordDiffPtr> > > DiffCache;
 

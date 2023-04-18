@@ -1,7 +1,5 @@
 #include "Formatter.h"
 
-#include <stdexcept>
-
 namespace wikidiff2 {
 
 void Formatter::printFileHeader() {
@@ -90,8 +88,8 @@ Formatter::String Formatter::toString(long input) const
 }
 
 void Formatter::printConcatDiff(
-	const WordDiff & wordDiff, 
-	int leftLine, int rightLine, 
+	const WordDiff & wordDiff,
+	int leftLine, int rightLine,
 	int offsetFrom, int offsetTo)
 {
 	throw std::runtime_error("this formatter does not implement line splitting");

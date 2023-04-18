@@ -18,7 +18,7 @@ private:
 	enum LinkDirection {Down, Up};
 
 public:
-	const char * getName();
+	const char * getName() override;
 
 	void printFileHeader() override;
 	void printFileFooter() override;
@@ -28,13 +28,13 @@ public:
 		int offsetTo) override;
 
 	void printWordDiff(
-		const WordDiff & wordDiff, 
-		int leftLine, int rightLine, 
-		int offsetFrom, int offsetTo, 
+		const WordDiff & wordDiff,
+		int leftLine, int rightLine,
+		int offsetFrom, int offsetTo,
 		bool printLeft = true, bool printRight = true,
 		const String & srcAnchor = "", const String & dstAnchor = "",
 		bool moveDirectionDownwards = false) override;
-	
+
 	void printBlockHeader(int leftLine, int rightLine) override;
 	void printContext(const String& input, int leftLine, int rightLine, int offsetFrom,
 		int offsetTo) override;
@@ -48,11 +48,11 @@ private:
 	void printEscapedJSON(const String & s) {
 		printEscapedJSON(s.cbegin(), s.cend());
 	}
-	
+
 	void printEscapedJSON(const Word & word) {
 		printEscapedJSON(word.start, word.end);
 	}
-	
+
 	void printEscapedJSON(StringIterator start, StringIterator end);
 };
 

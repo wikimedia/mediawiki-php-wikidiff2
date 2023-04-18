@@ -153,7 +153,7 @@ class DiffEngine
 
 		// Sets
 		typedef std::set<T, std::less<T>, WD2_ALLOCATOR<T> > ValueSet;
-		
+
 		DiffEngine(const DiffConfig & config_)
 			: config(config_), done(false)
 		{}

@@ -7,15 +7,15 @@ namespace wikidiff2 {
 
 class InlineFormatter: public Formatter {
 	public:
-		const char * getName();
+		const char * getName() override;
 		void printAdd(const String& line, int leftLine, int rightLine, int offsetFrom,
 			int offsetTo) override;
 		void printDelete(const String& line, int leftLine, int rightLine, int offsetFrom,
 			int offsetTo) override;
 		void printWordDiff(
-			const WordDiff & wordDiff, 
-			int leftLine, int rightLine, 
-			int offsetFrom, int offsetTo, 
+			const WordDiff & wordDiff,
+			int leftLine, int rightLine,
+			int offsetFrom, int offsetTo,
 			bool printLeft = true, bool printRight = true,
 			const String & srcAnchor = "", const String & dstAnchor = "",
 			bool moveDirectionDownwards = false) override;

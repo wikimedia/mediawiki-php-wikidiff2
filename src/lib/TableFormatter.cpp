@@ -123,8 +123,8 @@ size_t TableFormatter::printWordDiffSegment(const WordDiff &worddiff, size_t off
 	return worddiff.size();
 }
 
-void TableFormatter::printConcatDiff(const WordDiff & wordDiff, 
-	int leftLine, int rightLine, 
+void TableFormatter::printConcatDiff(const WordDiff & wordDiff,
+	int leftLine, int rightLine,
 	int offsetFrom, int offsetTo)
 {
 	size_t segmentStart = 0;

@@ -29,7 +29,7 @@ void WordDiffSegmenter::segment(WordDiff & diff)
 							result.add_edit(DiffOp<Word>(DiffOp<Word>::del, edit.from, empty));
 						}
 					} else {
-						// More than one line break: the whole LHS has already been emitted so we 
+						// More than one line break: the whole LHS has already been emitted so we
 						// just need to emit the RHS part not including the line break as an add op
 						if (pWord - segmentStart > 0) {
 							result.add_edit(DiffOp<Word>(DiffOp<Word>::add, empty, PointerVector(segmentStart, pWord)));

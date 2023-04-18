@@ -7,7 +7,6 @@
 
 #include <stdio.h>
 #include "Wikidiff2.h"
-#include <iostream>
 
 namespace wikidiff2 {
 
@@ -219,7 +218,7 @@ void Wikidiff2::printWordDiffFromStrings(
 
 void Wikidiff2::printConcatDiff(
 	const String * lines1, int numLines1,
-	const String * lines2, int numLines2, 
+	const String * lines2, int numLines2,
 	int leftLine, int rightLine,
 	int offsetFrom, int offsetTo)
 {
@@ -456,7 +455,7 @@ bool Wikidiff2::printMovedLineDiff(const StringDiff & linediff, int opIndex, int
 					}
 				}
 				std::shared_ptr<DiffMapEntry> tmp;
-				bool potentialMatch = false;
+				bool potentialMatch;
 				if (otherOp == DiffOp<String>::del) {
 					tmp = getDiffMapEntry(linediff[opIndex].to[opLine], lines[k], i, k, opIndex, opLine);
 					potentialMatch = cmpDiffMapEntries(tmp->opIndexFrom, tmp->opLineFrom);

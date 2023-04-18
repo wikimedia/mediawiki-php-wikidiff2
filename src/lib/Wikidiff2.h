@@ -150,7 +150,7 @@ class Wikidiff2 {
 
 		void printConcatDiff(
 			const String * lines1, int numLines1,
-			const String * lines2, int numLines2, 
+			const String * lines2, int numLines2,
 			int leftLine, int rightLine,
 			int offsetFrom, int offsetTo);
 

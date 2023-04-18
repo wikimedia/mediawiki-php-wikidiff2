@@ -1,9 +1,6 @@
 #include "WordDiffCache.h"
 #include "WordDiffSegmenter.h"
 
-#include <stdexcept>
-#include <iostream>
-
 namespace wikidiff2 {
 
 WordDiffCache::String WordDiffCache::newlineStorage = "\n";
@@ -28,7 +25,7 @@ WordDiffCache::WordDiffPtr WordDiffCache::getConcatDiff(
 		const WordVector & words2 = getConcatWords(toStart, toSize);
 		WordDiffPtr wordDiffPtr = std::allocate_shared<WordDiff>(WD2_ALLOCATOR<WordDiff>(),
 			diffConfig, words1, words2);
-		
+
 		if (fromSize > 1 || toSize > 1) {
 			WordDiffSegmenter::segment(*wordDiffPtr);
 		}

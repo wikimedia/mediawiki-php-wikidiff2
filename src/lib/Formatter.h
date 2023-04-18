@@ -20,7 +20,7 @@ class Formatter {
 
 		/**
 		 * Append a whole added line to the output
-		 * 
+		 *
 		 * @param line The text of the added line
 		 * @param leftLine The 1-based line number on the LHS
 		 * @param rightLine The 1-based line number on the RHS
@@ -60,9 +60,9 @@ class Formatter {
 		 *   if the move is upwards. Ignore if the operation is not a move.
 		 */
 		virtual void printWordDiff(
-			const WordDiff & wordDiff, 
-			int leftLine, int rightLine, 
-			int offsetFrom, int offsetTo, 
+			const WordDiff & wordDiff,
+			int leftLine, int rightLine,
+			int offsetFrom, int offsetTo,
 			bool printLeft = true, bool printRight = true,
 			const String & srcAnchor = "", const String & dstAnchor = "",
 			bool moveDirectionDownwards = false) = 0;
@@ -78,8 +78,8 @@ class Formatter {
 		 * @param offsetTo The 0-based byte offset in the RHS input string
 		 */
 		virtual void printConcatDiff(
-			const WordDiff & wordDiff, 
-			int leftLine, int rightLine, 
+			const WordDiff & wordDiff,
+			int leftLine, int rightLine,
 			int offsetFrom, int offsetTo);
 
 		/**

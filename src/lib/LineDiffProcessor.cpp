@@ -46,7 +46,7 @@ void LineDiffProcessor::detectChanges(StringDiff & result, StringDiffOp & diffOp
 			// Add the split as a separate change
 			flushSaved();
 			result.add_edit(StringDiffOp(StringDiffOp::change,
-				PointerVector(pDel, pDel + 1), 
+				PointerVector(pDel, pDel + 1),
 				PointerVector(pAdd, pAdd + split.size)));
 		} else if (split.similarity >= config.changeThreshold) {
 			// Save regular change for aggregation
@@ -56,7 +56,7 @@ void LineDiffProcessor::detectChanges(StringDiff & result, StringDiffOp & diffOp
 			flushSaved();
 			result.add_edit(StringDiffOp(StringDiffOp::add,
 				empty, PointerVector(pAdd, pAdd + 1)));
-			result.add_edit(StringDiffOp(StringDiffOp::del, 
+			result.add_edit(StringDiffOp(StringDiffOp::del,
 				PointerVector(pDel, pDel + 1), empty));
 			// Set split.size = 1 for the loop increment
 			split.size = 1;
@@ -84,7 +84,7 @@ void LineDiffProcessor::detectChanges(StringDiff & result, StringDiffOp & diffOp
  * @param pAddEnd The end (not inclusive) of the RHS range
  */
 LineDiffProcessor::SplitInfo LineDiffProcessor::getSplit(
-	PointerVectorIterator pDel, PointerVectorIterator pDelEnd, 
+	PointerVectorIterator pDel, PointerVectorIterator pDelEnd,
 	PointerVectorIterator pAdd, PointerVectorIterator pAddEnd)
 {
 	int splitSize = 0;

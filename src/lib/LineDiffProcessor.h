@@ -89,15 +89,15 @@ class LineDiffProcessor {
 		};
 
 		void detectChanges(StringDiff & result, StringDiffOp & diffOp);
-	
+
 		SplitInfo getSplit(
-			PointerVectorIterator pDel, PointerVectorIterator pDelEnd, 
+			PointerVectorIterator pDel, PointerVectorIterator pDelEnd,
 			PointerVectorIterator pAdd, PointerVectorIterator pAddEnd);
 
 		const WordDiffStats & getConcatDiffStats(
 			PointerVectorIterator from, PointerVectorIterator fromEnd,
 			PointerVectorIterator to, PointerVectorIterator toEnd);
-		
+
 };
 
 } // namespace wikidiff2

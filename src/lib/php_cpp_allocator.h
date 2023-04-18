@@ -11,14 +11,14 @@ namespace wikidiff2 {
  * to allocate and free memory using PHP's emalloc/efree facilities.
  */
 template <class T>
-class PhpAllocator : public std::allocator<T> 
+class PhpAllocator : public std::allocator<T>
 {
 	public:
 		// Make some typedefs to avoid having to use "typename" everywhere
 		typedef typename std::allocator<T>::pointer pointer;
 		typedef typename std::allocator<T>::size_type size_type;
 
-		// The rebind member allows callers to get allocators for other types, 
+		// The rebind member allows callers to get allocators for other types,
 		// given a specialised allocator
 		template <class U> struct rebind { typedef PhpAllocator<U> other; };
 
