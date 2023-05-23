@@ -71,6 +71,9 @@ PHP_INI_BEGIN()
 	PHP_INI_ENTRY("wikidiff2.moved_line_threshold",  "0.4", PHP_INI_ALL, NULL)
 	PHP_INI_ENTRY("wikidiff2.moved_paragraph_detection_cutoff",  "100", PHP_INI_ALL, NULL)
 	PHP_INI_ENTRY("wikidiff2.max_word_level_diff_complexity", "40000000", PHP_INI_ALL, NULL)
+	PHP_INI_ENTRY("wikidiff2.max_split_size", "1", PHP_INI_ALL, NULL)
+	PHP_INI_ENTRY("wikidiff2.initial_split_threshold",  "0.1", PHP_INI_ALL, NULL)
+	PHP_INI_ENTRY("wikidiff2.final_split_threshold",  "0.6", PHP_INI_ALL, NULL)
 PHP_INI_END()
 /* }}} */
 
@@ -119,13 +122,13 @@ static Wikidiff2::Config wikidiff2_get_config(int numContextLines)
 	config.movedLineThreshold = INI_FLT("wikidiff2.moved_line_threshold");
 	config.maxMovedLines = INI_INT("wikidiff2.moved_paragraph_detection_cutoff");
 	config.maxWordLevelDiffComplexity = INI_INT("wikidiff2.max_word_level_diff_complexity");
-	config.maxSplitSize = 1;
-	config.initialSplitThreshold = 0.1;
-	config.finalSplitThreshold = 0.6;
+	config.maxSplitSize = INI_INT("wikidiff2.max_split_size");
+	config.initialSplitThreshold = INI_FLT("wikidiff2.initial_split_threshold");
+	config.finalSplitThreshold = INI_FLT("wikidiff2.final_split_threshold");
 	return config;
 }
 
-static void wikidiff2_do_diff_impl(zval *return_value, 
+static void wikidiff2_do_diff_impl(zval *return_value,
 		const Wikidiff2::Config & config, Formatter & formatter,
 		char *text1, size_t text1_len,
 		char *text2, size_t text2_len)
@@ -136,7 +139,7 @@ static void wikidiff2_do_diff_impl(zval *return_value,
 	Wikidiff2::String text2String(text2, text2_len);
 	wikidiff2.execute(text1String, text2String);
 	Wikidiff2::String ret = formatter.getResult().str();
-	ZVAL_STRINGL(return_value, const_cast<char*>(ret.data()), ret.size());	
+	ZVAL_STRINGL(return_value, const_cast<char*>(ret.data()), ret.size());
 }
 
 static void wikidiff2_handle_exception(std::exception & e)
@@ -167,7 +170,7 @@ PHP_FUNCTION(wikidiff2_do_diff)
 		TableFormatter formatter;
 		auto config = wikidiff2_get_config(numContextLines);
 		wikidiff2_do_diff_impl(
-				return_value, 
+				return_value,
 				config,
 				formatter,
 				text1, text1_len,
@@ -204,8 +207,8 @@ PHP_FUNCTION(wikidiff2_inline_diff)
 	try {
 		InlineFormatter formatter;
 		wikidiff2_do_diff_impl(
-				return_value, 
-				wikidiff2_get_config(numContextLines), 
+				return_value,
+				wikidiff2_get_config(numContextLines),
 				formatter,
 				text1, text1_len,
 				text2, text2_len
@@ -241,8 +244,8 @@ PHP_FUNCTION(wikidiff2_inline_json_diff)
 	try {
 		InlineJSONFormatter formatter;
 		wikidiff2_do_diff_impl(
-				return_value, 
-				wikidiff2_get_config(numContextLines), 
+				return_value,
+				wikidiff2_get_config(numContextLines),
 				formatter,
 				text1, text1_len,
 				text2, text2_len
@@ -291,7 +294,7 @@ PHP_FUNCTION(wikidiff2_multi_format_diff)
 
 		zp_option = zend_hash_str_find(ht_options, "numContextLines", sizeof("numContextLines")-1);
 		if (zp_option) config.numContextLines = zval_get_long(zp_option);
-		
+
 		zp_option = zend_hash_str_find(ht_options, "changeThreshold", sizeof("changeThreshold")-1);
 		if (zp_option) config.changeThreshold = zval_get_double(zp_option);
 
@@ -347,7 +350,7 @@ PHP_FUNCTION(wikidiff2_multi_format_diff)
 			}
 		}
 	}
-	
+
 	if (formatters.empty()) {
 		formatters.push_back(std::allocate_shared<TableFormatter>(
 			WD2_ALLOCATOR<TableFormatter>()));
