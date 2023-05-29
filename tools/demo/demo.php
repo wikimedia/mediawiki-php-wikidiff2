@@ -146,9 +146,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST'):
 			$_POST['options'] ?? []
 		);
 		$t += microtime( true );
+		header( "Diff-Timing: " . round( $t * 1000, 3 ) . " ms" );
 		foreach ( $diffs as $format => $diff ) {
 			$diff = preg_replace( '/<!--LINE ([0-9]+)-->/', 'Line \1', $diff );
-			header( "Diff-Timing: " . round( $t * 1000, 3 ) . " ms" );
 			echo "<h2>Format: $format</h2>";
 			if ( $format === 'table' ) {
 				echo "<table class='diff'>
