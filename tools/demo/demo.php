@@ -16,6 +16,16 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST'):
 .params input[type="text"] {
 	width: 100%;
 }
+.mw-inline-diff-newline::after {
+	content: "↲ newline";
+	font-family: monospace;
+	font-size: 87.5%;
+	margin-left: 3px;
+	padding: 0 3px;
+	display: inline-block;
+	color: #72777D;
+	background: /* Mockup: #D8ECFF, match ins #a3d3ff; */ #a3d3ff;
+}
 </style>
 <link rel="stylesheet" href="diff.css">
 </head>

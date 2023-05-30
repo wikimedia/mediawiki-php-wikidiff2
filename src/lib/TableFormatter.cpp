@@ -75,13 +75,6 @@ void TableFormatter::printWordDiff(const WordDiff & worddiff, int leftLine,
 	}
 }
 
-bool TableFormatter::isNewlineMarker(const DiffOp<Word> & op)
-{
-	return op.op == DiffOp<Word>::add
-		&& op.to.size() == 1
-		&& op.to[0]->isNewline();
-}
-
 size_t TableFormatter::printWordDiffSegment(const WordDiff &worddiff, size_t offset, bool added)
 {
 	for (size_t i = offset; i < worddiff.size(); ++i) {

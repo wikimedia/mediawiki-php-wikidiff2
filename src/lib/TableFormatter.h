@@ -35,8 +35,6 @@ class TableFormatter: public Formatter {
 			printWordDiffSegment(worddiff, 0, added);
 		}
 
-		static bool isNewlineMarker(const DiffOp<Word> & op);
-
 		size_t printWordDiffSegment(const WordDiff &worddiff, size_t offset, bool added);
 };
 

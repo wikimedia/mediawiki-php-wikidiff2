@@ -154,6 +154,11 @@ class Formatter {
 		String toString(long input) const;
 
 		/**
+		 * Determine whether an op from a concat diff is a newline insertion marker
+		 */
+		static bool isNewlineMarker(const DiffOp<Word> & op);
+
+		/**
 		 * The stream to write the result to.
 		 */
 		StringStream result;

@@ -95,4 +95,11 @@ void Formatter::printConcatDiff(
 	throw std::runtime_error("this formatter does not implement line splitting");
 }
 
+bool Formatter::isNewlineMarker(const DiffOp<Word> & op)
+{
+	return op.op == DiffOp<Word>::add
+		&& op.to.size() == 1
+		&& op.to[0]->isNewline();
+}
+
 } // namespace wikidiff2
