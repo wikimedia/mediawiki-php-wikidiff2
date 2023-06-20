@@ -130,4 +130,57 @@ void InlineFormatter::printWrappedLine(const char* pre, const String& line, cons
 	result << post;
 }
 
+void InlineFormatter::printConcatDiff(
+	const WordDiff & wordDiff,
+	int leftLine, int rightLine,
+	int offsetFrom, int offsetTo)
+{
+	result << "<div class=\"mw-diff-inline-changed\">";
+
+	for (unsigned i = 0; i < wordDiff.size(); ++i) {
+		const DiffOp<Word> & op = wordDiff[i];
+		int n, j;
+		if (isNewlineMarker(op)) {
+			printNewlineMarker();
+		} else if (op.op == DiffOp<Word>::copy) {
+			n = op.from.size();
+			for (j=0; j<n; j++) {
+				printHtmlEncodedText(*op.from[j]);
+			}
+		} else if (op.op == DiffOp<Word>::del) {
+			n = op.from.size();
+			result << "<del>";
+			for (j=0; j<n; j++) {
+				printHtmlEncodedText(*op.from[j]);
+			}
+			result << "</del>";
+		} else if (op.op == DiffOp<Word>::add) {
+			n = op.to.size();
+			result << "<ins>";
+			for (j=0; j<n; j++) {
+				printHtmlEncodedText(*op.to[j]);
+			}
+			result << "</ins>";
+		} else if (op.op == DiffOp<Word>::change) {
+			n = op.from.size();
+			result << "<del>";
+			for (j=0; j<n; j++) {
+				printHtmlEncodedText(*op.from[j]);
+			}
+			result << "</del>";
+			n = op.to.size();
+			result << "<ins>";
+			for (j=0; j<n; j++) {
+				printHtmlEncodedText(*op.to[j]);
+			}
+			result << "</ins>";
+		}
+	}
+	result << "</div>\n";
+}
+
+void InlineFormatter::printNewlineMarker() {
+	result << "<span class=\"mw-inline-diff-newline\"></span><br>";
+}
+
 } // namespace wikidiff2

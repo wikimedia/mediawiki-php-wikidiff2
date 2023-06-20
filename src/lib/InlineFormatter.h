@@ -22,9 +22,14 @@ class InlineFormatter: public Formatter {
 		void printBlockHeader(int leftLine, int rightLine) override;
 		void printContext(const String& input, int leftLine, int rightLine, int offsetFrom,
 			int offsetTo) override;
+		void printConcatDiff(
+			const WordDiff & wordDiff,
+			int leftLine, int rightLine,
+			int offsetFrom, int offsetTo);
 
 	private:
 		void printWrappedLine(const char* pre, const String& line, const char* post);
+		void printNewlineMarker();
 };
 
 } // namespace wikidiff2
