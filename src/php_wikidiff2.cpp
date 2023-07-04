@@ -17,7 +17,7 @@
 #include <memory>
 #include <list>
 
-#define WIKIDIFF2_VERSION_STRING "1.14.0"
+#define WIKIDIFF2_VERSION_STRING "1.14.1"
 
 #if PHP_VERSION_ID >= 80000
 #	include "wikidiff2_arginfo.h"
