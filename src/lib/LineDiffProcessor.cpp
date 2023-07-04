@@ -48,7 +48,7 @@ void LineDiffProcessor::detectChanges(StringDiff & result, StringDiffOp & diffOp
 			result.add_edit(StringDiffOp(StringDiffOp::change,
 				PointerVector(pDel, pDel + 1),
 				PointerVector(pAdd, pAdd + split.size)));
-		} else if (split.similarity >= config.changeThreshold) {
+		} else if (split.similarity > config.changeThreshold) {
 			// Save regular change for aggregation
 			savedSize++;
 		} else {
