@@ -163,7 +163,7 @@ const WordDiffCache::WordVector & WordDiffCache::getConcatWords(
 
 void WordDiffCache::dumpDebugReport()
 {
-	auto h = hitStats;
+	auto & h = hitStats;
 	using std::endl;
 	std::cerr << "Diff cache: " << h.diffHits << " / " << h.diffTotal << endl
 		<< "Stat cache " << h.statHits << " / " << h.statTotal << endl

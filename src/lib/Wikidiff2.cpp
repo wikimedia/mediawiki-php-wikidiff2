@@ -399,7 +399,7 @@ bool Wikidiff2::printMovedLineDiff(const StringDiff & linediff, int opIndex, int
 	uint64_t key = makeKey(opIndex, opLine);
 	auto it = diffMap.find(key);
 	if (it != diffMap.end()) {
-		auto best = it->second;
+		auto & best = it->second;
 		int otherIndex = linediff[opIndex].op == DiffOp<String>::add ? best->opIndexFrom : best->opIndexTo;
 		int otherLine = linediff[opIndex].op == DiffOp<String>::add ? best->opLineFrom : best->opLineTo;
 
@@ -446,7 +446,7 @@ bool Wikidiff2::printMovedLineDiff(const StringDiff & linediff, int opIndex, int
 				auto it= diffMap.find(makeKey(i, k));
 				if(it!=diffMap.end())
 				{
-					auto found = it->second;
+					auto & found = it->second;
 					debugPrintf("found: lhsDisplayed=%s, rhsDisplayed=%s\n", found->lhsDisplayed? "true": "false", found->rhsDisplayed? "true": "false");
 					if( (printLeft && found->lhsDisplayed) || (printRight && found->rhsDisplayed) )
 					{
