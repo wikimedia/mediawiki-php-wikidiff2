@@ -13,27 +13,18 @@
 #include "lib/TableFormatter.h"
 #include "lib/InlineFormatter.h"
 #include "lib/InlineJSONFormatter.h"
+#include "wikidiff2_arginfo.h"
 
 #include <memory>
 #include <list>
 
 #define WIKIDIFF2_VERSION_STRING "1.14.1"
 
-#if PHP_VERSION_ID >= 80000
-#	include "wikidiff2_arginfo.h"
-#else
-#	define arginfo_wikidiff2_do_diff NULL
-#	define arginfo_wikidiff2_inline_diff NULL
-#	define arginfo_wikidiff2_inline_json_diff NULL
-#	define arginfo_wikidiff2_version NULL
-#	define arginfo_wikidiff2_multi_format_diff NULL
+#if PHP_VERSION_ID < 80200
+#    error "PHP version 8.2 or later is required."
 #endif
 
 #define COMPAT_RETURN_STRINGL(s, l) { RETURN_STRINGL(s, l); return; }
-
-#if PHP_VERSION_ID < 70000
-#    error "PHP version 7 or later is required."
-#endif
 
 using wikidiff2::Wikidiff2;
 using wikidiff2::Formatter;
@@ -129,9 +120,9 @@ static Wikidiff2::Config wikidiff2_get_config(int numContextLines)
 }
 
 static void wikidiff2_do_diff_impl(zval *return_value,
-		const Wikidiff2::Config & config, Formatter & formatter,
-		char *text1, size_t text1_len,
-		char *text2, size_t text2_len)
+	const Wikidiff2::Config & config, Formatter & formatter,
+	char *text1, size_t text1_len,
+	char *text2, size_t text2_len)
 {
 	Wikidiff2 wikidiff2(config);
 	wikidiff2.addFormatter(formatter);
@@ -170,11 +161,11 @@ PHP_FUNCTION(wikidiff2_do_diff)
 		TableFormatter formatter;
 		auto config = wikidiff2_get_config(numContextLines);
 		wikidiff2_do_diff_impl(
-				return_value,
-				config,
-				formatter,
-				text1, text1_len,
-				text2, text2_len
+			return_value,
+			config,
+			formatter,
+			text1, text1_len,
+			text2, text2_len
 		);
 	} catch (std::bad_alloc &e) {
 		php_error_docref(NULL, E_WARNING, "out of memory");
@@ -207,11 +198,11 @@ PHP_FUNCTION(wikidiff2_inline_diff)
 	try {
 		InlineFormatter formatter;
 		wikidiff2_do_diff_impl(
-				return_value,
-				wikidiff2_get_config(numContextLines),
-				formatter,
-				text1, text1_len,
-				text2, text2_len
+			return_value,
+			wikidiff2_get_config(numContextLines),
+			formatter,
+			text1, text1_len,
+			text2, text2_len
 		);
 	} catch (std::bad_alloc &e) {
 		php_error_docref(NULL, E_WARNING, "out of memory");
@@ -244,11 +235,11 @@ PHP_FUNCTION(wikidiff2_inline_json_diff)
 	try {
 		InlineJSONFormatter formatter;
 		wikidiff2_do_diff_impl(
-				return_value,
-				wikidiff2_get_config(numContextLines),
-				formatter,
-				text1, text1_len,
-				text2, text2_len
+			return_value,
+			wikidiff2_get_config(numContextLines),
+			formatter,
+			text1, text1_len,
+			text2, text2_len
 		);
 	} catch (std::bad_alloc &e) {
 		php_error_docref(NULL, E_WARNING, "out of memory");
