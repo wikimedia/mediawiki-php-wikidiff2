@@ -10,12 +10,12 @@ namespace wikidiff2 {
  */
 class LineDiffProcessor {
 	public:
-		typedef std::basic_string<char, std::char_traits<char>, WD2_ALLOCATOR<char> > String;
-		typedef Diff<String> StringDiff;
-		typedef Diff<Word> WordDiff;
-		typedef DiffOp<String> StringDiffOp;
-		typedef DiffOp<String>::PointerVector PointerVector;
-		typedef PointerVector::iterator PointerVectorIterator;
+		using String = std::basic_string<char, std::char_traits<char>, WD2_ALLOCATOR<char> >;
+		using StringDiff = Diff<String>;
+		using WordDiff = Diff<Word>;
+		using StringDiffOp = DiffOp<String>;
+		using PointerVector = DiffOp<String>::PointerVector;
+		using PointerVectorIterator = PointerVector::iterator;
 
 		/**
 		 * Options to be passed to the constructor

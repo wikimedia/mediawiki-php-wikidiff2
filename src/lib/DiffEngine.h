@@ -66,7 +66,7 @@ template<typename T>
 class DiffOp
 {
 	public:
-		typedef std::vector<const T*, WD2_ALLOCATOR<const T*> > PointerVector;
+		using PointerVector = std::vector<const T*, WD2_ALLOCATOR<const T*> > ;
 		DiffOp(int op_, const PointerVector & from_, const PointerVector & to_)
 			: op(op_), from(from_), to(to_) {}
 
@@ -84,8 +84,8 @@ template<typename T>
 class Diff
 {
 	public:
-		typedef std::vector<T, WD2_ALLOCATOR<T> > ValueVector;
-		typedef std::vector<DiffOp<T>, WD2_ALLOCATOR<DiffOp<T>> > DiffOpVector;
+		using ValueVector = std::vector<T, WD2_ALLOCATOR<T> >;
+		using DiffOpVector = std::vector<DiffOp<T>, WD2_ALLOCATOR<DiffOp<T>> > ;
 
 		Diff() {}
 
@@ -142,17 +142,17 @@ class DiffEngine
 {
 	public:
 		// Vectors
-		typedef std::vector<bool> BoolVector; // skip the allocator here to get the specialisation
-		typedef std::vector<const T*, WD2_ALLOCATOR<const T*> > PointerVector;
-		typedef std::vector<T, WD2_ALLOCATOR<T> > ValueVector;
-		typedef std::vector<int, WD2_ALLOCATOR<int> > IntVector;
-		typedef std::vector<std::pair<int, int>, WD2_ALLOCATOR<std::pair<int, int> > > IntPairVector;
+		using BoolVector = std::vector<bool> ; // skip the allocator here to get the specialisation
+		using PointerVector = std::vector<const T*, WD2_ALLOCATOR<const T*> > ;
+		using ValueVector = std::vector<T, WD2_ALLOCATOR<T> >;
+		using IntVector = std::vector<int, WD2_ALLOCATOR<int> > ;
+		using IntPairVector = std::vector<std::pair<int, int>, WD2_ALLOCATOR<std::pair<int, int> > >;
 
 		// Maps
-		typedef std::map<T, IntVector, std::less<T>, WD2_ALLOCATOR<std::pair<const T, IntVector>>> MatchesMap;
+		using MatchesMap = std::map<T, IntVector, std::less<T>, WD2_ALLOCATOR<std::pair<const T, IntVector>>>;
 
 		// Sets
-		typedef std::set<T, std::less<T>, WD2_ALLOCATOR<T> > ValueSet;
+		using ValueSet = std::set<T, std::less<T>, WD2_ALLOCATOR<T> >;
 
 		DiffEngine(const DiffConfig & config_)
 			: config(config_), done(false)

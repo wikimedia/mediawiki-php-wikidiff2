@@ -17,8 +17,8 @@ namespace wikidiff2 {
 // not be changed or destroyed.
 class Word {
 public:
-	typedef std::basic_string<char, std::char_traits<char>, WD2_ALLOCATOR<char> > String;
-	typedef String::const_iterator Iterator;
+	using String = std::basic_string<char, std::char_traits<char>, WD2_ALLOCATOR<char> >;
+	using Iterator = String::const_iterator;
 
 	Iterator start;
 	Iterator bodyEnd;

@@ -14,13 +14,13 @@ namespace wikidiff2 {
 
 class WordDiffCache {
 	public:
-		typedef std::basic_string<char, std::char_traits<char>, WD2_ALLOCATOR<char> > String;
-		typedef Diff<Word> WordDiff;
-		typedef std::shared_ptr<WordDiff> WordDiffPtr;
-		typedef std::vector<Word, WD2_ALLOCATOR<Word> > WordVector;
-		typedef std::vector<String, WD2_ALLOCATOR<String> > StringVector;
-		typedef std::vector<const String*, WD2_ALLOCATOR<const String*> > PointerVector;
-		typedef PointerVector::iterator PointerVectorIterator;
+		using String = std::basic_string<char, std::char_traits<char>, WD2_ALLOCATOR<char> >;
+		using WordDiff = Diff<Word>;
+		using WordDiffPtr = std::shared_ptr<WordDiff>;
+		using WordVector = std::vector<Word, WD2_ALLOCATOR<Word> >;
+		using StringVector = std::vector<String, WD2_ALLOCATOR<String> >;
+		using PointerVector = std::vector<const String*, WD2_ALLOCATOR<const String*> >;
+		using PointerVectorIterator = PointerVector::iterator;
 
 		WordDiffCache(const DiffConfig & config_)
 			: diffConfig(config_), textUtil(TextUtil::getInstance())
@@ -111,14 +111,14 @@ class WordDiffCache {
 			bool operator<(const WordsCacheKey & other) const;
 		};
 
-		typedef std::map<WordsCacheKey, WordVector, std::less<WordsCacheKey>,
-				WD2_ALLOCATOR<std::pair<const WordsCacheKey, WordVector> > > WordsCache;
+		using WordsCache = std::map<WordsCacheKey, WordVector, std::less<WordsCacheKey>,
+				WD2_ALLOCATOR<std::pair<const WordsCacheKey, WordVector> > >;
 
-		typedef std::map<DiffCacheKey, WordDiffPtr, std::less<DiffCacheKey>,
-				WD2_ALLOCATOR<std::pair<const DiffCacheKey, WordDiffPtr> > > DiffCache;
+		using DiffCache = std::map<DiffCacheKey, WordDiffPtr, std::less<DiffCacheKey>,
+				WD2_ALLOCATOR<std::pair<const DiffCacheKey, WordDiffPtr> > >;
 
-		typedef std::map<DiffCacheKey, WordDiffStats, std::less<DiffCacheKey>,
-				WD2_ALLOCATOR<std::pair<const DiffCacheKey, WordDiffStats>>> StatsCache;
+		using StatsCache = std::map<DiffCacheKey, WordDiffStats, std::less<DiffCacheKey>,
+				WD2_ALLOCATOR<std::pair<const DiffCacheKey, WordDiffStats>>>;
 
 		static String newlineStorage;
 		static Word newline;

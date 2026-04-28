@@ -14,9 +14,9 @@ class TextUtil
 {
 public:
 
-	typedef std::basic_string<char, std::char_traits<char>, WD2_ALLOCATOR<char> > String;
-	typedef std::vector<Word, WD2_ALLOCATOR<Word> > WordVector;
-	typedef std::vector<int, WD2_ALLOCATOR<int> > IntVector;
+	using String = std::basic_string<char, std::char_traits<char>, WD2_ALLOCATOR<char> >;
+	using WordVector = std::vector<Word, WD2_ALLOCATOR<Word> >;
+	using IntVector = std::vector<int, WD2_ALLOCATOR<int> >;
 
 private:
 	ThBrk * breaker;

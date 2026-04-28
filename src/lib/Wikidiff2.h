@@ -19,12 +19,12 @@ namespace wikidiff2 {
 
 class Wikidiff2 {
 	public:
-		typedef std::basic_string<char, std::char_traits<char>, WD2_ALLOCATOR<char> > String;
-		typedef std::vector<String, WD2_ALLOCATOR<String> > StringVector;
-		typedef std::list<Formatter*, WD2_ALLOCATOR<Formatter*> > FormatterPtrList;
+		using String = std::basic_string<char, std::char_traits<char>, WD2_ALLOCATOR<char> >;
+		using StringVector = std::vector<String, WD2_ALLOCATOR<String> >;
+		using FormatterPtrList = std::list<Formatter*, WD2_ALLOCATOR<Formatter*> >;
 
-		typedef Diff<String> StringDiff;
-		typedef Diff<Word> WordDiff;
+		using StringDiff = Diff<String>;
+		using WordDiff = Diff<Word>;
 
 		/**
 		 * Options used to configure the class, passed to the constructor
@@ -107,7 +107,7 @@ class Wikidiff2 {
 					int opIndexFrom_, int opLineFrom_, int opIndexTo_, int opLineTo_);
 		};
 		// PhpAllocator can't be specialized for std::pair, so we're using the standard allocator.
-		typedef std::map<uint64_t, std::shared_ptr<struct Wikidiff2::DiffMapEntry> > DiffMap;
+		using DiffMap = std::map<uint64_t, std::shared_ptr<struct Wikidiff2::DiffMapEntry> >;
 		DiffMap diffMap;
 
 		class AllowPrintMovedLineDiff {

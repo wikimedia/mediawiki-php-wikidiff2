@@ -7,9 +7,9 @@ namespace wikidiff2 {
 
 class WordDiffSegmenter {
 	public:
-		typedef Diff<Word> WordDiff;
-		typedef DiffOp<Word>::PointerVector PointerVector;
-		typedef PointerVector::iterator PointerVectorIterator;
+		using WordDiff = Diff<Word>;
+		using PointerVector = DiffOp<Word>::PointerVector;
+		using PointerVectorIterator = PointerVector::iterator;
 
 		static PointerVector empty;
 

@@ -11,10 +11,10 @@ namespace wikidiff2 {
 
 class Formatter {
 	public:
-		typedef std::basic_string<char, std::char_traits<char>, WD2_ALLOCATOR<char> > String;
-		typedef String::const_iterator StringIterator;
-		typedef std::basic_stringstream<char, std::char_traits<char>, WD2_ALLOCATOR<char> > StringStream;
-		typedef Diff<Word> WordDiff;
+		using String = std::basic_string<char, std::char_traits<char>, WD2_ALLOCATOR<char> >;
+		using StringIterator = String::const_iterator;
+		using StringStream = std::basic_stringstream<char, std::char_traits<char>, WD2_ALLOCATOR<char> >;
+		using WordDiff = Diff<Word>;
 
 		virtual const char * getName() = 0;
 

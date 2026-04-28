@@ -259,8 +259,8 @@ PHP_FUNCTION(wikidiff2_version)
 
 PHP_FUNCTION(wikidiff2_multi_format_diff)
 {
-	typedef std::shared_ptr<Formatter> FormatterPtr;
-	typedef std::list<FormatterPtr, WD2_ALLOCATOR<FormatterPtr>> FormatterList;
+	using FormatterPtr = std::shared_ptr<Formatter>;
+	using FormatterList = std::list<FormatterPtr, WD2_ALLOCATOR<FormatterPtr>>;
 
 	char *text1 = NULL;
 	char *text2 = NULL;
