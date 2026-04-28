@@ -23,9 +23,9 @@ class PhpAllocator : public std::allocator<T>
 		template <class U> struct rebind { typedef PhpAllocator<U> other; };
 
 		// Various constructors that do nothing
-		PhpAllocator() throw() {}
-		PhpAllocator(const PhpAllocator& other) throw() {}
-		template <class U> PhpAllocator(const PhpAllocator<U>&) throw() {}
+		PhpAllocator() noexcept {}
+		PhpAllocator(const PhpAllocator& other) noexcept {}
+		template <class U> PhpAllocator(const PhpAllocator<U>&) noexcept {}
 
 		// Allocate some memory from the PHP request pool
 		pointer allocate(size_type size, typename std::allocator<void>::const_pointer hint = 0) {
