@@ -1,6 +1,7 @@
 #ifndef WORD_H
 #define WORD_H
 
+#include <cstddef>
 #include <string>
 #include <algorithm>
 #include <iostream>
@@ -33,22 +34,37 @@ public:
 	{}
 
 	bool operator== (const Word &w) const {
-		return (bodyEnd - start == w.bodyEnd - w.start)
-			&& std::equal(start, bodyEnd, w.start);
+		return body() == w.body();
 	}
 	bool operator!=(const Word &w) const {
 		return !operator==(w);
 	}
 	bool operator<(const Word &w) const {
-		return std::lexicographical_compare(start, bodyEnd, w.start, w.bodyEnd);
+		return body() < w.body();
+	}
+
+	std::string_view body() const {
+		std::size_t bodyLength = bodyEnd - start;
+		return std::string_view{&*start, bodyLength};
+	}
+
+	std::string_view suffix() const {
+		std::size_t suffixLen = end - bodyEnd;
+		return std::string_view{&*bodyEnd, suffixLen};
+	}
+
+	std::string_view whole() const {
+		std::size_t wholeSize = end - start;
+		return std::string_view{&*start, wholeSize};
 	}
 
 	size_t size() const {
-		return end - start;
+		return whole().size();
 	}
 
 	bool isNewline() const {
-		return size() == 1 && *start == '\n';
+		using namespace std::literals;
+		return whole() == "\n"sv;
 	}
 };
 
@@ -58,7 +74,8 @@ template<class CharT, class Traits>
 std::basic_ostream<CharT, Traits>&
 operator<<(std::basic_ostream<CharT, Traits> & os, const wikidiff2::Word & word)
 {
-	os.write(&*word.start, word.size());
+	auto s = word.whole();
+	os.write(s.data(), s.size());
 	return os;
 }
 
