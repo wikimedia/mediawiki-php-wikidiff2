@@ -30,7 +30,7 @@ if test "$PHP_WIKIDIFF2" != "no"; then
 
   PHP_SUBST(WIKIDIFF2_SHARED_LIBADD)
   AC_DEFINE(HAVE_WIKIDIFF2, 1, [ ])
-  export CXXFLAGS="-Wno-write-strings -std=c++11 $CXXFLAGS"
+  export CXXFLAGS="-Wno-write-strings -std=c++17 $CXXFLAGS"
   PHP_NEW_EXTENSION(wikidiff2, \
 	src/php_wikidiff2.cpp \
 	src/lib/Wikidiff2.cpp \

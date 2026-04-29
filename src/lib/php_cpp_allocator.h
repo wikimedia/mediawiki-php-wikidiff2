@@ -11,32 +11,25 @@ namespace wikidiff2 {
  * to allocate and free memory using PHP's emalloc/efree facilities.
  */
 template <class T>
-class PhpAllocator : public std::allocator<T>
-{
-	public:
-		// Make some typedefs to avoid having to use "typename" everywhere
-		typedef typename std::allocator<T>::pointer pointer;
-		typedef typename std::allocator<T>::size_type size_type;
+struct PhpAllocator {
+	using value_type = T;
+	template <class U> struct rebind { using other = PhpAllocator<U>; };
 
-		// The rebind member allows callers to get allocators for other types,
-		// given a specialised allocator
-		template <class U> struct rebind { typedef PhpAllocator<U> other; };
+	PhpAllocator() noexcept = default;
+	template <class U> PhpAllocator(const PhpAllocator<U>&) noexcept {}
 
-		// Various constructors that do nothing
-		PhpAllocator() noexcept {}
-		PhpAllocator(const PhpAllocator& other) noexcept {}
-		template <class U> PhpAllocator(const PhpAllocator<U>&) noexcept {}
+	T* allocate(std::size_t n) {
+		return static_cast<T*>(safe_emalloc(n, sizeof(T), 0));
+	}
+	void deallocate(T* p, std::size_t) noexcept { efree(p); }
 
-		// Allocate some memory from the PHP request pool
-		pointer allocate(size_type size, typename std::allocator<void>::const_pointer hint = 0) {
-			return (pointer)safe_emalloc(size, sizeof(T), 0);
-		}
-
-		// Free memory
-		void deallocate(pointer p, size_type n) {
-			return efree(p);
-		}
 };
+
+template<class T, class U>
+bool operator==(const PhpAllocator <T>&, const PhpAllocator <U>&) { return true; }
+
+template<class T, class U>
+bool operator!=(const PhpAllocator <T>&, const PhpAllocator <U>&) { return false; }
 
 } // namespace wikidiff2
 
