@@ -17,28 +17,28 @@ WordDiffStats::WordDiffStats(const Diff<Word> & diff)
 	}
 
 	for (int i = 0; i < diff.size(); ++i) {
-		int op = diff[i].op;
+		DiffOp<Word>::Op op = diff[i].op;
 		int charCount;
 		switch (op) {
-			case DiffOp<Word>::del:
-			case DiffOp<Word>::copy:
+			case DiffOp<Word>::Op::del:
+			case DiffOp<Word>::Op::copy:
 				charCount = countOpChars(diff[i].from);
 				break;
-			case DiffOp<Word>::add:
+			case DiffOp<Word>::Op::add:
 				charCount = countOpChars(diff[i].to);
 				break;
-			case DiffOp<Word>::change:
+			case DiffOp<Word>::Op::change:
 				charCount = std::max(countOpChars(diff[i].from), countOpChars(diff[i].to));
 				break;
 		}
-		opCharCount[op] += charCount;
+		opCharCount[static_cast<int>(op)] += charCount;
 		charsTotal += charCount;
 	}
-	if (opCharCount[DiffOp<Word>::copy] == 0) {
+	if (opCharCount[static_cast<int>(DiffOp<Word>::Op::copy)] == 0) {
 		charSimilarity = 0.0;
 	} else {
 		if (charsTotal) {
-			charSimilarity = double(opCharCount[DiffOp<Word>::copy]) / charsTotal;
+			charSimilarity = double(opCharCount[static_cast<int>(DiffOp<Word>::Op::copy)]) / charsTotal;
 		} else {
 			charSimilarity = 0.0;
 		}

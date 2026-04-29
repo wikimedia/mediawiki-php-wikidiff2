@@ -13,7 +13,7 @@ void WordDiffSegmenter::segment(WordDiff & diff)
 	for (int i = 0; i < diff.size(); i++) {
 		DiffOp<Word> & edit = diff[i];
 
-		if (edit.op == DiffOp<Word>::change) {
+		if (edit.op == DiffOp<Word>::Op::change) {
 			segmentStart = edit.to.begin();
 			bool isFirstSegment = true;
 
@@ -23,20 +23,20 @@ void WordDiffSegmenter::segment(WordDiff & diff)
 						isFirstSegment = false;
 						if (pWord - segmentStart > 0) {
 							// Emit the part from the start to the line break as a change op
-							result.add_edit(DiffOp<Word>(DiffOp<Word>::change, edit.from, PointerVector(segmentStart, pWord)));
+							result.add_edit(DiffOp<Word>(DiffOp<Word>::Op::change, edit.from, PointerVector(segmentStart, pWord)));
 						} else {
 							// Line break at the start of the RHS: emit the LHS as a delete op
-							result.add_edit(DiffOp<Word>(DiffOp<Word>::del, edit.from, empty));
+							result.add_edit(DiffOp<Word>(DiffOp<Word>::Op::del, edit.from, empty));
 						}
 					} else {
 						// More than one line break: the whole LHS has already been emitted so we
 						// just need to emit the RHS part not including the line break as an add op
 						if (pWord - segmentStart > 0) {
-							result.add_edit(DiffOp<Word>(DiffOp<Word>::add, empty, PointerVector(segmentStart, pWord)));
+							result.add_edit(DiffOp<Word>(DiffOp<Word>::Op::add, empty, PointerVector(segmentStart, pWord)));
 						}
 					}
 					// Add the newline marker
-					result.add_edit(DiffOp<Word>(DiffOp<Word>::add, empty, PointerVector(pWord, pWord + 1)));
+					result.add_edit(DiffOp<Word>(DiffOp<Word>::Op::add, empty, PointerVector(pWord, pWord + 1)));
 					segmentStart = pWord + 1;
 				}
 			}
@@ -46,9 +46,9 @@ void WordDiffSegmenter::segment(WordDiff & diff)
 				result.add_edit(edit);
 			} else if (pWord - segmentStart > 0) {
 				// Emit the trailing part after the last line break
-				result.add_edit(DiffOp<Word>(DiffOp<Word>::add, empty, PointerVector(segmentStart, pWord)));
+				result.add_edit(DiffOp<Word>(DiffOp<Word>::Op::add, empty, PointerVector(segmentStart, pWord)));
 			}
-		} else if (edit.op == DiffOp<Word>::add) {
+		} else if (edit.op == DiffOp<Word>::Op::add) {
 			segmentStart = edit.to.begin();
 			bool isFirstSegment = true;
 
@@ -56,9 +56,9 @@ void WordDiffSegmenter::segment(WordDiff & diff)
 				if ((*pWord)->isNewline()) {
 					isFirstSegment = false;
 					if (pWord - segmentStart > 0) {
-						result.add_edit(DiffOp<Word>(DiffOp<Word>::add, empty, PointerVector(segmentStart, pWord)));
+						result.add_edit(DiffOp<Word>(DiffOp<Word>::Op::add, empty, PointerVector(segmentStart, pWord)));
 					}
-					result.add_edit(DiffOp<Word>(DiffOp<Word>::add, empty, PointerVector(pWord, pWord + 1)));
+					result.add_edit(DiffOp<Word>(DiffOp<Word>::Op::add, empty, PointerVector(pWord, pWord + 1)));
 					segmentStart = pWord + 1;
 				}
 			}
@@ -66,7 +66,7 @@ void WordDiffSegmenter::segment(WordDiff & diff)
 			if (isFirstSegment) {
 				result.add_edit(edit);
 			} else if (pWord - segmentStart > 0) {
-				result.add_edit(DiffOp<Word>(DiffOp<Word>::add, empty, PointerVector(segmentStart, pWord)));
+				result.add_edit(DiffOp<Word>(DiffOp<Word>::Op::add, empty, PointerVector(segmentStart, pWord)));
 			}
 		} else {
 			result.add_edit(edit);

@@ -86,7 +86,7 @@ size_t TableFormatter::printWordDiffSegment(const WordDiff &worddiff, size_t off
 			// segment, we've already done the blank output.
 			return (i > offset && i == worddiff.size() - 1) ? i : i + 1;
 		}
-		if (op.op == DiffOp<Word>::copy) {
+		if (op.op == DiffOp<Word>::Op::copy) {
 			n = op.from.size();
 			if (added) {
 				for (j=0; j<n; j++) {
@@ -97,14 +97,14 @@ size_t TableFormatter::printWordDiffSegment(const WordDiff &worddiff, size_t off
 					printHtmlEncodedText(*op.from[j]);
 				}
 			}
-		} else if (!added && (op.op == DiffOp<Word>::del || op.op == DiffOp<Word>::change)) {
+		} else if (!added && (op.op == DiffOp<Word>::Op::del || op.op == DiffOp<Word>::Op::change)) {
 			n = op.from.size();
 			result << "<del class=\"diffchange diffchange-inline\">";
 			for (j=0; j<n; j++) {
 				printHtmlEncodedText(*op.from[j]);
 			}
 			result << "</del>";
-		} else if (added && (op.op == DiffOp<Word>::add || op.op == DiffOp<Word>::change)) {
+		} else if (added && (op.op == DiffOp<Word>::Op::add || op.op == DiffOp<Word>::Op::change)) {
 			n = op.to.size();
 			result << "<ins class=\"diffchange diffchange-inline\">";
 			for (j=0; j<n; j++) {

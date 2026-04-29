@@ -13,16 +13,16 @@ void Formatter::debugPrintWordDiff(const WordDiff & worddiff)
 	for (unsigned i = 0; i < worddiff.size(); ++i) {
 		const DiffOp<Word> & op = worddiff[i];
 		switch (op.op) {
-			case DiffOp<Word>::copy:
+			case DiffOp<Word>::Op::copy:
 				result << "Copy\n";
 				break;
-			case DiffOp<Word>::del:
+			case DiffOp<Word>::Op::del:
 				result << "Delete\n";
 				break;
-			case DiffOp<Word>::add:
+			case DiffOp<Word>::Op::add:
 				result << "Add\n";
 				break;
-			case DiffOp<Word>::change:
+			case DiffOp<Word>::Op::change:
 				result << "Change\n";
 				break;
 		}
@@ -97,7 +97,7 @@ void Formatter::printConcatDiff(
 
 bool Formatter::isNewlineMarker(const DiffOp<Word> & op)
 {
-	return op.op == DiffOp<Word>::add
+	return op.op == DiffOp<Word>::Op::add
 		&& op.to.size() == 1
 		&& op.to[0]->isNewline();
 }

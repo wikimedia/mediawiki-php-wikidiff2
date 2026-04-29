@@ -55,12 +55,12 @@ void InlineFormatter::printWordDiff(const WordDiff & worddiff, int leftLine, int
 	for (unsigned i = 0; i < worddiff.size(); ++i) {
 		const DiffOp<Word> & op = worddiff[i];
 		int n, j;
-		if (op.op == DiffOp<Word>::copy) {
+		if (op.op == DiffOp<Word>::Op::copy) {
 			n = op.from.size();
 			for (j=0; j<n; j++) {
 				printHtmlEncodedText(*op.from[j]);
 			}
-		} else if (op.op == DiffOp<Word>::del) {
+		} else if (op.op == DiffOp<Word>::Op::del) {
 			n = op.from.size();
 			if (!isMoveSrc)
 				result << "<del>";
@@ -69,7 +69,7 @@ void InlineFormatter::printWordDiff(const WordDiff & worddiff, int leftLine, int
 			}
 			if (!isMoveSrc)
 				result << "</del>";
-		} else if (op.op == DiffOp<Word>::add) {
+		} else if (op.op == DiffOp<Word>::Op::add) {
 			if (isMoveSrc)
 				continue;
 			n = op.to.size();
@@ -78,7 +78,7 @@ void InlineFormatter::printWordDiff(const WordDiff & worddiff, int leftLine, int
 				printHtmlEncodedText(*op.to[j]);
 			}
 			result << "</ins>";
-		} else if (op.op == DiffOp<Word>::change) {
+		} else if (op.op == DiffOp<Word>::Op::change) {
 			n = op.from.size();
 			if (!isMoveSrc)
 				result << "<del>";
@@ -142,26 +142,26 @@ void InlineFormatter::printConcatDiff(
 		int n, j;
 		if (isNewlineMarker(op)) {
 			printNewlineMarker();
-		} else if (op.op == DiffOp<Word>::copy) {
+		} else if (op.op == DiffOp<Word>::Op::copy) {
 			n = op.from.size();
 			for (j=0; j<n; j++) {
 				printHtmlEncodedText(*op.from[j]);
 			}
-		} else if (op.op == DiffOp<Word>::del) {
+		} else if (op.op == DiffOp<Word>::Op::del) {
 			n = op.from.size();
 			result << "<del>";
 			for (j=0; j<n; j++) {
 				printHtmlEncodedText(*op.from[j]);
 			}
 			result << "</del>";
-		} else if (op.op == DiffOp<Word>::add) {
+		} else if (op.op == DiffOp<Word>::Op::add) {
 			n = op.to.size();
 			result << "<ins>";
 			for (j=0; j<n; j++) {
 				printHtmlEncodedText(*op.to[j]);
 			}
 			result << "</ins>";
-		} else if (op.op == DiffOp<Word>::change) {
+		} else if (op.op == DiffOp<Word>::Op::change) {
 			n = op.from.size();
 			result << "<del>";
 			for (j=0; j<n; j++) {

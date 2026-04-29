@@ -33,7 +33,7 @@ void LineDiffProcessor::detectChanges(StringDiff & result, StringDiffOp & diffOp
 
 	auto flushSaved = [&]() {
 		if (savedSize) {
-			result.add_edit(StringDiffOp(StringDiffOp::change,
+			result.add_edit(StringDiffOp(StringDiffOp::Op::change,
 				PointerVector(pDel - savedSize, pDel),
 				PointerVector(pAdd - savedSize, pAdd)));
 			savedSize = 0;
@@ -45,7 +45,7 @@ void LineDiffProcessor::detectChanges(StringDiff & result, StringDiffOp & diffOp
 		if (split.size > 1) {
 			// Add the split as a separate change
 			flushSaved();
-			result.add_edit(StringDiffOp(StringDiffOp::change,
+			result.add_edit(StringDiffOp(StringDiffOp::Op::change,
 				PointerVector(pDel, pDel + 1),
 				PointerVector(pAdd, pAdd + split.size)));
 		} else if (split.similarity > config.changeThreshold) {
@@ -54,9 +54,9 @@ void LineDiffProcessor::detectChanges(StringDiff & result, StringDiffOp & diffOp
 		} else {
 			// Convert dissimilar change to delete + add
 			flushSaved();
-			result.add_edit(StringDiffOp(StringDiffOp::add,
+			result.add_edit(StringDiffOp(StringDiffOp::Op::add,
 				empty, PointerVector(pAdd, pAdd + 1)));
-			result.add_edit(StringDiffOp(StringDiffOp::del,
+			result.add_edit(StringDiffOp(StringDiffOp::Op::del,
 				PointerVector(pDel, pDel + 1), empty));
 			// Set split.size = 1 for the loop increment
 			split.size = 1;
@@ -66,10 +66,10 @@ void LineDiffProcessor::detectChanges(StringDiff & result, StringDiffOp & diffOp
 
 	// Handle the trailing part which doesn't match due to unequal length
 	if (pDel != pDelEnd) {
-		result.add_edit(StringDiffOp(StringDiffOp::del,
+		result.add_edit(StringDiffOp(StringDiffOp::Op::del,
 			PointerVector(pDel, pDelEnd), empty));
 	} else if (pAdd != pAddEnd) {
-		result.add_edit(StringDiffOp(StringDiffOp::add,
+		result.add_edit(StringDiffOp(StringDiffOp::Op::add,
 			empty, PointerVector(pAdd, pAddEnd)));
 	}
 }
@@ -125,7 +125,7 @@ void LineDiffProcessor::process(StringDiff & lineDiff) {
 
 	for (size_t i = 0; i < n; i++) {
 		StringDiffOp & diffOp = lineDiff[i];
-		if (diffOp.op == StringDiffOp::change) {
+		if (diffOp.op == StringDiffOp::Op::change) {
 			detectChanges(result, diffOp);
 		} else {
 			result.add_edit(diffOp);

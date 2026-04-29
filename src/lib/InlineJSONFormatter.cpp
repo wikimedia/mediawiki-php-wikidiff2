@@ -91,14 +91,14 @@ void InlineJSONFormatter::printWordDiff(const WordDiff & worddiff, int leftLine,
 		const DiffOp<Word> & op = worddiff[i];
 		unsigned long n;
 		int j;
-		if (op.op == DiffOp<Word>::copy) {
+		if (op.op == DiffOp<Word>::Op::copy) {
 			n = op.from.size();
 			for (j=0; j<n; j++) {
 				const Word & word = *op.from[j];
 				rangeCalcResult += word.size();
 				printEscapedJSON(word);
 			}
-		} else if (op.op == DiffOp<Word>::del) {
+		} else if (op.op == DiffOp<Word>::Op::del) {
 			n = op.from.size();
 			unsigned int start = rangeCalcResult;
 			unsigned int length = 0;
@@ -117,7 +117,7 @@ void InlineJSONFormatter::printWordDiff(const WordDiff & worddiff, int leftLine,
 					toString(length) + ", \"type\": " + toString(HighlightType::Delete) +
 					" }");
 			}
-		} else if (op.op == DiffOp<Word>::add) {
+		} else if (op.op == DiffOp<Word>::Op::add) {
 			if (isMoveSrc)
 				continue;
 			n = op.to.size();
@@ -136,7 +136,7 @@ void InlineJSONFormatter::printWordDiff(const WordDiff & worddiff, int leftLine,
 			ranges.append("{\"start\": " + toString(start) + ", \"length\": " +
 				toString(length) + ", \"type\": " + toString(HighlightType::Add) + " }");
 
-		} else if (op.op == DiffOp<Word>::change) {
+		} else if (op.op == DiffOp<Word>::Op::change) {
 			n = op.from.size();
 			unsigned int start = rangeCalcResult;
 			unsigned int length = 0;

@@ -41,7 +41,7 @@ void Wikidiff2::printDiff(const StringDiff & linediff)
 	for (int i = 0; i < linediff.size(); ++i) {
 		int j;
 		// Line 1 changed, show heading with no leading context
-		if (linediff[i].op != DiffOp<String>::copy && i == 0) {
+		if (linediff[i].op != DiffOp<String>::Op::copy && i == 0) {
 			printBlockHeader(1, 1);
 		}
 
@@ -49,7 +49,7 @@ void Wikidiff2::printDiff(const StringDiff & linediff)
 		int n2 = linediff[i].to.size();
 
 		switch (linediff[i].op) {
-			case DiffOp<String>::add:
+			case DiffOp<String>::Op::add:
 				// inserted lines
 				for (j=0; j<n2; j++) {
 
@@ -65,7 +65,7 @@ void Wikidiff2::printDiff(const StringDiff & linediff)
 				}
 				to_index += n2;
 				break;
-			case DiffOp<String>::del:
+			case DiffOp<String>::Op::del:
 				// deleted lines
 				for (j=0; j<n1; j++) {
 
@@ -81,7 +81,7 @@ void Wikidiff2::printDiff(const StringDiff & linediff)
 				}
 				from_index += n1;
 				break;
-			case DiffOp<String>::copy:
+			case DiffOp<String>::Op::copy:
 				// copy/context
 				for (j=0; j<n1; j++) {
 
@@ -106,7 +106,7 @@ void Wikidiff2::printDiff(const StringDiff & linediff)
 					to_index++;
 				}
 				break;
-			case DiffOp<String>::change:
+			case DiffOp<String>::Op::change:
 				if (n1 != n2) {
 					// Line split
 					printConcatDiff(
@@ -351,7 +351,7 @@ bool Wikidiff2::printMovedLineDiff(const StringDiff & linediff, int opIndex, int
 
 	debugPrintf("printMovedLineDiff (...), %d, %d", opIndex, opLine);
 
-	bool printLeft = linediff[opIndex].op == DiffOp<String>::del ? true : false;
+	bool printLeft = linediff[opIndex].op == DiffOp<String>::Op::del ? true : false;
 	bool printRight = !printLeft;
 
 	// check whether this op actually refers to the diff map entry
@@ -369,7 +369,7 @@ bool Wikidiff2::printMovedLineDiff(const StringDiff & linediff, int opIndex, int
 				// the paragraph was already moved to a different place. a move operation can only have one source and one destination.
 				debugPrintf("printMovedLineDiff(..., %d, %d): excluding this candidate (multiple potential matches). op=%s, printLeft %s, otheridx/line %d/%d, found %d/%d, other->lhsDisplayed %s, other->rhsDisplayed  %s",
 					opIndex, opLine,
-					linediff[opIndex].op == DiffOp<String>::add ? "add": linediff[opIndex].op == DiffOp<String>::del ? "del": "???",
+					linediff[opIndex].op == DiffOp<String>::Op::add ? "add": linediff[opIndex].op == DiffOp<String>::Op::del ? "del": "???",
 					printLeft ? "true" : "false",
 					otherIndex, otherLine, (printLeft ? other->opIndexFrom : other->opIndexTo), (printLeft? other->opLineFrom: other->opLineTo),
 					other->lhsDisplayed ? "true" : "false",
@@ -379,7 +379,7 @@ bool Wikidiff2::printMovedLineDiff(const StringDiff & linediff, int opIndex, int
 			// the entry in the diff map refers to this paragraph.
 			debugPrintf("printMovedLineDiff(..., %d, %d): diffMap entry refers to this paragraph (or other side not displayed). op=%s, printLeft %s, otheridx/line %d/%d, found %d/%d",
 				opIndex, opLine,
-				linediff[opIndex].op == DiffOp<String>::add ? "add": linediff[opIndex].op == DiffOp<String>::del ? "del": "???",
+				linediff[opIndex].op == DiffOp<String>::Op::add ? "add": linediff[opIndex].op == DiffOp<String>::Op::del ? "del": "???",
 				printLeft ? "true" : "false",
 				otherIndex, otherLine, (printLeft ? other->opIndexFrom : other->opIndexTo), (printLeft? other->opLineFrom: other->opLineTo));
 			return true;
@@ -387,7 +387,7 @@ bool Wikidiff2::printMovedLineDiff(const StringDiff & linediff, int opIndex, int
 		// no entry in the diffMap.
 		debugPrintf("printMovedLineDiff(..., %d, %d): no diffMap entry found. op=%s, printLeft %s, otheridx/line %d/%d",
 			opIndex, opLine,
-			linediff[opIndex].op == DiffOp<String>::add ? "add": linediff[opIndex].op == DiffOp<String>::del ? "del": "???",
+			linediff[opIndex].op == DiffOp<String>::Op::add ? "add": linediff[opIndex].op == DiffOp<String>::Op::del ? "del": "???",
 			printLeft ? "true" : "false",
 			otherIndex, otherLine);
 		return true;
@@ -400,8 +400,8 @@ bool Wikidiff2::printMovedLineDiff(const StringDiff & linediff, int opIndex, int
 	auto it = diffMap.find(key);
 	if (it != diffMap.end()) {
 		auto & best = it->second;
-		int otherIndex = linediff[opIndex].op == DiffOp<String>::add ? best->opIndexFrom : best->opIndexTo;
-		int otherLine = linediff[opIndex].op == DiffOp<String>::add ? best->opLineFrom : best->opLineTo;
+		int otherIndex = linediff[opIndex].op == DiffOp<String>::Op::add ? best->opIndexFrom : best->opIndexTo;
+		int otherLine = linediff[opIndex].op == DiffOp<String>::Op::add ? best->opLineFrom : best->opLineTo;
 
 		if(!cmpDiffMapEntries(otherIndex, otherLine))
 			return false;
@@ -427,8 +427,11 @@ bool Wikidiff2::printMovedLineDiff(const StringDiff & linediff, int opIndex, int
 
 		debugPrintf("found in diffmap. copy: %d, del: %d, add: %d, change: %d, similarity: %.4f\n"
 					"from: (%d,%d) to: (%d,%d)",
-			best->ds.opCharCount[DiffOp<Word>::copy], best->ds.opCharCount[DiffOp<Word>::del], best->ds.opCharCount[DiffOp<Word>::add], best->ds.opCharCount[DiffOp<Word>::change], best->ds.charSimilarity,
-			best->opIndexFrom, best->opLineFrom, best->opIndexTo, best->opLineTo);
+			best->ds.opCharCount[static_cast<int>(DiffOp<Word>::Op::copy)],
+			best->ds.opCharCount[static_cast<int>(DiffOp<Word>::Op::del)],
+			best->ds.opCharCount[static_cast<int>(DiffOp<Word>::Op::add)],
+			best->ds.opCharCount[static_cast<int>(DiffOp<Word>::Op::change)],
+			best->ds.charSimilarity, best->opIndexFrom, best->opLineFrom, best->opIndexTo, best->opLineTo);
 
 		return true;
 	}
@@ -437,11 +440,11 @@ bool Wikidiff2::printMovedLineDiff(const StringDiff & linediff, int opIndex, int
 
 	// else:
 	//     try to find a corresponding moved line in deleted/added lines
-	int otherOp = (linediff[opIndex].op == DiffOp<String>::add ? DiffOp<String>::del : DiffOp<String>::add);
+	auto otherOp = (linediff[opIndex].op == DiffOp<String>::Op::add ? DiffOp<String>::Op::del : DiffOp<String>::Op::add);
 	std::shared_ptr<DiffMapEntry> found = nullptr;
 	for (int i = 0; i < linediff.size(); ++i) {
 		if (linediff[i].op == otherOp) {
-			auto& lines = (linediff[opIndex].op == DiffOp<String>::add ? linediff[i].from : linediff[i].to);
+			auto& lines = (linediff[opIndex].op == DiffOp<String>::Op::add ? linediff[i].from : linediff[i].to);
 			for (int k = 0; k < lines.size(); ++k) {
 				auto it= diffMap.find(makeKey(i, k));
 				if(it!=diffMap.end())
@@ -456,7 +459,7 @@ bool Wikidiff2::printMovedLineDiff(const StringDiff & linediff, int opIndex, int
 				}
 				std::shared_ptr<DiffMapEntry> tmp;
 				bool potentialMatch;
-				if (otherOp == DiffOp<String>::del) {
+				if (otherOp == DiffOp<String>::Op::del) {
 					tmp = getDiffMapEntry(linediff[opIndex].to[opLine], lines[k], i, k, opIndex, opLine);
 					potentialMatch = cmpDiffMapEntries(tmp->opIndexFrom, tmp->opLineFrom);
 				} else {
@@ -478,8 +481,8 @@ bool Wikidiff2::printMovedLineDiff(const StringDiff & linediff, int opIndex, int
 	//     print diff to the moved line, omitting the left/right side for added/deleted line
 	if (found && found->ds.charSimilarity > config.movedLineThreshold) {
 		// if we displayed a diff to the found block before, don't display this one as moved.
-		int otherIndex = linediff[opIndex].op == DiffOp<String>::add ? found->opIndexFrom : found->opIndexTo;
-		int otherLine = linediff[opIndex].op == DiffOp<String>::add ? found->opLineFrom : found->opLineTo;
+		int otherIndex = linediff[opIndex].op == DiffOp<String>::Op::add ? found->opIndexFrom : found->opIndexTo;
+		int otherLine = linediff[opIndex].op == DiffOp<String>::Op::add ? found->opLineFrom : found->opLineTo;
 
 		if(!cmpDiffMapEntries(otherIndex, otherLine))
 			return false;
@@ -520,8 +523,11 @@ bool Wikidiff2::printMovedLineDiff(const StringDiff & linediff, int opIndex, int
 
 		debugPrintf("copy: %d, del: %d, add: %d, change: %d, similarity: %.4f\n"
 					"from: (%d,%d) to: (%d,%d)",
-			found->ds.opCharCount[DiffOp<Word>::copy], found->ds.opCharCount[DiffOp<Word>::del], found->ds.opCharCount[DiffOp<Word>::add], found->ds.opCharCount[DiffOp<Word>::change], found->ds.charSimilarity,
-			found->opIndexFrom, found->opLineFrom, found->opIndexTo, found->opLineTo);
+			found->ds.opCharCount[static_cast<int>(DiffOp<Word>::Op::copy)],
+			found->ds.opCharCount[static_cast<int>(DiffOp<Word>::Op::del)],
+			found->ds.opCharCount[static_cast<int>(DiffOp<Word>::Op::add)],
+			found->ds.opCharCount[static_cast<int>(DiffOp<Word>::Op::change)],
+			found->ds.charSimilarity, found->opIndexFrom, found->opLineFrom, found->opIndexTo, found->opLineTo);
 
 		return true;
 	}

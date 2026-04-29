@@ -66,12 +66,12 @@ template<typename T>
 class DiffOp
 {
 	public:
+		enum class Op {copy, del, add, change};
 		using PointerVector = std::vector<const T*, WD2_ALLOCATOR<const T*> > ;
-		DiffOp(int op_, const PointerVector & from_, const PointerVector & to_)
+		DiffOp(Op op_, const PointerVector & from_, const PointerVector & to_)
 			: op(op_), from(from_), to(to_) {}
 
-		enum {copy, del, add, change};
-		int op;
+		Op op;
 		PointerVector from;
 		PointerVector to;
 };
@@ -241,7 +241,7 @@ void DiffEngine<T>::diff (const ValueVector & from_lines,
 		for (yi = 0; yi < n_to; yi++) {
 			add.push_back(&to_lines[yi]);
 		}
-		diff.add_edit(DiffOp<T>(DiffOp<T>::change, del, add));
+		diff.add_edit(DiffOp<T>(DiffOp<T>::Op::change, del, add));
 		diff.bailout = true;
 
 		done = true;
@@ -294,7 +294,7 @@ void DiffEngine<T>::diff (const ValueVector & from_lines,
 			++yi;
 		}
 		if (del.size()) {
-			diff.add_edit(DiffOp<T>(DiffOp<T>::copy, del, add));
+			diff.add_edit(DiffOp<T>(DiffOp<T>::Op::copy, del, add));
 			del.clear();
 			add.clear();
 		}
@@ -307,11 +307,11 @@ void DiffEngine<T>::diff (const ValueVector & from_lines,
 			add.push_back(&to_lines[yi++]);
 
 		if (del.size() && add.size()) {
-			diff.add_edit(DiffOp<T>(DiffOp<T>::change, del, add));
+			diff.add_edit(DiffOp<T>(DiffOp<T>::Op::change, del, add));
 		} else if (del.size())
-			diff.add_edit(DiffOp<T>(DiffOp<T>::del, del, empty));
+			diff.add_edit(DiffOp<T>(DiffOp<T>::Op::del, del, empty));
 		else if (add.size())
-			diff.add_edit(DiffOp<T>(DiffOp<T>::add, empty, add));
+			diff.add_edit(DiffOp<T>(DiffOp<T>::Op::add, empty, add));
 	}
 
 	done = true;

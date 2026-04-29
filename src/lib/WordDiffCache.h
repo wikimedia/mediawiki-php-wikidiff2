@@ -157,7 +157,7 @@ class WordDiffCache {
 		size_t getKey(const String * str);
 
 		static int sizetToInt(size_t x) {
-			if (x > std::numeric_limits<int>().max()) {
+			if (x > std::numeric_limits<int>::max()) {
 				throwOutOfRange();
 			}
 			return (int)x;

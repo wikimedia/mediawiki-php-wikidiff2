@@ -175,9 +175,9 @@ inline bool Wikidiff2::AllowPrintMovedLineDiff::operator () (const StringDiff & 
 		// count the number of added or removed lines which could have been moved.
 		int adds = 0, deletes = 0;
 		for(int i = 0; i < linediff.size(); ++i) {
-			if(linediff[i].op == DiffOp<String>::add)
+			if(linediff[i].op == DiffOp<String>::Op::add)
 				adds += linediff[i].to.size();
-			if(linediff[i].op == DiffOp<String>::del)
+			if(linediff[i].op == DiffOp<String>::Op::del)
 				deletes += linediff[i].from.size();
 			// number of comparisons is (number of additions) x (number of deletions).
 			// if count is too large, don't try detecting moved lines.
