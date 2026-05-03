@@ -1,0 +1,18 @@
+{
+	"name": "wikimedia/wikidiff2",
+	"description": "Wikidiff2 is a PHP extension which formats changes between two input texts, producing HTML or JSON.",
+	"type": "php-ext",
+	"license": "GPL-2.0-or-later",
+	"authors": [
+		{
+			"name": "Tim Starling",
+			"email": "tstarling@wikimedia.org"
+		},
+		{
+			"name": "Wikimedia Community"
+		}
+	],
+	"php-ext": {
+		"extension-name": "wikidiff2"
+	}
+}
