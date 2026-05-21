@@ -26,12 +26,14 @@ $ sudo make install
 
 ## License
 
-wikidiff2 is licensed under the GPL v2 or any later version. The GPL is incompatible
-with the PHP license, meaning that any binaries of wikidiff2 are not redistributable
-under either license.
+wikidiff2 is licensed under the GPL v2 or any later version.
 
-The licensing issue is tracked at https://phabricator.wikimedia.org/T196132
+Historically the PHP License was incompatible with the GPL, meaning that
+binaries were not redistributable. However that was resolved in 2026 with
+version 4 of the PHP License, which is merely the BSD-3-Clause license and
+explicitly GPL compatible.
 
+See COPYING and <https://www.php.net/license/> for more details.
 
 ## Configuration
 
