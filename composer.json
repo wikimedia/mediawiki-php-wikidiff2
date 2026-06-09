@@ -14,5 +14,8 @@
 	],
 	"php-ext": {
 		"extension-name": "wikidiff2"
+	},
+	"require": {
+		"php": ">=8.2"
 	}
 }

@@ -18,7 +18,7 @@
 #include <memory>
 #include <list>
 
-#define WIKIDIFF2_VERSION_STRING "1.14.1"
+#define WIKIDIFF2_VERSION_STRING "1.14.2"
 
 #if PHP_VERSION_ID < 80200
 #    error "PHP version 8.2 or later is required."
