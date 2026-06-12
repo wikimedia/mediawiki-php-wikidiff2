@@ -5,22 +5,9 @@ if test "$PHP_WIKIDIFF2" != "no"; then
   PHP_REQUIRE_CXX
   AC_LANG_CPLUSPLUS
 
-  if test -z "$PKG_CONFIG"
-  then
-	AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
-  fi
-  if test "$PKG_CONFIG" = "no"
-  then
-	AC_MSG_ERROR([required utility 'pkg-config' not found])
-  fi
-
-  if ! $PKG_CONFIG --atleast-version=0.1.25 --exists libthai
-  then
-	AC_MSG_ERROR(['libthai' is not in pkg-config or version < 0.1.25])
-  fi
-
-  PHP_EVAL_INCLINE(`$PKG_CONFIG --cflags-only-I libthai`)
-  PHP_EVAL_LIBLINE(`$PKG_CONFIG --libs libthai`, WIKIDIFF2_SHARED_LIBADD)
+  PKG_CHECK_MODULES([LIBTHAI], [libthai >= 0.1.25])
+  PHP_EVAL_INCLINE([$LIBTHAI_CFLAGS])
+  PHP_EVAL_LIBLINE([$LIBTHAI_LIBS], [WIKIDIFF2_SHARED_LIBADD])
 
   export OLD_CPPFLAGS="$CPPFLAGS"
   export CPPFLAGS="$CPPFLAGS $INCLUDES -DHAVE_WIKIDIFF2"
