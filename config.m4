@@ -4,7 +4,6 @@ PHP_ARG_ENABLE(wikidiff2, whether to enable wikidiff2 support,
 if test "$PHP_WIKIDIFF2" != "no"; then
   PHP_REQUIRE_CXX
   AC_LANG_CPLUSPLUS
-  PHP_ADD_LIBRARY(stdc++,,WIKIDIFF2_SHARED_LIBADD)
 
   if test -z "$PKG_CONFIG"
   then
@@ -42,5 +41,5 @@ if test "$PHP_WIKIDIFF2" != "no"; then
 	src/lib/LineDiffProcessor.cpp \
 	src/lib/WordDiffCache.cpp \
 	src/lib/WordDiffSegmenter.cpp \
-	src/lib/WordDiffStats.cpp, $ext_shared)
+	src/lib/WordDiffStats.cpp, $ext_shared,,, [cxx])
 fi
