@@ -29,4 +29,8 @@ if test "$PHP_WIKIDIFF2" != "no"; then
 	src/lib/WordDiffCache.cpp \
 	src/lib/WordDiffSegmenter.cpp \
 	src/lib/WordDiffStats.cpp, $ext_shared,,, [cxx])
+
+  PHP_ADD_BUILD_DIR($ext_builddir/src)
+  PHP_ADD_BUILD_DIR($ext_builddir/src/lib)
+  PHP_ADD_INCLUDE($ext_srcdir/src)
 fi
