@@ -100,6 +100,8 @@ PHP_MINFO_FUNCTION(wikidiff2)
 	php_info_print_table_header(2, "wikidiff2 support", "enabled");
 	php_info_print_table_row(2, "wikidiff2 version", WIKIDIFF2_VERSION_STRING);
 	php_info_print_table_end();
+
+	DISPLAY_INI_ENTRIES();
 }
 
 /**
