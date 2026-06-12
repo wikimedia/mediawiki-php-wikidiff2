@@ -4,24 +4,10 @@ PHP_ARG_ENABLE(wikidiff2, whether to enable wikidiff2 support,
 if test "$PHP_WIKIDIFF2" != "no"; then
   PHP_REQUIRE_CXX
   AC_LANG_CPLUSPLUS
-  PHP_ADD_LIBRARY(stdc++,,WIKIDIFF2_SHARED_LIBADD)
 
-  if test -z "$PKG_CONFIG"
-  then
-	AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
-  fi
-  if test "$PKG_CONFIG" = "no"
-  then
-	AC_MSG_ERROR([required utility 'pkg-config' not found])
-  fi
-
-  if ! $PKG_CONFIG --atleast-version=0.1.25 --exists libthai
-  then
-	AC_MSG_ERROR(['libthai' is not in pkg-config or version < 0.1.25])
-  fi
-
-  PHP_EVAL_INCLINE(`$PKG_CONFIG --cflags-only-I libthai`)
-  PHP_EVAL_LIBLINE(`$PKG_CONFIG --libs libthai`, WIKIDIFF2_SHARED_LIBADD)
+  PKG_CHECK_MODULES([LIBTHAI], [libthai >= 0.1.25])
+  PHP_EVAL_INCLINE([$LIBTHAI_CFLAGS])
+  PHP_EVAL_LIBLINE([$LIBTHAI_LIBS], [WIKIDIFF2_SHARED_LIBADD])
 
   export OLD_CPPFLAGS="$CPPFLAGS"
   export CPPFLAGS="$CPPFLAGS $INCLUDES -DHAVE_WIKIDIFF2"
@@ -30,7 +16,6 @@ if test "$PHP_WIKIDIFF2" != "no"; then
 
   PHP_SUBST(WIKIDIFF2_SHARED_LIBADD)
   AC_DEFINE(HAVE_WIKIDIFF2, 1, [ ])
-  export CXXFLAGS="-Wno-write-strings -std=c++17 $CXXFLAGS"
   PHP_NEW_EXTENSION(wikidiff2, \
 	src/php_wikidiff2.cpp \
 	src/lib/Wikidiff2.cpp \
@@ -42,5 +27,9 @@ if test "$PHP_WIKIDIFF2" != "no"; then
 	src/lib/LineDiffProcessor.cpp \
 	src/lib/WordDiffCache.cpp \
 	src/lib/WordDiffSegmenter.cpp \
-	src/lib/WordDiffStats.cpp, $ext_shared)
+	src/lib/WordDiffStats.cpp, $ext_shared,, [-Wno-write-strings -std=c++17], [cxx])
+
+  PHP_ADD_BUILD_DIR($ext_builddir/src)
+  PHP_ADD_BUILD_DIR($ext_builddir/src/lib)
+  PHP_ADD_INCLUDE($ext_srcdir/src)
 fi
